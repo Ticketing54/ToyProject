@@ -18,10 +18,7 @@ public class LoginManager : MonoBehaviour
     {
 
     }
-    IEnumerator CPost(WWWForm form)
-    {
-
-    }
+   
     public void Regist()
     {
         
