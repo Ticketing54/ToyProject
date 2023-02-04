@@ -6,10 +6,29 @@ using UnityEngine.Networking;
 
 [System.Serializable]
 class LoginMessage
-{
-    public string order { get; set; }
-    public string result { get; set; }
-    public string msg { get; set; }    
+{   [SerializeField]
+    string order;  
+    [SerializeField]
+    string result; 
+    [SerializeField]
+    string msg;
+    public enum orderType
+    {
+        login,
+        regist,
+        none,
+    }
+    public orderType Getorder()
+    {
+        switch(order)
+        {
+            case "login":
+                return orderType.login;
+            case "regist":
+                return orderType.regist;
+            default:
+                return orderType.none;        }
+    }
 }
 public class LoginManager : MonoBehaviour
 {
@@ -48,9 +67,8 @@ public class LoginManager : MonoBehaviour
 
             if (www.isDone)
             {   
-                LoginMessage json = JsonUtility.FromJson<LoginMessage>(www.downloadHandler.text);
-                Debug.Log(json.order);
-                Debug.Log(json.result);
+                LoginMessage json = JsonUtility.FromJson<LoginMessage>(www.downloadHandler.text);                
+                
             }
             else
             {
