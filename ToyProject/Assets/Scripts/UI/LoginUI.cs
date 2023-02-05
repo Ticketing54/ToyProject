@@ -11,6 +11,8 @@ public class LoginUI : MonoBehaviour
     TMP_InputField input_Id;
     [SerializeField]
     TMP_InputField input_Pw;
+    [SerializeField]
+    LoginMessage message;
     
     public void OnClikLoginButton()
     {
@@ -32,9 +34,8 @@ public class LoginUI : MonoBehaviour
     }
     void PushMessage(PostData _data)
     {
-        Debug.Log(_data.Order);
-        Debug.Log(_data.Msg);
-        Debug.Log(_data.Result);        
+        message.gameObject.SetActive(true);
+        message.LoginFail_ID();
     }
     
 }
