@@ -4,32 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
-[System.Serializable]
-class LoginMessage
-{   [SerializeField]
-    string order;  
-    [SerializeField]
-    string result; 
-    [SerializeField]
-    string msg;
-    public enum orderType
-    {
-        login,
-        regist,
-        none,
-    }
-    public orderType Getorder()
-    {
-        switch(order)
-        {
-            case "login":
-                return orderType.login;
-            case "regist":
-                return orderType.regist;
-            default:
-                return orderType.none;        }
-    }
-}
 public class LoginManager : MonoBehaviour
 {
     string URL = "https://script.google.com/macros/s/AKfycbwqlDjWePQi1heqNZiyX3OJZMoqka_JhsTUrY7zzG0GWQp4U_wGduTK1D2nFZn6o4PP/exec";
@@ -54,11 +28,7 @@ public class LoginManager : MonoBehaviour
         form.AddField("id", input_ID.text);
         form.AddField("password", input_Pw.text);        
     }
-    class UserData
-    {
-        public string id { get; }
-        public string password { get; }
-    }
+    
     IEnumerator CoPos(WWWForm form)
     {   
         using (UnityWebRequest www = UnityWebRequest.Post(URL,form))
@@ -68,11 +38,22 @@ public class LoginManager : MonoBehaviour
             if (www.isDone)
             {   
                 LoginMessage json = JsonUtility.FromJson<LoginMessage>(www.downloadHandler.text);                
-                
+                switch(json.TryLogin())
+                {
+                    case LoginMessage.LogInMsg.LogInSucess:
+                        break;
+                    case LoginMessage.LogInMsg.NonExistent:
+                        break;
+                    case LoginMessage.LogInMsg.WrongPassword:
+                        break;
+                    default:
+                        // Error Message
+                        break;
+                }
             }
             else
             {
-                // errorMessage
+                // Error Message
             }
         }
     }
