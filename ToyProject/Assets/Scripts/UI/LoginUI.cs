@@ -12,17 +12,20 @@ public class LoginUI : MonoBehaviour
     [SerializeField]
     TMP_InputField input_Pw;
     [SerializeField]
-    LoginMessage message;
-    
+    GameObject errormessageObj;
+    [SerializeField]
+    TextMeshProUGUI errorMessage;
+
     public void OnClikLoginButton()
     {
         string id = input_Id.text;
         string password = input_Pw.text;
 
-        DataManager.datamanager.Post(id, password, PushMessage, false);
+        DataManager.datamanager.UserInfoPost(id, password, ErrorMessage,PostDataType.Login);
 
         input_Pw.text = "";
-    }
+    }   
+    
     bool CheckInput(string _input)
     {
         string inputCheck = Regex.Replace(_input, @"[^a-zA-Z0-9°¡-ÆR\.*,]", "", RegexOptions.Singleline);
@@ -32,10 +35,25 @@ public class LoginUI : MonoBehaviour
             return true;
         
     }
-    void PushMessage(PostData _data)
+    void ErrorMessage(PostData _data)
     {
-        message.gameObject.SetActive(true);
-        message.LoginFail_ID();
+        if (_data.Result != "OK")
+        {
+            errormessageObj.gameObject.SetActive(true);
+            switch(_data.Msg)
+            {
+                case "NoneID":
+                    errorMessage.text = "¾ÆÀÌµð°¡ ¾ø½À´Ï´Ù.";
+                    break;
+                case "WrongPassword":
+                    errorMessage.text = "ºñ¹Ð¹øÈ£°¡ Æ²·È½À´Ï´Ù.";
+                    break;
+                default:
+                    Debug.LogError("Wrong GoogleMsg");
+                    break;
+            }
+        }
     }
-    
+  
+  
 }

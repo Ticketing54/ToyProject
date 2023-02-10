@@ -9,7 +9,7 @@ public class DataManager : MonoBehaviour
 {
     public static DataManager datamanager;
 
-    string URL = "https://script.google.com/macros/s/AKfycbwqlDjWePQi1heqNZiyX3OJZMoqka_JhsTUrY7zzG0GWQp4U_wGduTK1D2nFZn6o4PP/exec";
+    string URL = "https://script.google.com/macros/s/AKfycbzi1ju790oFWwEvBlNgKpeE3nm73HCIChnd8k_D9AixmmGH7_DWsNY3JblPAOEeKGcW/exec";
 
     private void Awake()
     {
@@ -25,17 +25,26 @@ public class DataManager : MonoBehaviour
                 
     }
     
-    public void Post(string _id,string _pw,Action<PostData> _ui,bool _isRegist)
+    public void UserInfoPost(string _id,string _pw,Action<PostData> _ui,PostDataType _postDatatype)
     {
         WWWForm form = new WWWForm();
-        if(_isRegist)
+
+        switch(_postDatatype)
         {
-            form.AddField("order", "register");
+            case PostDataType.Login:
+                {
+                    form.AddField("order", "login");
+                    break;
+                }
+            case PostDataType.Regist:
+                {
+                    form.AddField("order", "register");
+                    break;
+                }
+            default:
+                break;
         }
-        else
-        {
-            form.AddField("order", "login");
-        }
+        
         form.AddField("id",_id);
         form.AddField("password", _pw);
         StartCoroutine(CoPost(form, _ui));
