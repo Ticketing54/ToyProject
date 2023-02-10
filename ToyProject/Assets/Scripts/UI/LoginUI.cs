@@ -5,14 +5,14 @@ using UnityEngine.UI;
 using System.Text.RegularExpressions;
 using TMPro;
 
-public class LoginUI : MonoBehaviour
-{
+public class LoginUI :UIView
+{   
     [SerializeField]
     TMP_InputField input_Id;
     [SerializeField]
     TMP_InputField input_Pw;
     [SerializeField]
-    GameObject errormessageObj;
+    GameObject dontTouch;
     [SerializeField]
     TextMeshProUGUI errorMessage;
 
@@ -24,8 +24,8 @@ public class LoginUI : MonoBehaviour
         DataManager.datamanager.UserInfoPost(id, password, ErrorMessage,PostDataType.Login);
 
         input_Pw.text = "";
-    }   
-    
+    }
+
     bool CheckInput(string _input)
     {
         string inputCheck = Regex.Replace(_input, @"[^a-zA-Z0-9°¡-ÆR\.*,]", "", RegexOptions.Singleline);
@@ -39,7 +39,7 @@ public class LoginUI : MonoBehaviour
     {
         if (_data.Result != "OK")
         {
-            errormessageObj.gameObject.SetActive(true);
+            dontTouch.gameObject.SetActive(true);
             switch(_data.Msg)
             {
                 case "NoneID":
