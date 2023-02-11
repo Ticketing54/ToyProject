@@ -136,7 +136,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 598668781}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -464,6 +464,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 701e7ed4dde1bf949b30e33741547ac9, type: 3}
+    - target: {fileID: 4581699983378140901, guid: 8c92ef31d539cbc4c8753fc91f9da7ea, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8047953419785075126, guid: 8c92ef31d539cbc4c8753fc91f9da7ea, type: 3}
       propertyPath: UIViewName
       value: login
@@ -519,6 +523,14 @@ PrefabInstance:
     - target: {fileID: 8047953419925653642, guid: 8c92ef31d539cbc4c8753fc91f9da7ea, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9004391518266416403, guid: 8c92ef31d539cbc4c8753fc91f9da7ea, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 598668781}
+    - target: {fileID: 9004391518266416403, guid: 8c92ef31d539cbc4c8753fc91f9da7ea, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8c92ef31d539cbc4c8753fc91f9da7ea, type: 3}

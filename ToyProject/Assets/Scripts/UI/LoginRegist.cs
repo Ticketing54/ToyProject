@@ -28,6 +28,14 @@ public class LoginRegist : MonoBehaviour
     public void OnClickRegistButton()
     {
         ResetErrorMsg();
+        if (input_ID.text == "" || input_PW.text == "")
+        {
+            errorMsg_ID.gameObject.SetActive(true);
+            errorMsg_PW.gameObject.SetActive(true);
+            errorMsg_PW.text = "비밀번호를 확인해 주세요.";
+            errorMsg_ID.text = "ID를 확인해 주세요.";
+            return;
+        }            
         if(input_PW.text != input_PWC.text)
         {
             errorMsg_PW.gameObject.SetActive(true);

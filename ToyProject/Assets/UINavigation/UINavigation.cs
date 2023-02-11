@@ -6,6 +6,21 @@ using UnityEngine.UI;
 public class UINavigation : MonoBehaviour
 {   
     public static UINavigation uiNav;
+    private void Awake()
+    {
+        if (uiNav == null)
+        {
+            uiNav = this;
+            DontDestroyOnLoad(this.gameObject);
+            uiViewDic = new Dictionary<string, UIView>();
+            history = new Stack<UIView>();
+        }
+        else
+        {
+            Destroy(uiNav);
+        }
+    }
+
     public Dictionary<string, UIView> uiViewDic;
     private UIView current;
     Stack<UIView> history;
@@ -17,60 +32,48 @@ public class UINavigation : MonoBehaviour
             uiViewDic.Add(_uiViewName, _uiView);
         }
     }
-  
-    #region DontTouch
-    static Image dontTouchScreen;
-    public static void DontTouchScreenOn(UIView _current)
+
+    #region ErrorMessage
+    [SerializeField]
+    ErrorMessage errorMessage;
+    public void OnDontTouch()
     {
-        dontTouchScreen.gameObject.SetActive(true);
-        dontTouchScreen.transform.SetParent(_current.gameObject.transform);
-        dontTouchScreen.transform.localPosition = Vector3.zero;
+        errorMessage.gameObject.SetActive(true);
+        errorMessage.transform.SetParent(current.transform);
+        errorMessage.transform.localPosition = Vector3.zero;
     }
-    public static void DontTouchScreenOff()
+    public void OnErrorMessage(string _msg)
     {
-        dontTouchScreen.transform.SetParent(null);
-        dontTouchScreen.gameObject.SetActive(false);
+        errorMessage.gameObject.SetActive(true);
+        errorMessage.transform.SetParent(current.transform);
+        errorMessage.transform.localPosition = Vector3.zero;        
+        errorMessage.SetErrorMessage(_msg);
+    }
+    public void OffErrorMessage()
+    {
+        errorMessage.gameObject.SetActive(false);
     }
     #endregion
 
-    private void Awake()
+    public void ChangeRoot(UIView _uiView)
     {
-        if(uiNav == null)
-        {
-            uiNav = this;
-            DontDestroyOnLoad(this.gameObject);
-            dontTouchScreen = GameObject.FindGameObjectWithTag("DontTouch").GetComponent<Image>();
-            uiViewDic = new Dictionary<string, UIView>();
-            history = new Stack<UIView>();
-        }
-        else
-        {
-            Destroy(uiNav);            
-        }
+
     }
-
-
     
-    public UIView Push(string _uiviewName)
+    public UIView Push(UIView _pushUIView)
     {
-        if(uiViewDic.ContainsKey(_uiviewName))
-        {
-            UIView cUIView = uiViewDic[_uiviewName];
-            cUIView.Show();
-            history .Push(cUIView);
-            if(current != null)
-            {
-                current.Hide();
-            }
-            current = cUIView;
-        }
-        else
-        {
-            Debug.LogError("Wrong UIViewName");
-            return null;
-        }
-        
+        StartCoroutine(CoPush(_pushUIView));
         return null;
+    }
+    IEnumerator CoPush(UIView _pushUIView)
+    {
+        OnDontTouch();
+        if(current != null)
+        {
+            yield return current.Hide();
+        }
+        yield return _pushUIView.Show();
+        OffErrorMessage();
     }
     public UIView Pop()
     {
@@ -79,12 +82,4 @@ public class UINavigation : MonoBehaviour
     }
     
 
-    void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.K))
-        {
-            Push("login");
-        }
-        
-    }
 }

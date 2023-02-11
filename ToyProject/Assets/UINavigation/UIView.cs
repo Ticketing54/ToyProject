@@ -10,7 +10,7 @@ public abstract class UIView : MonoBehaviour
     [SerializeField]
     string UIViewName;
 
-    VisibleState state;
+    
 
     public virtual void Start()
     {
@@ -18,40 +18,36 @@ public abstract class UIView : MonoBehaviour
             Debug.LogError("UIView이름을 입력하지 않았습니다.");
 
         UINavigation.uiNav.PushUIViewDic(UIViewName, this);
-    }
-    public VisibleState State { get; }        
+    }    
     
-    public virtual void Show() { StartCoroutine(FadeIn()); }    
-    public virtual void Hide() { StartCoroutine(FadeOut()); }
-    public enum VisibleState
-    {
-        Appearing,
-        Appeared,
-        Disappearing,
-        Disappeared,
-    }
+    public virtual IEnumerator Show() { yield return StartCoroutine(FadeIn()); }    
+    public virtual IEnumerator Hide() { yield return StartCoroutine(FadeOut()); }
+    //public enum VisibleState
+    //{
+    //    Appearing,
+    //    Appeared,
+    //    Disappearing,
+    //    Disappeared,
+    //}
+    // 사용 될때 기다리기
     IEnumerator FadeIn()
-    {
-        UINavigation.DontTouchScreenOn(this);
-        state = VisibleState.Appearing;
+    {   
+        //state = VisibleState.Appearing;
         while(canvasGroup.alpha!= 1)
         {
             canvasGroup.alpha += Time.deltaTime;
             yield return null;
-        }
-        UINavigation.DontTouchScreenOff();
-        state = VisibleState.Appeared;
+        }        
+        //state = VisibleState.Appeared;
     }
     IEnumerator FadeOut()
-    {
-        UINavigation.DontTouchScreenOn(this);
-        state = VisibleState.Disappeared;
+    {   
+        //state = VisibleState.Disappeared;
         while (canvasGroup.alpha != 0)
         {
             canvasGroup.alpha -= Time.deltaTime;
             yield return null;
         }        
-        UINavigation.DontTouchScreenOff();
-        state = VisibleState.Disappeared;
+        //tate = VisibleState.Disappeared;
     }
 }
