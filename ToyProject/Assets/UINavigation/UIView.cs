@@ -7,19 +7,7 @@ public abstract class UIView : MonoBehaviour
     [SerializeField]
     CanvasGroup canvasGroup;
     
-    [SerializeField]
-    string UIViewName;
 
-    
-
-    public virtual void Start()
-    {
-        if (UIViewName == "")
-            Debug.LogError("UIView이름을 입력하지 않았습니다.");
-
-        UINavigation.uiNav.PushUIViewDic(UIViewName, this);
-    }    
-    
     public virtual IEnumerator Show() { yield return StartCoroutine(FadeIn()); }    
     public virtual IEnumerator Hide() { yield return StartCoroutine(FadeOut()); }
     //public enum VisibleState

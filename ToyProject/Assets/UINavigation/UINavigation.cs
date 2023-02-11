@@ -6,33 +6,23 @@ using UnityEngine.UI;
 public class UINavigation : MonoBehaviour
 {   
     public static UINavigation uiNav;
+    private UIView current;
+    Stack<UIView> history;
+
     private void Awake()
     {
         if (uiNav == null)
         {
             uiNav = this;
-            DontDestroyOnLoad(this.gameObject);
-            uiViewDic = new Dictionary<string, UIView>();
+            DontDestroyOnLoad(this.gameObject);            
             history = new Stack<UIView>();
         }
         else
         {
             Destroy(uiNav);
         }
-    }
-
-    public Dictionary<string, UIView> uiViewDic;
-    private UIView current;
-    Stack<UIView> history;
-
-    public void PushUIViewDic(string _uiViewName,UIView _uiView)
-    {
-        if(!uiViewDic.ContainsKey(_uiViewName))
-        {
-            uiViewDic.Add(_uiViewName, _uiView);
-        }
-    }
-
+    }    
+    
     #region ErrorMessage
     [SerializeField]
     ErrorMessage errorMessage;
@@ -54,12 +44,7 @@ public class UINavigation : MonoBehaviour
         errorMessage.gameObject.SetActive(false);
     }
     #endregion
-
-    public void ChangeRoot(UIView _uiView)
-    {
-
-    }
-    
+   
     public UIView Push(UIView _pushUIView)
     {
         StartCoroutine(CoPush(_pushUIView));
@@ -67,11 +52,7 @@ public class UINavigation : MonoBehaviour
     }
     IEnumerator CoPush(UIView _pushUIView)
     {
-        OnDontTouch();
-        if(current != null)
-        {
-            yield return current.Hide();
-        }
+        OnDontTouch();       
         yield return _pushUIView.Show();
         OffErrorMessage();
     }
