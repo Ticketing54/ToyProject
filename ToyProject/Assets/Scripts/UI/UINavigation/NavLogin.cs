@@ -5,23 +5,23 @@ using UnityEngine;
 public class NavLogin : UINavigation
 {
     [SerializeField]
-    UIView login;
-    [SerializeField]
     UIView regist;
-
+    
     public override void Awake()
     {
         base.Awake();
-        Push(login);
-
     }
     public override UIView Pop()
     {
-        throw new System.NotImplementedException();
+        if (history.Count == 1&&current.State != UIView.VisibleState.Disappeared)
+            return null;
+
+        return null;
+      // 다시 생각해볼것  
     }
 
     public override void Push(UIView _uiview)
     {
-        throw new System.NotImplementedException();
-    }
+        
+    }    
 }
