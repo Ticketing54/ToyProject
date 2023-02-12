@@ -9,7 +9,8 @@ public class ErrorMessage : MonoBehaviour
     
     public void OnClickButton()
     {
-        errorMessage.gameObject.SetActive(false);
+        gameObject.transform.SetParent(null);
+        errorMessage.gameObject.SetActive(false);        
         gameObject.SetActive(false);
     }
     public void SetErrorMessage(string _result)
