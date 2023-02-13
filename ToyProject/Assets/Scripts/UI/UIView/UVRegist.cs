@@ -43,7 +43,7 @@ public class UVRegist : UIView
             input_PWC.text = "";           
             return;
         }
-        UIManager.uiManager.Regist(errorMsg_ID.text, errorMsg_PW.text);
+        UIManager.uiManager.Regist(input_ID.text, input_PW.text);
     }
     public void OnClickCompleteMessage()
     {

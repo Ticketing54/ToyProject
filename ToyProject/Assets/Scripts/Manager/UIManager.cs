@@ -14,13 +14,17 @@ public class UIManager : MonoBehaviour
             DontDestroyOnLoad(this.gameObject);
             login += (ID, PW)  =>{ DataManager.datamanager.UserInfoPost(ID, PW, OnErrorMessage, PostDataType.Login); };
             regist += (ID, PW) => { DataManager.datamanager.UserInfoPost(ID, PW, OnErrorMessage, PostDataType.Regist); };
+            current = unLogin;
         }
         else
         {
             Destroy(uiManager);
         }
     }
-
+    private void Start()
+    {
+        
+    }
 
     public Action<string, string> Login { get => login; }
     public Action<string,string> Regist { get => regist; }
@@ -61,27 +65,28 @@ public class UIManager : MonoBehaviour
         current.gameObject.transform.position = Vector3.zero;
     }
 
-    #region ErrorMessage    
+    #region DontClick && ErrorMessage    
     [SerializeField]
-    ErrorMessage errorMessage;
-    public void OnErrorMessage(string _msg)
+    DontClick dontClick;
+    public void OnErrorMessage(PostData _msg)
     {
-        errorMessage.gameObject.SetActive(true);
-        errorMessage.transform.SetParent(current.transform);
-        errorMessage.transform.localPosition = Vector3.zero;
-        errorMessage.SetErrorMessage(_msg);
+        OnDontTouch();
+        dontClick.SetErrorMessage(_msg);
+        
     }
-    #endregion
 
     public void OnDontTouch()
     {
-        errorMessage.gameObject.SetActive(true);
-        errorMessage.transform.SetParent(current.transform);
-        errorMessage.transform.localPosition = Vector3.zero;
+        dontClick.gameObject.SetActive(true);
+        dontClick.transform.SetParent(current.transform);
+        dontClick.transform.localPosition = Vector3.zero;
     }
-    
-   
-   
-    
+    public void OffDontTouch()
+    {
+        dontClick.transform.SetParent(null);
+        dontClick.gameObject.SetActive(false);        
+    }
+    #endregion
+
 
 }

@@ -8,8 +8,8 @@ public abstract class UIView : MonoBehaviour
     CanvasGroup canvasGroup;
     public VisibleState State { get => state; }
     VisibleState state;
-    public virtual IEnumerator Show() { yield return StartCoroutine(FadeIn()); }    
-    public virtual IEnumerator Hide() { yield return StartCoroutine(FadeOut()); }
+    public virtual void Show() { StartCoroutine(FadeIn()); }
+    public virtual void Hide() { StartCoroutine(FadeOut()); }
     public enum VisibleState
     {
         Appearing,
@@ -23,18 +23,18 @@ public abstract class UIView : MonoBehaviour
         state = VisibleState.Appearing;
         while(canvasGroup.alpha!= 1)
         {
-            canvasGroup.alpha += Time.deltaTime;
             yield return null;
+            canvasGroup.alpha += Time.deltaTime*0.7f;            
         }        
         state = VisibleState.Appeared;
     }
     IEnumerator FadeOut()
     {   
-        state = VisibleState.Disappeared;
+        state = VisibleState.Disappearing;
         while (canvasGroup.alpha != 0)
-        {
-            canvasGroup.alpha -= Time.deltaTime;
+        {   
             yield return null;
+            canvasGroup.alpha -= Time.deltaTime*0.7f;
         }        
         state = VisibleState.Disappeared;
     }

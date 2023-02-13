@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
 using System;
+using System.Collections;
+using UnityEngine;
 using UnityEngine.Networking;
 
 public class DataManager : MonoBehaviour
@@ -25,10 +23,10 @@ public class DataManager : MonoBehaviour
                 
     }
     
-    public void UserInfoPost(string _id,string _pw,Action<string> _ui,PostDataType _postDatatype)
+    public void UserInfoPost(string _id,string _pw,Action<PostData> _ui,PostDataType _postDatatype)
     {
         WWWForm form = new WWWForm();
-
+        UIManager.uiManager.OnDontTouch();
         switch(_postDatatype)
         {
             case PostDataType.Login:
@@ -49,20 +47,24 @@ public class DataManager : MonoBehaviour
         form.AddField("password", _pw);
         StartCoroutine(CoPost(form, _ui));
     }
-    IEnumerator CoPost(WWWForm form,Action<string> _ui)
-    {
-        
-        
+    IEnumerator CoPost(WWWForm form,Action<PostData> _ui)
+    {   
         using (UnityWebRequest www = UnityWebRequest.Post(URL,form))
         {
             yield return www.SendWebRequest();
-
+            UIManager.uiManager.OnDontTouch();
             if (www.isDone)
             {
                 Debug.Log(www.downloadHandler.text);
                 PostData json = JsonUtility.FromJson<PostData>(www.downloadHandler.text);
-                
-                // 오류가 났을떄 상정 _ui(json);
+                if(json.Order == "login"&&json.Result == "OK")
+                {
+                    // 로그인
+                }                
+                else
+                {
+                    _ui(json);
+                }
             }
             else
             {
@@ -70,7 +72,8 @@ public class DataManager : MonoBehaviour
             }
         }
     }
-        
+   
+
     public void Regist()
     {
 
