@@ -19,7 +19,14 @@ public class NavLogin : UINavigation
         return null;
       // 다시 생각해볼것  
     }
+    public void OnClickRegistButton()
+    {
 
+    }
+    public void OnClickRegistExitButton()
+    {
+
+    }
     public override void Push(UIView _uiview)
     {
         

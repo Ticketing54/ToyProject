@@ -660,7 +660,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8047953419925653642}
-  - component: {fileID: 3691538593808253742}
+  - component: {fileID: 804128087285453710}
   m_Layer: 0
   m_Name: UIManager
   m_TagString: Untagged
@@ -685,7 +685,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3691538593808253742
+--- !u!114 &804128087285453710
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -694,9 +694,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 8047953419925653637}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12a8e6462bbb5cb4fa46e4cdfe8f9f35, type: 3}
+  m_Script: {fileID: 11500000, guid: beb9894c8c36e494f89a6725bb0b0f00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  login: {fileID: 0}
+  lobby: {fileID: 0}
+  playing: {fileID: 0}
   errorMessage: {fileID: 5100585360302885351}
 --- !u!1 &8209611104654424095
 GameObject:
@@ -873,7 +876,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 5148160993380969494, guid: a229c45eb7d638f419435f1a54afcd83, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4713601005834428676, guid: a229c45eb7d638f419435f1a54afcd83, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: a229c45eb7d638f419435f1a54afcd83, type: 3}
 --- !u!224 &8047953419742922127 stripped
 RectTransform:

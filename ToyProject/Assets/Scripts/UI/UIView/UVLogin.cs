@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using System.Text.RegularExpressions;
 using TMPro;
 
-public class LoginUI :UIView
+public class UVLogin :UIView
 {   
     [SerializeField]
     TMP_InputField input_Id;
@@ -19,25 +19,19 @@ public class LoginUI :UIView
         string password = input_Pw.text;
         if(id == ""|| password == "")
         {
-            
+            return;
         }
-        DataManager.datamanager.UserInfoPost(id, password, ErrorMessage,PostDataType.Login);
-
+        UIManager.uiManager.Login(id, password);
         input_Pw.text = "";
     }
-    void ErrorMessage(PostData _data)
-    {
-
-    }
-   
+    
     bool CheckInput(string _input)
     {
         string inputCheck = Regex.Replace(_input, @"[^a-zA-Z0-9°¡-ÆR\.*,]", "", RegexOptions.Singleline);
         if (_input.Equals(inputCheck) == false)
             return false;
         else
-            return true;
-        
+            return true;        
     }
     
   

@@ -25,7 +25,7 @@ public class DataManager : MonoBehaviour
                 
     }
     
-    public void UserInfoPost(string _id,string _pw,Action<PostData> _ui,PostDataType _postDatatype)
+    public void UserInfoPost(string _id,string _pw,Action<string> _ui,PostDataType _postDatatype)
     {
         WWWForm form = new WWWForm();
 
@@ -49,7 +49,7 @@ public class DataManager : MonoBehaviour
         form.AddField("password", _pw);
         StartCoroutine(CoPost(form, _ui));
     }
-    IEnumerator CoPost(WWWForm form,Action<PostData> _ui)
+    IEnumerator CoPost(WWWForm form,Action<string> _ui)
     {
         
         
@@ -62,7 +62,7 @@ public class DataManager : MonoBehaviour
                 Debug.Log(www.downloadHandler.text);
                 PostData json = JsonUtility.FromJson<PostData>(www.downloadHandler.text);
                 
-                _ui(json);
+                // 오류가 났을떄 상정 _ui(json);
             }
             else
             {

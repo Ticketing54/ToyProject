@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using UnityEngine.UI;
 using TMPro;
-public class LoginRegist : MonoBehaviour
+public class UVRegist : UIView
 {
     [SerializeField]
     TextMeshProUGUI errorMsg_ID;
@@ -27,7 +27,7 @@ public class LoginRegist : MonoBehaviour
     }
     public void OnClickRegistButton()
     {
-        ResetErrorMsg();
+        ResetErrorMsg();        
         if (input_ID.text == "" || input_PW.text == "")
         {
             errorMsg_ID.gameObject.SetActive(true);
@@ -43,7 +43,7 @@ public class LoginRegist : MonoBehaviour
             input_PWC.text = "";           
             return;
         }
-        DataManager.datamanager.UserInfoPost(input_ID.text, input_PW.text, CompleteMessage, PostDataType.Regist);
+        UIManager.uiManager.Regist(errorMsg_ID.text, errorMsg_PW.text);
     }
     public void OnClickCompleteMessage()
     {
@@ -56,19 +56,7 @@ public class LoginRegist : MonoBehaviour
         ResetErrorMsg();        
         gameObject.SetActive(false);
     }
-    void CompleteMessage(PostData _postData)
-    {
-        if (_postData.Result == "OK")
-        {   
-            completeMessage.gameObject.SetActive(true);            
-        }
-        else
-        {
-            errorMsg_ID.gameObject.SetActive(true);
-            errorMsg_ID.text = "중복되는 아이디입니다.";
-        }
-    }
-
+   
     void ResetErrorMsg()
     {
         if(errorMsg_ID.gameObject.activeSelf == true)

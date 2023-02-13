@@ -11,34 +11,43 @@ public class UIManager : MonoBehaviour
         if (uiManager == null)
         {
             uiManager = this;
-            DontDestroyOnLoad(this.gameObject);                        
+            DontDestroyOnLoad(this.gameObject);
+            login += (ID, PW)  =>{ DataManager.datamanager.UserInfoPost(ID, PW, OnErrorMessage, PostDataType.Login); };
+            regist += (ID, PW) => { DataManager.datamanager.UserInfoPost(ID, PW, OnErrorMessage, PostDataType.Regist); };
         }
         else
         {
             Destroy(uiManager);
         }
-    }    
+    }
+
+
+    public Action<string, string> Login { get => login; }
+    public Action<string,string> Regist { get => regist; }
+    Action<string, string> login;
+    Action<string, string> regist;
+
     // current present
     private UINavigation current;
 
     // UINavigation in GameSate 
     [SerializeField]
-    UINavigation login;
+    UINavigation unLogin;
     [SerializeField]
-    UINavigation lobby;
+    UINavigation unLobby;
     [SerializeField]
-    UINavigation playing;
+    UINavigation unplaying;
 
     UINavigation GetUINavigation(GameState _state)
     {
         switch (_state)
         {
             case GameState.Login:
-                return login;
+                return unLogin;
             case GameState.Lobby:
-                return lobby;
+                return unLobby;
             case GameState.Playing:
-                return playing;
+                return unplaying;
             default:
                 Debug.LogError("Wrong Enum GameState");
                 return null;
@@ -63,12 +72,15 @@ public class UIManager : MonoBehaviour
         errorMessage.SetErrorMessage(_msg);
     }
     #endregion
+
     public void OnDontTouch()
     {
         errorMessage.gameObject.SetActive(true);
         errorMessage.transform.SetParent(current.transform);
         errorMessage.transform.localPosition = Vector3.zero;
-    }    
+    }
+    
+   
    
     
 
