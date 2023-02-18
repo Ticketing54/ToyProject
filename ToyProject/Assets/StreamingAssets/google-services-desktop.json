@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "509718245769",
+    "project_id": "castledepence",
+    "storage_bucket": "castledepence.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509718245769:android:9455a6c687d1e00d35f158",
+        "android_client_info": {
+          "package_name": "com.Portfolio.ToyProject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "509718245769-cmjksirsi64988mj3in8s5llpd4fc1ct.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.Portfolio.ToyProject",
+            "certificate_hash": "63e8202b495764d1c04230cc04d4373af29872e6"
+          }
+        },
+        {
+          "client_id": "509718245769-3sjm4krqqol69c4k11pho0rd86ichcdp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1pcHIC713KgPKxMZHyQP2L_9T0rG41eE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "509718245769-3sjm4krqqol69c4k11pho0rd86ichcdp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
