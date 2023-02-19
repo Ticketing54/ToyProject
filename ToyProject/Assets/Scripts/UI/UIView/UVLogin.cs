@@ -19,6 +19,7 @@ public class UVLogin :UIView
         string password = input_Pw.text;
         if(id == ""|| password == "")
         {
+            UIManager.uiManager.OnErrorMessage("E-Mail과 Password를 입력해 주세요.");
             return;
         }
         UIManager.uiManager.Login(id, password);
