@@ -19,9 +19,6 @@ public class AuthManager
             return instance;
         }
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
-
     public  void Init()
     {
         Auth = FirebaseAuth.DefaultInstance;
@@ -48,12 +45,6 @@ public class AuthManager
 
         }
     }
-
-    
-=======
->>>>>>> parent of 10360df (20230218 DeskTop FirebaseSetting)
-=======
->>>>>>> parent of 10360df (20230218 DeskTop FirebaseSetting)
     public FirebaseAuth Auth { get; private set; }
     public FirebaseApp App { get; private set; }
     public FirebaseUser User { get; private set; }
