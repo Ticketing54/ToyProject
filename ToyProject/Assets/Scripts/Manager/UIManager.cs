@@ -70,8 +70,10 @@ public class UIManager : MonoBehaviour
     DontClick dontClick;
     public void OnErrorMessage(string _msg)
     {
-        OnDontTouch();        
-        dontClick.SetErrorMessage(_msg);        
+        OnDontTouch();
+        PostData test = new PostData();
+        dontClick.SetErrorMessage(test);
+        
     }
 
     public void OnDontTouch()

@@ -11,11 +11,11 @@ public class DontClick : MonoBehaviour
         if (errorMessage.gameObject.activeSelf == true)
             errorMessage.gameObject.SetActive(false);
     }
-    public void SetErrorMessage(string _msg)
+    public void SetErrorMessage(PostData _data)
     {
         errorMessage.gameObject.SetActive(true);
         errorMessage.gameObject.transform.localPosition = Vector3.zero;
-        errorMessage.SetErrorMessage(_msg);            
+        errorMessage.SetErrorMessage(_data);            
     }
     public void OnClickCloseButton()
     {
