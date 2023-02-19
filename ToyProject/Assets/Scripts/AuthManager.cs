@@ -22,7 +22,7 @@ public class AuthManager
 
     public  void Init()
     {
-        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith((task) =>
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread((task) =>
         {
             DependencyStatus state = task.Result;
 
@@ -31,9 +31,9 @@ public class AuthManager
                 Debug.LogError("FireBase와 연결되지않았습니다.");
                 return;
             }
-            App = FirebaseApp.DefaultInstance;
+            //App = FirebaseApp.DefaultInstance;
             Auth = FirebaseAuth.DefaultInstance;
-            Auth.StateChanged += OnChanged;
+            //Auth.StateChanged += OnChanged;
         });
         
         
