@@ -20,6 +20,7 @@ public class AuthManager
         }
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     public  void Init()
     {
@@ -49,6 +50,8 @@ public class AuthManager
     }
 
     
+=======
+>>>>>>> parent of 10360df (20230218 DeskTop FirebaseSetting)
 =======
 >>>>>>> parent of 10360df (20230218 DeskTop FirebaseSetting)
     public FirebaseAuth Auth { get; private set; }
