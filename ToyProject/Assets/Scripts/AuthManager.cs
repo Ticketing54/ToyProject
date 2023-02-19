@@ -19,6 +19,35 @@ public class AuthManager
             return instance;
         }
     }
+
+    public  void Init()
+    {
+        Auth = FirebaseAuth.DefaultInstance;
+        Auth.StateChanged += OnChanged;
+
+    }
+
+    private void OnChanged(object sender, EventArgs e)
+    {
+        if(Auth.CurrentUser != User)
+        {
+            bool signed = (Auth.CurrentUser != User && Auth.CurrentUser != null);
+
+            if(!signed && User != null)
+            {
+                // 로그 아웃
+            }
+            User = Auth.CurrentUser;
+
+            if(signed)
+            {
+                // 로그인
+            }
+
+        }
+    }
+
+    
     public FirebaseAuth Auth { get; private set; }
     public FirebaseApp App { get; private set; }
     public FirebaseUser User { get; private set; }
