@@ -7,7 +7,7 @@ using Firebase.Extensions;
 using System;
 public class AuthManager 
 {
-    public static AuthManager instance;
+    private static AuthManager instance;
     public static AuthManager Instance
     {
         get
@@ -22,8 +22,21 @@ public class AuthManager
 
     public  void Init()
     {
-        Auth = FirebaseAuth.DefaultInstance;
-        Auth.StateChanged += OnChanged;
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith((task) =>
+        {
+            DependencyStatus state = task.Result;
+
+            if( state != DependencyStatus.Available)
+            {
+                Debug.LogError("FireBase와 연결되지않았습니다.");
+                return;
+            }
+            App = FirebaseApp.DefaultInstance;
+            Auth = FirebaseAuth.DefaultInstance;
+            Auth.StateChanged += OnChanged;
+        });
+        
+        
 
     }
 
@@ -59,7 +72,25 @@ public class AuthManager
     /// <param name="UIAction"></param>
     public void Login(string _id,string _pw,Action<string>_uiAction)
     {
-        
+        Auth.SignInWithEmailAndPasswordAsync(_id, _pw).ContinueWith((task) =>
+         {
+             if (task.IsFaulted)
+             {
+                 Debug.Log("IsFaulted");
+                 Debug.Log(task.Exception);
+
+             }
+             else if (task.IsCanceled) 
+             {
+                 Debug.Log("IsCanceled");
+                 Debug.Log(task.Exception);
+             }
+             else
+             {
+                 Debug.Log("로그인 성공");
+             }
+         });
+         
     }
     /// <summary>
     /// Regist : ID와 Password, 결과에대한 UI표시함수
@@ -69,7 +100,10 @@ public class AuthManager
     /// <param name="UIAction"></param>
     public void Regist(string _id,string _pw,Action<string> _uiAction)
     {
-
+        Auth.CreateUserWithEmailAndPasswordAsync(_id, _pw).ContinueWith((task) =>
+        {
+            
+        });
     }
 
 
