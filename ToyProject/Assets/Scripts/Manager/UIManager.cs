@@ -11,26 +11,20 @@ public class UIManager : MonoBehaviour
         if (uiManager == null)
         {
             uiManager = this;
-            DontDestroyOnLoad(this.gameObject);
-            //login += (ID, PW)  =>{ DataManager.datamanager.UserInfoPost(ID, PW, OnErrorMessage, PostDataType.Login); };
-            //regist += (ID, PW) => { DataManager.datamanager.UserInfoPost(ID, PW, OnErrorMessage, PostDataType.Regist); };
+            DontDestroyOnLoad(this.gameObject);            
             current = unLogin;
         }
         else
         {
             Destroy(uiManager);
         }
+
+        AuthManager.Instance.Init();
     }
     private void Start()
     {
         
     }
-
-    public Action<string, string> Login { get => login; }
-    public Action<string,string> Regist { get => regist; }
-    Action<string, string> login;
-    Action<string, string> regist;
-
     // current present
     private UINavigation current;
 
@@ -80,11 +74,18 @@ public class UIManager : MonoBehaviour
         dontClick.gameObject.SetActive(true);
         dontClick.transform.SetParent(current.transform);
         dontClick.transform.localPosition = Vector3.zero;
+        dontClick.transform.localScale = new Vector3(1f, 1f, 1f);
+        dontClick.SetRange(new Vector2(Screen.width, Screen.height));
+        
     }
     public void OffDontTouch()
     {
         dontClick.transform.SetParent(null);
         dontClick.gameObject.SetActive(false);        
+    }
+    public void CurrentPop()
+    {
+        current.
     }
     #endregion
 

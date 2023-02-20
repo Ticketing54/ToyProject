@@ -7,9 +7,10 @@ public class ErrorMessage : MonoBehaviour
 {
     [SerializeField]
     TextMeshProUGUI errorMessage;
+    [SerializeField]
     private void OnEnable()
     {
-        errorMessage.text = "";
+        errorMessage.text = "";        
     }
     public void SetErrorMessage(string _msg)
     {
