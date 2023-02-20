@@ -12,8 +12,8 @@ public class UIManager : MonoBehaviour
         {
             uiManager = this;
             DontDestroyOnLoad(this.gameObject);
-            login += (ID, PW)  =>{ DataManager.datamanager.UserInfoPost(ID, PW, OnErrorMessage, PostDataType.Login); };
-            regist += (ID, PW) => { DataManager.datamanager.UserInfoPost(ID, PW, OnErrorMessage, PostDataType.Regist); };
+            //login += (ID, PW)  =>{ DataManager.datamanager.UserInfoPost(ID, PW, OnErrorMessage, PostDataType.Login); };
+            //regist += (ID, PW) => { DataManager.datamanager.UserInfoPost(ID, PW, OnErrorMessage, PostDataType.Regist); };
             current = unLogin;
         }
         else
@@ -68,7 +68,7 @@ public class UIManager : MonoBehaviour
     #region DontClick && ErrorMessage    
     [SerializeField]
     DontClick dontClick;
-    public void OnErrorMessage(PostData _msg)
+    public void OnErrorMessage(string _msg)
     {
         OnDontTouch();
         dontClick.SetErrorMessage(_msg);
