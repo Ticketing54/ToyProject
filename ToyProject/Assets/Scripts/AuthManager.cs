@@ -48,25 +48,53 @@ public class AuthManager
     /// <param name="ID"></param>
     /// <param name="PW"></param>
     /// <param name="UIAction"></param>
-    public void Login(string _id,string _pw,Action _uiAction)
+    public void Login(string _id, string _pw, Action _uiAction)
     {
+        if (Auth == null)
+        {
+            Debug.LogError("Auth is Null");
+        }
+
         Auth.SignInWithEmailAndPasswordAsync(_id, _pw).ContinueWith(
             (task) =>
             {
-                if(task.IsFaulted)
+                if(task.IsCanceled)
                 {
-                    _uiAction();
+                    Debug.Log("Login Canceled");
                 }
-                else if (task.IsCanceled)
-                {
-                    Debug.Log("로그인 취소");
+                else if (task.IsFaulted)
+                {   
+                    if(task.Exception.InnerException.InnerException is FirebaseException)
+                    {
+                        FirebaseException ex = (FirebaseException)task.Exception.InnerException.InnerException;
+                        AuthError error = (AuthError)ex.ErrorCode;
+                        switch (error)
+                        {
+                            case AuthError.UserNotFound:
+                                {
+                                    UIManager.uiManager.OnErrorMessage("아이디를 찾을수 없습니다.");
+                                }
+                                break;
+                            case AuthError.WrongPassword:
+                                {
+                                    UIManager.uiManager.OnErrorMessage("패스워드를 다시입력해 주세요");
+                                }
+                                break;
+                            default:
+                                Debug.Log(error);
+                                break;
+                        }
+                    }
                 }
                 else
                 {
-                    Debug.Log("로그인 성공");
-                    // 씬이동
+                    User = task.Result;
                 }
             });
+
+
+       
+       
     }
     /// <summary>
     /// Regist : ID와 Password, 결과에대한 UI표시함수
@@ -79,13 +107,10 @@ public class AuthManager
         Auth.CreateUserWithEmailAndPasswordAsync(_id, _pw).ContinueWith(
             (task) =>
             {
-                if (task.IsFaulted)
+                
+                if (task.IsFaulted || task.IsCanceled)
                 {
                     _uiAction();
-                }
-                else if (task.IsCanceled)
-                {
-                    UIManager.uiManager.OnErrorMessage("Regist 생성 취소");
                 }
                 else
                 {

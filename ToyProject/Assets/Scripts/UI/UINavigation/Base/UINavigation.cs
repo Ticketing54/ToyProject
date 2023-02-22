@@ -5,18 +5,21 @@ using UnityEngine;
 public abstract class UINavigation : MonoBehaviour
 {
     protected Stack<UIView> history;
-    protected UIView current;
+    protected UIView current;    
     [SerializeField]
     UIView root;
+    
+    
 
     public virtual void Awake()
-    {
+    {   
         history = new Stack<UIView>();        
         root.gameObject.SetActive(true);
         root.Show();
-        current = root;
+        current = root;        
     }
 
+    
     public virtual void Push(UIView _uiview)
     {
         if(current.State != UIView.VisibleState.Appeared)

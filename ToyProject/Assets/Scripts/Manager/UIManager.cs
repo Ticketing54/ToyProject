@@ -20,6 +20,8 @@ public class UIManager : MonoBehaviour
         }
 
         AuthManager.Instance.Init();
+        OpenDontClick += () => { dontClick.gameObject.SetActive(true); };
+        CloseDontClick += () => { dontClick.gameObject.SetActive(false); };        
     }
     private void Start()
     {
@@ -61,31 +63,19 @@ public class UIManager : MonoBehaviour
 
     #region DontClick && ErrorMessage    
     [SerializeField]
-    DontClick dontClick;
+    DontClick dontClick;    
+    public Action OpenDontClick { get; private set; }
+    public Action CloseDontClick { get; private set; }
     public void OnErrorMessage(string _msg)
     {
-        OnDontTouch();
+        OpenDontClick();
         dontClick.SetErrorMessage(_msg);
-        
     }
 
-    public void OnDontTouch()
-    {
-        dontClick.gameObject.SetActive(true);
-        dontClick.transform.SetParent(current.transform);
-        dontClick.transform.localPosition = Vector3.zero;
-        dontClick.transform.localScale = new Vector3(1f, 1f, 1f);
-        dontClick.SetRange(new Vector2(Screen.width, Screen.height));
-        
-    }
-    public void OffDontTouch()
-    {
-        dontClick.transform.SetParent(null);
-        dontClick.gameObject.SetActive(false);        
-    }
+    
     public void CurrentPop()
     {
-        current.
+       //
     }
     #endregion
 

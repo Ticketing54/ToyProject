@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class NavLogin : UINavigation
+public class NavSign : UINavigation
 {
     [SerializeField]
     UIView regist;
     
     public override void Awake()
     {
-        base.Awake();    
+        base.Awake();            
     }
 
     
