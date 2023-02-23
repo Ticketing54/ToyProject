@@ -13,7 +13,7 @@ public abstract class UINavigation : MonoBehaviour
 
     public virtual void Awake()
     {   
-        history = new Stack<UIView>();        
+        history = new Stack<UIView>();
         root.gameObject.SetActive(true);
         root.Show();
         current = root;        

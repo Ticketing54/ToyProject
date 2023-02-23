@@ -22,13 +22,10 @@ public class UVLogin :UIView
             UIManager.uiManager.OnErrorMessage("E-Mail°ú Password¸¦ ÀÔ·ÂÇØ ÁÖ¼¼¿ä.");
             return;
         }
-        AuthManager.Instance.Login(id, password, ErrorMessage);
+        AuthManager.Instance.Login(id, password);
         input_Pw.text = "";
     }
-    void ErrorMessage()
-    {
-        UIManager.uiManager.OnErrorMessage("E-Mail°ú Password¸¦ È®ÀÎÇØ ÁÖ¼¼¿ä");
-    }
+   
     bool CheckInput(string _input)
     {
         string inputCheck = Regex.Replace(_input, @"[^a-zA-Z0-9°¡-ÆR\.*,]", "", RegexOptions.Singleline);

@@ -16,6 +16,7 @@ public class AuthManager
             {
                 instance = new AuthManager();                
             }           
+
             return instance;
         }
     }
@@ -48,14 +49,14 @@ public class AuthManager
     /// <param name="ID"></param>
     /// <param name="PW"></param>
     /// <param name="UIAction"></param>
-    public void Login(string _id, string _pw, Action _uiAction)
+    public void Login(string _id, string _pw)
     {
         if (Auth == null)
         {
             Debug.LogError("Auth is Null");
         }
 
-        Auth.SignInWithEmailAndPasswordAsync(_id, _pw).ContinueWith(
+        Auth.SignInWithEmailAndPasswordAsync(_id, _pw).ContinueWithOnMainThread(
             (task) =>
             {
                 if(task.IsCanceled)
@@ -72,12 +73,15 @@ public class AuthManager
                         {
                             case AuthError.UserNotFound:
                                 {
-                                    UIManager.uiManager.OnErrorMessage("아이디를 찾을수 없습니다.");
+                                    
+                                    UIManager.uiManager.OnErrorMessage("패스워드를 다시입력해 주세요");
+                                    
                                 }
                                 break;
                             case AuthError.WrongPassword:
                                 {
                                     UIManager.uiManager.OnErrorMessage("패스워드를 다시입력해 주세요");
+                                    
                                 }
                                 break;
                             default:

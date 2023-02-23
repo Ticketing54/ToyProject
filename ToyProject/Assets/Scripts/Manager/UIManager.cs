@@ -20,13 +20,10 @@ public class UIManager : MonoBehaviour
         }
 
         AuthManager.Instance.Init();
-        OpenDontClick += () => { dontClick.gameObject.SetActive(true); };
-        CloseDontClick += () => { dontClick.gameObject.SetActive(false); };        
-    }
-    private void Start()
-    {
         
     }
+
+ 
     // current present
     private UINavigation current;
 
@@ -63,13 +60,20 @@ public class UIManager : MonoBehaviour
 
     #region DontClick && ErrorMessage    
     [SerializeField]
-    DontClick dontClick;    
-    public Action OpenDontClick { get; private set; }
-    public Action CloseDontClick { get; private set; }
+    DontClick dontClickscrip;
+    [SerializeField]
+    public GameObject dontClick;
+    public void OnDontClick() { dontClick.SetActive(true); }
+    public void OFFDontClick() { dontClick.SetActive(false); }
+    
     public void OnErrorMessage(string _msg)
     {
-        OpenDontClick();
-        dontClick.SetErrorMessage(_msg);
+        if(dontClick.gameObject.activeSelf == true)
+        {
+            Debug.Log("Dd");
+        }
+        dontClick.SetActive(true);
+        dontClickscrip.SetErrorMessage(_msg);
     }
 
     

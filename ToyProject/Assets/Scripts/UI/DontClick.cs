@@ -7,13 +7,7 @@ public class DontClick : MonoBehaviour
 {
     [SerializeField]
     ErrorMessage errorMessage;
-    
-    private void OnEnable()
-    {
-        if (errorMessage.gameObject.activeSelf == true)
-            errorMessage.gameObject.SetActive(false);                
-
-    }    
+      
     public void SetErrorMessage(string _data)
     {
         errorMessage.gameObject.SetActive(true);
