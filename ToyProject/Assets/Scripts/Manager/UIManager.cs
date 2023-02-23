@@ -12,20 +12,20 @@ public class UIManager : MonoBehaviour
         {
             uiManager = this;
             DontDestroyOnLoad(this.gameObject);            
-            current = unLogin;
+            // 수정할 것
+            Current = unLogin;
         }
         else
         {
             Destroy(uiManager);
         }
-
+        // 추후에 게임메니저에서 할 것!
         AuthManager.Instance.Init();
-        
     }
 
  
-    // current present
-    private UINavigation current;
+    // Current UINavigation
+    public UINavigation Current { get; private set; }
 
     // UINavigation in GameSate 
     [SerializeField]
@@ -35,6 +35,11 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     UINavigation unplaying;
 
+    /// <summary>
+    ///  GameState 에따른 UINavigation 반환
+    /// </summary>
+    /// <param name="GameState"></param>
+    /// <returns></returns>
     UINavigation GetUINavigation(GameState _state)
     {
         switch (_state)
@@ -50,37 +55,46 @@ public class UIManager : MonoBehaviour
                 return null;
         }
     }
+    /// <summary>
+    /// 게임 씬 상태에 따른 UINavigation 변화
+    /// </summary>
+    /// <param name="GameState"></param>
     public void ChangeUINavgation(GameState _state)
     {
-        current.gameObject.SetActive(false);
-        current = GetUINavigation(_state);
-        current.gameObject.SetActive(true);
-        current.gameObject.transform.position = Vector3.zero;
-    }
-
-    #region DontClick && ErrorMessage    
-    [SerializeField]
-    DontClick dontClickscrip;
-    [SerializeField]
-    public GameObject dontClick;
-    public void OnDontClick() { dontClick.SetActive(true); }
-    public void OFFDontClick() { dontClick.SetActive(false); }
-    
-    public void OnErrorMessage(string _msg)
-    {
-        if(dontClick.gameObject.activeSelf == true)
-        {
-            Debug.Log("Dd");
-        }
-        dontClick.SetActive(true);
-        dontClickscrip.SetErrorMessage(_msg);
-    }
-
-    
+        Current.gameObject.SetActive(false);
+        Current = GetUINavigation(_state);
+        Current.gameObject.SetActive(true);
+        Current.gameObject.transform.position = Vector3.zero;
+    }    
     public void CurrentPop()
     {
-       //
+        if(Current == null)
+        {
+            Debug.LogError("Current UINavigation is NULL");
+            return;
+        }
+        Current.Pop();
     }
+    #region DontClick && ErrorMessage    
+    [SerializeField]
+    DontClick dontClick;    
+    /// <summary>
+    /// 화면 클릭 방지용(On)
+    /// </summary>
+    public void OnDontClick() { dontClick.gameObject.SetActive(true); }
+    /// <summary>
+    /// 화면 클릭 반지용(Off)
+    /// </summary>
+    public void OFFDontClick() { dontClick.gameObject.SetActive(false); }
+    /// <summary>
+    /// 오류 메세지 출력
+    /// </summary>
+    /// <param name="Messege"></param>
+    public void OnErrorMessage(string _msg)
+    {
+        OnDontClick();
+        dontClick.SetErrorMessage(_msg);
+    }    
     #endregion
 
 

@@ -7,11 +7,21 @@ public class DontClick : MonoBehaviour
 {
     [SerializeField]
     ErrorMessage errorMessage;
-      
-    public void SetErrorMessage(string _data)
+    private void OnEnable()
+    {
+        if(errorMessage.gameObject.activeSelf == true)
+        {
+            errorMessage.gameObject.SetActive(false);
+        }
+    }
+    /// <summary>
+    /// 오류 메세지 출력 
+    /// </summary>
+    /// <param name="Message"></param>
+    public void SetErrorMessage(string _msg)
     {
         errorMessage.gameObject.SetActive(true);
         errorMessage.gameObject.transform.localPosition = Vector3.zero;
-        errorMessage.SetErrorMessage(_data);            
+        errorMessage.SetErrorMessage(_msg);            
     }    
 }

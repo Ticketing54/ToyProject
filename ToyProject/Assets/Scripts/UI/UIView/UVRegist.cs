@@ -6,20 +6,19 @@ using UnityEngine.UI;
 using TMPro;
 public class UVRegist : UIView
 {
+    // ErrorMessage
     [SerializeField]
     TextMeshProUGUI errorMsg_ID;
     [SerializeField]
     TextMeshProUGUI errorMsg_PW;    
 
+    // ID PW PWC Input
     [SerializeField]
     TMP_InputField input_ID;
     [SerializeField]
     TMP_InputField input_PW;
     [SerializeField]
     TMP_InputField input_PWC;
-
-    [SerializeField]
-    Image completeMessage;
 
     private void OnEnable()
     {
@@ -43,20 +42,6 @@ public class UVRegist : UIView
         AuthManager.Instance.Regist(input_ID.text, input_PW.text, () => { errorMsg_ID.gameObject.SetActive(true); });
     }
     
-    
-
-    public void OnClickCompleteMessage()
-    {
-        completeMessage.gameObject.SetActive(false);
-        ResetErrorMsg();        
-        gameObject.SetActive(false);
-    }
-    public void OnClickCloseButton()
-    {
-        ResetErrorMsg();        
-        gameObject.SetActive(false);
-    }
-   
     void ResetErrorMsg()
     {
         if(errorMsg_ID.gameObject.activeSelf == true)
@@ -64,7 +49,7 @@ public class UVRegist : UIView
         if (errorMsg_PW.gameObject.activeSelf == true)
             errorMsg_PW.gameObject.SetActive(false);        
     }
-    private void Reset()
+    void Reset()
     {
         ResetErrorMsg();
         input_ID.text = "";
