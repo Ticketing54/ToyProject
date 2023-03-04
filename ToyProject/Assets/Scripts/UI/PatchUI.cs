@@ -17,6 +17,11 @@ public class PatchUI : UIView
     [SerializeField]
     Image progressBar;
 
+    private void Awake()
+    {
+        GameManager.instance.UpdatePatchUI += UpdatePatch;
+
+    }
     private void OnEnable()
     {   
         Reset();
@@ -36,7 +41,7 @@ public class PatchUI : UIView
     {
         downloadMessageUI.gameObject.SetActive(false);
         downloadProgress.gameObject.SetActive(true);
-        GameManager.instance.DownloadPatch(UpdatePatch);
+        GameManager.instance.DownloadPatch();
     }
     public void OnClickCancleButton()
     {

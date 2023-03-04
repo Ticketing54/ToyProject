@@ -22,18 +22,28 @@ public class GameManager : MonoBehaviour
         ChangeGameState += ChangeState;
     }
 
+    private void Start()
+    {
+        State = GameState.Login;
+        StartCoroutine(CoPatchCheck());
+    }
     public GameState State { get; private set; }
     /// <summary>
     /// 게임 상태 변경 (Enum타입)
     /// </summary>
     /// <param name="GameState"></param>
     public Action<GameState> ChangeGameState;
+    
+
     void ChangeState(GameState _state)
     {
         State = _state;
         switch(_state)
         {   
             case GameState.Login:
+                {
+                    StartCoroutine(CoPatchCheck());
+                }
                 break;
             case GameState.Lobby:
                 break;
@@ -48,20 +58,30 @@ public class GameManager : MonoBehaviour
         }
     }
     #region Patch    
-    // 업데이스 코루틴 정지를 위한 변수
-    Coroutine updateUI;
+
+    /// <summary>
+    /// UpdateCurent UpdateSize UpdateProgress
+    /// </summary>
+    public Action<long, long, float> UpdatePatchUI
+    {
+        get => updatePatchUI;
+        set
+        {
+            if (value == null)
+            {
+                Debug.LogError("value is null(GameManager->UpdatePatchUI)");
+            }
+            else
+                updatePatchUI = value;
+        }
+    }
+    private Action<long, long, float> updatePatchUI;    
     // UIPatchButton에 등록할 함수
-
-    public void CheckPatch(Action _openLogin, Action<long> _openPatch)
+    public void DownloadPatch()
     {
-        StartCoroutine(CoPatchCheck(_openLogin,_openPatch));
-
+        StartCoroutine(CoPatchDownLoad());
     }
-    public void DownloadPatch(Action<long,long,float> _uiUpdate)
-    {
-        StartCoroutine(CoPatchDownLoad(_uiUpdate));
-    }
-    IEnumerator CoPatchCheck(Action _openLogin, Action<long> _openPatch)
+    IEnumerator CoPatchCheck()
     {
         yield return AuthManager.Instance.Init();
 
@@ -69,27 +89,25 @@ public class GameManager : MonoBehaviour
         yield return sizeCheck;        
         if (sizeCheck.Result == 0)
         {
-            _openLogin();
+            UIManager.uiManager.OpenLoginUI();
         }
         else
         {
-            _openPatch(sizeCheck.Result);            
+            UIManager.uiManager.OpenPatchUI(sizeCheck.Result);            
         }
     }
-    IEnumerator CoPatchDownLoad(Action<long,long,float> _downloadUI)
+    IEnumerator CoPatchDownLoad()
     {   
-        AsyncOperationHandle patch = Addressables.DownloadDependenciesAsync("Patch", true);
-        updateUI = StartCoroutine(UpdateUI(patch, _downloadUI));
-        yield return patch;
-        StopCoroutine(updateUI);        
+        AsyncOperationHandle patch = Addressables.DownloadDependenciesAsync("Patch", true);        
+        yield return StartCoroutine(UpdateUI(patch));              
     }
-    IEnumerator UpdateUI(AsyncOperationHandle _handle,Action<long, long, float> _downloadUI)
+    IEnumerator UpdateUI(AsyncOperationHandle _handle)
     {
-        while(true)
-        {
-            yield return null;
+        while(_handle.IsValid())
+        {   
             DownloadStatus downstatus = _handle.GetDownloadStatus();
-            _downloadUI(downstatus.DownloadedBytes, downstatus.TotalBytes, downstatus.Percent);
+            UpdatePatchUI(downstatus.DownloadedBytes, downstatus.TotalBytes, downstatus.Percent);
+            yield return null;
         }
     }
     #endregion

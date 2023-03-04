@@ -12,38 +12,41 @@ public class NavSign : UINavigation
     [SerializeField]
     UIView regist;
     
-    public override void Awake()
+    private void Start()
     {
-        base.Awake();            
+        UIManager.uiManager.OpenLoginUI += OpenLogin;
+        UIManager.uiManager.OpenPatchUI += OpenPatch;
     }
-    private void OnEnable()
+    void StartLoginUI(bool _patch)
     {
-        GameManager.instance.CheckPatch(OpenLoginStart,OpenPatchStart);
-    }
-    
-    void OpenLoginStart()
-    {
-        if(current != null)
+        if(_patch)
         {
-            current.gameObject.SetActive(false);            
+            patch.gameObject.SetActive(true);
         }
-        login.gameObject.SetActive(true);
-        login.Show();
-        current = login;
-    }
-    /// <summary>
-    /// Download Size
-    /// </summary>
-    /// <param name="DownloadSize"></param>
-    void OpenPatchStart(long _size)
-    {
-        patch.gameObject.SetActive(true);
-        PatchUI temp = (PatchUI)patch;
-        temp.SetPatchUI(_size);
-        patch.Show();
-        current = patch;
-    }
-
+        else
+        {
+            login.gameObject.SetActive(true);
+        }
+    }    
     public void OnClickRegistButton() { Push(regist); }    
     public void OnClickPopButton() { Pop(); }
+    
+    private void OpenLogin()
+    {
+        if (patch.gameObject.activeSelf == true)
+        {
+            patch.gameObject.SetActive(false);
+        }            
+        current = login;
+        login.gameObject.SetActive(true);
+        login.Show();
+    }
+    private void OpenPatch(long _size)
+    {
+        current = patch;
+        patch.gameObject.SetActive(true);
+        PatchUI patchUI = patch as PatchUI;
+        patchUI.SetPatchUI(_size);
+        patch.Show();
+    }
 }

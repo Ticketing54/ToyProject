@@ -78,7 +78,7 @@ MonoBehaviour:
       - m_Id: 0e1bfc4644c50c44084d25c7d6d7dcc7
         m_Value: ServerData/[BuildTarget]
       - m_Id: f918d70b51bcb934e9d5cb239591c95a
-        m_Value: https://storage.googleapis.com/dastledefence
+        m_Value: https://storage.googleapis.com/dastledefence/Android
     m_ProfileEntryNames:
     - m_Id: 89f04fed5d108ee43837a343ae94f4da
       m_Name: BuildTarget

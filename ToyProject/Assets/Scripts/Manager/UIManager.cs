@@ -17,18 +17,19 @@ public class UIManager : MonoBehaviour
         {
             Destroy(uiManager);
         }
-
-        GameManager.instance.ChangeGameState += ChangeUINavgation;
-        Current = unPatch;
+        Current = unLogin;
+    }
+    private void Start()
+    {
+        GameManager.instance.ChangeGameState += ChangeUINavgation;        
     }
 
- 
+
     // Current UINavigation
     public UINavigation Current { get; private set; }
 
     // UINavigation in GameSate 
-    [SerializeField]
-    UINavigation unPatch;
+    
     [SerializeField]
     UINavigation unLogin;
     [SerializeField]
@@ -42,7 +43,7 @@ public class UIManager : MonoBehaviour
     /// 게임 씬 상태에 따른 UINavigation 변화
     /// </summary>
     /// <param name="GameState"></param>
-    public void ChangeUINavgation(GameState _state)
+    void ChangeUINavgation(GameState _state)
     {
         Current.gameObject.SetActive(false);
         Current = GetUINavigation(_state);
@@ -77,7 +78,43 @@ public class UIManager : MonoBehaviour
             return;
         }
         Current.Pop();
+    }    
+    public Action OpenLoginUI
+    {
+        get => openLoginUi;
+        set
+        {
+            if (value == null)
+            {
+                Debug.LogError("value is Null(OpenLoginUI)");                
+            }
+            else
+                openLoginUi = value;
+        }
+        
+        
     }
+    /// <summary>
+    /// PatchSize 
+    /// </summary>
+    public Action<long> OpenPatchUI
+    {
+        get => openPatchUI;        
+        set
+        {
+            if (value == null)
+            {
+                Debug.LogError("value is Null(OpenPatchUI");
+            }
+            else
+            {
+                openPatchUI = value;
+            } 
+        }
+
+    }
+    private Action openLoginUi;
+    private Action<long> openPatchUI;
     #region DontClick && ErrorMessage    
     [SerializeField]
     DontClick dontClick;    
