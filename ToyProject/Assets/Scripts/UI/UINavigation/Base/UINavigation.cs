@@ -6,17 +6,11 @@ public abstract class UINavigation : MonoBehaviour
 {
     protected Stack<UIView> history;
     protected UIView current;    
-    [SerializeField]
-    UIView root;
-    
-    
+
 
     public virtual void Awake()
     {   
         history = new Stack<UIView>();
-        root.gameObject.SetActive(true);
-        root.Show();
-        current = root;        
     }
 
     

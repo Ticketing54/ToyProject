@@ -10,7 +10,7 @@ public enum PostDataType
     Regist,
 }
 public enum GameState
-{
+{   
     Login,
     Lobby,
     Playing,  

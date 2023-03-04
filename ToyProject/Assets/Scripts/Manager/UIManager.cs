@@ -11,16 +11,15 @@ public class UIManager : MonoBehaviour
         if (uiManager == null)
         {
             uiManager = this;
-            DontDestroyOnLoad(this.gameObject);            
-            // 수정할 것
-            Current = unLogin;
+            DontDestroyOnLoad(this.gameObject);                        
         }
         else
         {
             Destroy(uiManager);
         }
-        // 추후에 게임메니저에서 할 것!
-        AuthManager.Instance.Init();
+
+        GameManager.instance.ChangeGameState += ChangeUINavgation;
+        Current = unPatch;
     }
 
  
@@ -29,12 +28,27 @@ public class UIManager : MonoBehaviour
 
     // UINavigation in GameSate 
     [SerializeField]
+    UINavigation unPatch;
+    [SerializeField]
     UINavigation unLogin;
     [SerializeField]
     UINavigation unLobby;
     [SerializeField]
     UINavigation unplaying;
+    
 
+
+    /// <summary>
+    /// 게임 씬 상태에 따른 UINavigation 변화
+    /// </summary>
+    /// <param name="GameState"></param>
+    public void ChangeUINavgation(GameState _state)
+    {
+        Current.gameObject.SetActive(false);
+        Current = GetUINavigation(_state);
+        Current.gameObject.SetActive(true);
+        Current.gameObject.transform.position = Vector3.zero;
+    }
     /// <summary>
     ///  GameState 에따른 UINavigation 반환
     /// </summary>
@@ -54,17 +68,6 @@ public class UIManager : MonoBehaviour
                 Debug.LogError("Wrong Enum GameState");
                 return null;
         }
-    }
-    /// <summary>
-    /// 게임 씬 상태에 따른 UINavigation 변화
-    /// </summary>
-    /// <param name="GameState"></param>
-    public void ChangeUINavgation(GameState _state)
-    {
-        Current.gameObject.SetActive(false);
-        Current = GetUINavigation(_state);
-        Current.gameObject.SetActive(true);
-        Current.gameObject.transform.position = Vector3.zero;
     }    
     public void CurrentPop()
     {
@@ -94,8 +97,6 @@ public class UIManager : MonoBehaviour
     {
         OnDontClick();
         dontClick.SetErrorMessage(_msg);
-    }    
-    #endregion
-
-
+    }
+    #endregion    
 }

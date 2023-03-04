@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Test
+  m_EditorClassIdentifier: 
+  m_GroupName: Test
+  m_Data:
+    m_SerializedData: []
+  m_GUID: c8894bf322a9d0742bec50b41096b2bd
+  m_SerializeEntries:
+  - m_GUID: 9c69ddcfbf0adfc489453c4f34112d8b
+    m_Address: Cube
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Patch
+  - m_GUID: 6848f2b406bdb2745b49e2cc8e003dd9
+    m_Address: Cube2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Patch
+  - m_GUID: 77c6e8dc90aded442b6b325ea07bd731
+    m_Address: Cube3
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Patch
+  - m_GUID: 8cf06961a4dc1a24a82d7d02fdb17e82
+    m_Address: Cube4
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Patch
+  - m_GUID: a05d49e5687fd3c4380912ac00e2db9c
+    m_Address: rkskek
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Patch
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 185dab7d74f7bf245883506aadc823da, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 4272740c48aad8c4599f612f83bb5e8d, type: 2}
+    - {fileID: 11400000, guid: 620372c56f1b47444ba0bb64f6d3fcd4, type: 2}

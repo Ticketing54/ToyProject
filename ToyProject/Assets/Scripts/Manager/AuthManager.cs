@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Firebase;
 using Firebase.Auth;
+using Firebase.Storage;
 using Firebase.Extensions;
 using System;
 public class AuthManager 
@@ -21,9 +22,9 @@ public class AuthManager
         }
     }
 
-    public void Init()
+    public IEnumerator Init()
     {
-        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(
+        yield return FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(
             (task) =>
             {
                 if(task.Result == DependencyStatus.Available)
@@ -36,7 +37,6 @@ public class AuthManager
                     Debug.LogError("사용할 수 없음");
                     Application.Quit();
                 }
-
             });        
     }
     
