@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         State = GameState.Login;
-        StartCoroutine(CoPatchCheck());
+        StartCoroutine(CoPatchCheck());        
     }
     public GameState State { get; private set; }
     /// <summary>
@@ -99,7 +99,8 @@ public class GameManager : MonoBehaviour
     IEnumerator CoPatchDownLoad()
     {   
         AsyncOperationHandle patch = Addressables.DownloadDependenciesAsync("Patch", true);        
-        yield return StartCoroutine(UpdateUI(patch));              
+        yield return StartCoroutine(UpdateUI(patch));
+        UIManager.uiManager.OpenLoginUI();
     }
     IEnumerator UpdateUI(AsyncOperationHandle _handle)
     {

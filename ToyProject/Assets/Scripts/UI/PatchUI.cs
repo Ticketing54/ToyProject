@@ -16,7 +16,9 @@ public class PatchUI : UIView
 
     [SerializeField]
     Image progressBar;
-
+    [SerializeField]
+    TextMeshProUGUI ProgressMessage;
+    
     private void Awake()
     {
         GameManager.instance.UpdatePatchUI += UpdatePatch;
@@ -34,7 +36,7 @@ public class PatchUI : UIView
     public void SetPatchUI(long _size)
     {
         downloadMessageUI.gameObject.SetActive(true);
-        sizeUI.text = _size+" Byte";
+        sizeUI.text = ((float)_size / (1024f * 1024f)).ToString("F2") + " MB";
     }
 
     public void OnClickUpdateButton()
@@ -68,7 +70,8 @@ public class PatchUI : UIView
     {
         string cur = ((float)_cur / (1024f * 1024f)).ToString("F2") +" MB";
         string size = ((float)_size / (1024f * 1024f)).ToString("F2")+" MB";
-        Debug.Log(cur + " / " + size + "  [" + _percent * 100+"]");
+        ProgressMessage.text = cur + " / " + size + "  [" + _percent * 100 +" % "+"]";
+        progressBar.fillAmount = _percent;
     }
 
 }
