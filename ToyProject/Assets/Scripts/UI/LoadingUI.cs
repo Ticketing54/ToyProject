@@ -3,63 +3,43 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LoadingUI : MonoBehaviour
-{
-    [SerializeField]
-    CanvasGroup loadingAlpha;
+public class LoadingUI : UIView
+{   
     [SerializeField]
     Image backGround;
     [SerializeField]
     Image loadingImage;
-
-    [SerializeField]
-    Coroutine uiEffect;
-
-    private void OnEnable()
-    {
-        if(uiEffect != null)
-        {
-            StopCoroutine(uiEffect);
-            uiEffect = null;
-        }
-    }
-    public void OpenLoading()
-    {
-        StartCoroutine(CoFadeOut());
-        uiEffect = StartCoroutine(CoLoading());
-    }
-    // LoadingUI를 종료할떄  꼭 사용할 것
-    public void CoseLoading() { StartCoroutine(CoExitLoadingUI()); }
     
-    IEnumerator CoExitLoadingUI()
+
+    private void Update()
     {
-        yield return CoFadeIn();
-        StopCoroutine(uiEffect);
-        gameObject.SetActive(false);
+        loadingImage.transform.Rotate(Vector3.forward * 2f);
     }
-    IEnumerator CoFadeIn()
-    {
-        while(loadingAlpha.alpha > 0)
-        {
-            yield return null;
-            loadingAlpha.alpha -= Time.deltaTime;
-        }
-    }
-    IEnumerator CoFadeOut()
-    {
-        while (loadingAlpha.alpha < 1)
-        {
-            yield return null;
-            loadingAlpha.alpha += Time.deltaTime;
-        }
-    }
-    IEnumerator CoLoading()
-    {
-        while(true)
-        {
-            yield return null;
-            loadingImage.transform.Rotate(Vector3.forward * 2f);
-        }
+    public override void Show()
+    {   
+        // background sprite 변경 시  load할것
+        base.Show();        
     }
 
+    protected override IEnumerator FadeIn()
+    {
+        state = VisibleState.Appearing;
+        while (canvasGroup.alpha != 1)
+        {
+            yield return null;
+            canvasGroup.alpha += Time.deltaTime * 0.7f;
+        }
+        state = VisibleState.Appeared;
+    }
+    protected override IEnumerator FadeOut()
+    {
+        state = VisibleState.Disappearing;
+        while (canvasGroup.alpha != 0)
+        {
+            yield return null;
+            canvasGroup.alpha -= Time.deltaTime * 0.7f;
+        }
+        state = VisibleState.Disappeared;
+        this.gameObject.SetActive(false);
+    }
 }

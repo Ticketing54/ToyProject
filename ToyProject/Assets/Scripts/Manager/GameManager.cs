@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 using System;
 public class GameManager : MonoBehaviour
@@ -18,36 +19,42 @@ public class GameManager : MonoBehaviour
         else
         {
             Destroy(this.gameObject);
-        }
-        ChangeGameState += ChangeState;
+        }        
     }
-
     private void Start()
     {
         State = GameState.Login;
-        StartCoroutine(CoPatchCheck());        
+        StartCoroutine(CoLogin());        
     }
     public GameState State { get; private set; }
     /// <summary>
     /// 게임 상태 변경 (Enum타입)
     /// </summary>
-    /// <param name="GameState"></param>
-    public Action<GameState> ChangeGameState;
-    
-
-    void ChangeState(GameState _state)
+    /// <param name="GameState"></param>    
+    public void ChangeState(GameState _state) { StartCoroutine(CoChangeState(_state)); }    
+    IEnumerator CoChangeState(GameState _state)
     {
-        State = _state;
-        switch(_state)
-        {   
+        UIManager.uiManager.OpenLoadingUI();
+        yield return null;                
+        switch (_state)
+        {
             case GameState.Login:
                 {
-                    StartCoroutine(CoPatchCheck());
+                    yield return SceneManager.LoadSceneAsync("LoginScene");
+                    StartCoroutine(CoLogin());
                 }
                 break;
             case GameState.Lobby:
+                {
+                    yield return SceneManager.LoadSceneAsync("LobbyScene");
+                    
+                }
                 break;
             case GameState.Playing:
+                {
+                    yield return SceneManager.LoadSceneAsync("PlayScene");
+                    
+                }
                 break;
             default:
                 {
@@ -56,7 +63,26 @@ public class GameManager : MonoBehaviour
                 break;
 
         }
+        yield return new WaitForSeconds(5f);
+        State = _state;
+        UIManager.uiManager.CloseLoadingUI();
     }
+    IEnumerator CoLogin()
+    {
+        yield return AuthManager.Instance.Init();
+
+        AsyncOperationHandle<long> sizeCheck = Addressables.GetDownloadSizeAsync("Patch");
+        yield return sizeCheck;
+        if (sizeCheck.Result == 0)
+        {
+            UIManager.uiManager.OpenLoginUI();
+        }
+        else
+        {
+            UIManager.uiManager.OpenPatchUI(sizeCheck.Result);
+        }
+    }
+
     #region Patch    
 
     /// <summary>
@@ -81,21 +107,7 @@ public class GameManager : MonoBehaviour
     {
         StartCoroutine(CoPatchDownLoad());
     }
-    IEnumerator CoPatchCheck()
-    {
-        yield return AuthManager.Instance.Init();
-
-        AsyncOperationHandle<long> sizeCheck = Addressables.GetDownloadSizeAsync("Patch");        
-        yield return sizeCheck;        
-        if (sizeCheck.Result == 0)
-        {
-            UIManager.uiManager.OpenLoginUI();
-        }
-        else
-        {
-            UIManager.uiManager.OpenPatchUI(sizeCheck.Result);            
-        }
-    }
+   
     IEnumerator CoPatchDownLoad()
     {   
         AsyncOperationHandle patch = Addressables.DownloadDependenciesAsync("Patch", true);        

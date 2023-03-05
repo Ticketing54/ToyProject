@@ -94,7 +94,7 @@ public class AuthManager
                 {
                     UIManager.uiManager.OFFDontClick();
                     User = task.Result;
-                    GameManager.instance.ChangeGameState(GameState.Lobby);
+                    GameManager.instance.ChangeState(GameState.Lobby);
                 }
             });
 

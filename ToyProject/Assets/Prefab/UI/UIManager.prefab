@@ -430,7 +430,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1876612825279383335
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2539,6 +2539,7 @@ MonoBehaviour:
   unLogin: {fileID: 5931334920191773980}
   unLobby: {fileID: 0}
   unplaying: {fileID: 0}
+  loadingUI: {fileID: 5027865209275608931}
   dontClick: {fileID: 4515789981589056624}
 --- !u!1 &5027865207806659291
 GameObject:
@@ -2818,7 +2819,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5027865207892807530
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4799,7 +4800,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e87ea3a8b0a49d409cfaf8fde69982c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loadingAlpha: {fileID: 5027865209275608930}
+  canvasGroup: {fileID: 5027865209275608930}
   backGround: {fileID: 5027865207892807531}
   loadingImage: {fileID: 5027865207892807531}
 --- !u!225 &5027865209275608930
@@ -6639,7 +6640,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &3059776183183283102
 RectTransform:
   m_ObjectHideFlags: 0

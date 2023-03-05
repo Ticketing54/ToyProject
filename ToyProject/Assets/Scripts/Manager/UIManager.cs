@@ -19,11 +19,7 @@ public class UIManager : MonoBehaviour
         }
         Current = unLogin;
     }
-    private void Start()
-    {
-        GameManager.instance.ChangeGameState += ChangeUINavgation;        
-    }
-
+    
 
     // Current UINavigation
     public UINavigation Current { get; private set; }
@@ -43,7 +39,7 @@ public class UIManager : MonoBehaviour
     /// 게임 씬 상태에 따른 UINavigation 변화
     /// </summary>
     /// <param name="GameState"></param>
-    void ChangeUINavgation(GameState _state)
+    public void ChangeUINavgation(GameState _state)
     {
         Current.gameObject.SetActive(false);
         Current = GetUINavigation(_state);
@@ -78,7 +74,22 @@ public class UIManager : MonoBehaviour
             return;
         }
         Current.Pop();
-    }    
+    }
+    #region LoadingUI
+    [SerializeField]
+    LoadingUI loadingUI;
+    public void OpenLoadingUI()
+    {
+        loadingUI.gameObject.SetActive(true);
+        loadingUI.Show();
+    }
+    /// <summary>
+    /// 종료 시 자동으로 Setactive False;
+    /// </summary>
+    public void CloseLoadingUI() { loadingUI.Hide(); }
+    #endregion
+
+    #region Patch
     public Action OpenLoginUI
     {
         get => openLoginUi;
@@ -86,20 +97,20 @@ public class UIManager : MonoBehaviour
         {
             if (value == null)
             {
-                Debug.LogError("value is Null(OpenLoginUI)");                
+                Debug.LogError("value is Null(OpenLoginUI)");
             }
             else
                 openLoginUi = value;
         }
-        
-        
+
+
     }
     /// <summary>
     /// PatchSize 
     /// </summary>
     public Action<long> OpenPatchUI
     {
-        get => openPatchUI;        
+        get => openPatchUI;
         set
         {
             if (value == null)
@@ -109,12 +120,14 @@ public class UIManager : MonoBehaviour
             else
             {
                 openPatchUI = value;
-            } 
+            }
         }
 
     }
     private Action openLoginUi;
     private Action<long> openPatchUI;
+    #endregion
+
     #region DontClick && ErrorMessage    
     [SerializeField]
     DontClick dontClick;    

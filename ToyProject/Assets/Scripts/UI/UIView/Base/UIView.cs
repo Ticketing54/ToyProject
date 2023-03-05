@@ -5,9 +5,9 @@ using UnityEngine;
 public abstract class UIView : MonoBehaviour
 {
     [SerializeField]
-    CanvasGroup canvasGroup;
+    protected CanvasGroup canvasGroup;
     public VisibleState State { get => state; }
-    VisibleState state;
+    protected VisibleState state;
     public virtual void Show() { StartCoroutine(FadeIn()); }
     public virtual void Hide() { StartCoroutine(FadeOut()); }
     public enum VisibleState
@@ -18,7 +18,7 @@ public abstract class UIView : MonoBehaviour
         Disappeared,
     }
     
-    IEnumerator FadeIn()
+    protected virtual IEnumerator FadeIn()
     {   
         state = VisibleState.Appearing;
         while(canvasGroup.alpha!= 1)
@@ -28,7 +28,7 @@ public abstract class UIView : MonoBehaviour
         }        
         state = VisibleState.Appeared;
     }
-    IEnumerator FadeOut()
+    protected virtual IEnumerator FadeOut()
     {   
         state = VisibleState.Disappearing;
         while (canvasGroup.alpha != 0)
