@@ -27,7 +27,7 @@ public class LoadingUI : UIView
         while (canvasGroup.alpha != 1)
         {
             yield return null;
-            canvasGroup.alpha += Time.deltaTime * 0.7f;
+            canvasGroup.alpha += Time.deltaTime;
         }
         state = VisibleState.Appeared;
     }

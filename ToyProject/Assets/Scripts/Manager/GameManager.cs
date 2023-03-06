@@ -35,11 +35,13 @@ public class GameManager : MonoBehaviour
     IEnumerator CoChangeState(GameState _state)
     {
         UIManager.uiManager.OpenLoadingUI();
-        yield return null;                
+
+        yield return new WaitForSeconds(1f);                
+
         switch (_state)
         {
             case GameState.Login:
-                {
+                {   
                     yield return SceneManager.LoadSceneAsync("LoginScene");
                     StartCoroutine(CoLogin());
                 }
@@ -47,18 +49,18 @@ public class GameManager : MonoBehaviour
             case GameState.Lobby:
                 {
                     yield return SceneManager.LoadSceneAsync("LobbyScene");
-                    
+                    UIManager.uiManager.ChangeUINavgation(_state);
                 }
                 break;
             case GameState.Playing:
                 {
                     yield return SceneManager.LoadSceneAsync("PlayScene");
-                    
+                    UIManager.uiManager.ChangeUINavgation(_state);
                 }
                 break;
             default:
                 {
-                    Debug.LogError("GaemeState Error (Enum Default)");
+                    Debug.LogError("GaemeState Error (Enum Default)");                    
                 }
                 break;
 

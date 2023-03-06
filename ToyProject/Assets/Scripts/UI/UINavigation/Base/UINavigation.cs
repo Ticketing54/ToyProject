@@ -16,11 +16,10 @@ public abstract class UINavigation : MonoBehaviour
     
     public virtual void Push(UIView _uiview)
     {
-        if(current.State != UIView.VisibleState.Appeared)
+        if(current != null&& current.State != UIView.VisibleState.Appeared)
         {
             return;
         }
-        current.Hide();
         StartCoroutine(CoPushUIView(_uiview));        
     }        
     public virtual UIView Pop()
@@ -39,8 +38,12 @@ public abstract class UINavigation : MonoBehaviour
 
     IEnumerator CoPushUIView(UIView _uiview)
     {
-        yield return new WaitWhile(() => current.State != UIView.VisibleState.Disappeared);
-        current.gameObject.SetActive(false);
+        if(current != null)
+        {
+            current.Hide();
+            yield return new WaitWhile(() => current.State != UIView.VisibleState.Disappeared);
+            current.gameObject.SetActive(false);
+        }
         _uiview.gameObject.SetActive(true);
         _uiview.Show();
         history.Push(current);

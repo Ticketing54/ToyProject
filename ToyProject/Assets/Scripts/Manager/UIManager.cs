@@ -18,21 +18,18 @@ public class UIManager : MonoBehaviour
             Destroy(uiManager);
         }
         Current = unLogin;
-    }
-    
+    }    
 
     // Current UINavigation
     public UINavigation Current { get; private set; }
 
-    // UINavigation in GameSate 
-    
+    // UINavigation in GameSate     
     [SerializeField]
     UINavigation unLogin;
     [SerializeField]
     UINavigation unLobby;
     [SerializeField]
-    UINavigation unplaying;
-    
+    UINavigation unplaying;   
 
 
     /// <summary>
@@ -44,10 +41,10 @@ public class UIManager : MonoBehaviour
         Current.gameObject.SetActive(false);
         Current = GetUINavigation(_state);
         Current.gameObject.SetActive(true);
-        Current.gameObject.transform.position = Vector3.zero;
+        Current.gameObject.transform.localPosition= Vector3.zero;
     }
     /// <summary>
-    ///  GameState 에따른 UINavigation 반환
+    ///  GameState 로 UINavigation 반환
     /// </summary>
     /// <param name="GameState"></param>
     /// <returns></returns>
@@ -66,6 +63,9 @@ public class UIManager : MonoBehaviour
                 return null;
         }
     }    
+    /// <summary>
+    /// Back Button
+    /// </summary>
     public void CurrentPop()
     {
         if(Current == null)
@@ -75,24 +75,20 @@ public class UIManager : MonoBehaviour
         }
         Current.Pop();
     }
-    #region LoadingUI
-    [SerializeField]
-    LoadingUI loadingUI;
-    public void OpenLoadingUI()
-    {
-        loadingUI.gameObject.SetActive(true);
-        loadingUI.Show();
-    }
-    /// <summary>
-    /// 종료 시 자동으로 Setactive False;
-    /// </summary>
-    public void CloseLoadingUI() { loadingUI.Hide(); }
-    #endregion
 
-    #region Patch
+    #region Login
+    
     public Action OpenLoginUI
     {
-        get => openLoginUi;
+        get
+        {
+            if(Current != unLogin)
+            {
+                Current.gameObject.SetActive(false);
+                Current = unLogin;
+            }
+            return openLoginUi;
+        }
         set
         {
             if (value == null)
@@ -110,7 +106,15 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public Action<long> OpenPatchUI
     {
-        get => openPatchUI;
+        get
+        {
+            if (Current != unLogin)
+            {
+                Current.gameObject.SetActive(false);
+                Current = unLogin;
+            }
+            return openPatchUI;
+        }
         set
         {
             if (value == null)
@@ -127,6 +131,27 @@ public class UIManager : MonoBehaviour
     private Action openLoginUi;
     private Action<long> openPatchUI;
     #endregion
+    #region Lobby
+
+
+    #endregion
+
+
+
+
+    #region LoadingUI
+    [SerializeField]
+    LoadingUI loadingUI;
+    public void OpenLoadingUI()
+    {
+        loadingUI.gameObject.SetActive(true);
+        loadingUI.Show();
+    }
+    /// <summary>
+    /// 종료 시 자동으로 SetActive False;
+    /// </summary>
+    public void CloseLoadingUI() { loadingUI.Hide(); }
+    #endregion
 
     #region DontClick && ErrorMessage    
     [SerializeField]
@@ -136,7 +161,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void OnDontClick() { dontClick.gameObject.SetActive(true); }
     /// <summary>
-    /// 화면 클릭 반지용(Off)
+    /// 화면 클릭 방지용(Off)
     /// </summary>
     public void OFFDontClick() { dontClick.gameObject.SetActive(false); }
     /// <summary>

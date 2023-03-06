@@ -36,14 +36,11 @@ public class NavSign : UINavigation
         if (patch.gameObject.activeSelf == true)
         {
             patch.gameObject.SetActive(false);
-        }            
-        current = login;
-        login.gameObject.SetActive(true);
-        login.Show();
+        }
+        Push(login);
     }
     private void OpenPatch(long _size)
-    {
-        current = patch;
+    {   
         patch.gameObject.SetActive(true);
         PatchUI patchUI = patch as PatchUI;
         patchUI.SetPatchUI(_size);
