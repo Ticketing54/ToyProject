@@ -9,6 +9,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         
     }
+<<<<<<< HEAD
     public void ConnectMainSever()
     {
         if(AuthManager.Instance.User == null)
@@ -20,7 +21,17 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     }
   public void test()
     {
+=======
+>>>>>>> 40e6cbfd2d814b74c0b01c2e380baac49d7a44b0
 
+    public override void OnConnectedToMaster()
+    {
+        
+    }
+
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        
     }
 
 }
