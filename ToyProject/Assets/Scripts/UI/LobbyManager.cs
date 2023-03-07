@@ -18,9 +18,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         }
         
     }
-  public void test()
-    {
 
+    public override void OnConnectedToMaster()
+    {
+        
+    }
+
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        
     }
 
 }
