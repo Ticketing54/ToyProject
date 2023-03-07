@@ -21,7 +21,7 @@ public class PatchUI : UIView
     
     private void Awake()
     {
-        GameManager.instance.UpdatePatchUI += UpdatePatch;
+        GameManager.Instance.UpdatePatchUI += UpdatePatch;
 
     }
     private void OnEnable()
@@ -43,7 +43,7 @@ public class PatchUI : UIView
     {
         downloadMessageUI.gameObject.SetActive(false);
         downloadProgress.gameObject.SetActive(true);
-        GameManager.instance.DownloadPatch();
+        GameManager.Instance.DownloadPatch();
     }
     public void OnClickCancleButton()
     {

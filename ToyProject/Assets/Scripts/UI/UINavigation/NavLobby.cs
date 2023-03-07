@@ -4,5 +4,15 @@ using UnityEngine;
 
 public class NavLobby : UINavigation
 {
+    [SerializeField]
+    UIView playRoom;
 
+    public void OnClickTutorialButton()
+    {
+
+    }
+    public void OnClickNomalPlayButton()
+    {
+
+    }
 }

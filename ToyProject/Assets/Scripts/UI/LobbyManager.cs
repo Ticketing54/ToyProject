@@ -5,18 +5,18 @@ using Photon.Pun;
 using Photon.Realtime;
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
-    private static LobbyManager instance;
-    public static LobbyManager Instance
+    private void Start()
     {
-        get
-        {
-            if(instance == null)
-            {
-                instance = new LobbyManager();                
-            }
-            return instance;
-        }
         
+    }
+    public void ConnectMainSever()
+    {
+        if(AuthManager.Instance.User == null)
+        {
+            Debug.LogError("AuthManager User is Null");
+            GameManager.Instance.ChangeState(GameState.Login);
+        }
+
     }
   public void test()
     {

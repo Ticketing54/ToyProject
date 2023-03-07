@@ -7,13 +7,13 @@ using UnityEngine;
 using System;
 public class GameManager : MonoBehaviour
 {
-    public static GameManager instance;
+    public static GameManager Instance;
 
     private void Awake()
     {
-        if(instance == null)
+        if(Instance == null)
         {
-            instance = this;
+            Instance = this;
             DontDestroyOnLoad(this.gameObject);
         }
         else
@@ -71,8 +71,7 @@ public class GameManager : MonoBehaviour
     }
     IEnumerator CoLogin()
     {
-        yield return AuthManager.Instance.Init();
-
+        yield return AuthManager.Instance.Init();        
         AsyncOperationHandle<long> sizeCheck = Addressables.GetDownloadSizeAsync("Patch");
         yield return sizeCheck;
         if (sizeCheck.Result == 0)

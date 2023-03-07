@@ -5,6 +5,7 @@ using Firebase;
 using Firebase.Auth;
 using Firebase.Storage;
 using Firebase.Extensions;
+
 using System;
 public class AuthManager 
 {
@@ -24,6 +25,7 @@ public class AuthManager
 
     public IEnumerator Init()
     {
+        User = null;
         yield return FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(
             (task) =>
             {
@@ -40,6 +42,7 @@ public class AuthManager
             });        
     }
     
+
     public FirebaseAuth Auth { get; private set; }
     public FirebaseApp App { get; private set; }
     public FirebaseUser User { get; private set; }
@@ -94,14 +97,11 @@ public class AuthManager
                 {
                     UIManager.uiManager.OFFDontClick();
                     User = task.Result;
-                    GameManager.instance.ChangeState(GameState.Lobby);
+                    GameManager.Instance.ChangeState(GameState.Lobby);
                 }
             });
-
-
-       
-       
     }
+
     /// <summary>
     /// Regist : ID와 Password, 결과에대한 UI표시함수
     /// </summary>
