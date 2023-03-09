@@ -42,12 +42,19 @@ public class GameManager : MonoBehaviour
         {
             case GameState.Login:
                 {   
+                    // Login Scene에서는 RootView가 Patch일수도 Login일수도 있어서 
+                    // ChangeUIVavgation을 사용하지 않았다.
                     yield return SceneManager.LoadSceneAsync("LoginScene");
                     StartCoroutine(CoLogin());
                 }
                 break;
             case GameState.Lobby:
                 {
+                    if(AuthManager.Instance.User == null)
+                    {
+                        ChangeState(GameState.Login);
+                        yield break;
+                    }
                     yield return SceneManager.LoadSceneAsync("LobbyScene");
                     UIManager.uiManager.ChangeUINavgation(_state);
                 }
@@ -69,9 +76,11 @@ public class GameManager : MonoBehaviour
         State = _state;
         UIManager.uiManager.CloseLoadingUI();
     }
+
+    #region Login    
     IEnumerator CoLogin()
     {
-        yield return AuthManager.Instance.Init();        
+        yield return AuthManager.Instance.Init();
         AsyncOperationHandle<long> sizeCheck = Addressables.GetDownloadSizeAsync("Patch");
         yield return sizeCheck;
         if (sizeCheck.Result == 0)
@@ -83,8 +92,6 @@ public class GameManager : MonoBehaviour
             UIManager.uiManager.OpenPatchUI(sizeCheck.Result);
         }
     }
-
-    #region Patch    
 
     /// <summary>
     /// UpdateCurent UpdateSize UpdateProgress
@@ -124,6 +131,16 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
     }
+    #endregion
+
+    #region Lobby
+    public Action ConnectMainServer { get; set; }
+    IEnumerator CoLobby()
+    {
+        yield return null;
+    }
+        
+
     #endregion
 
 }

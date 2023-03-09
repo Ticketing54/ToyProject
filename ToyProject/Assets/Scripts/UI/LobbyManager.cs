@@ -5,33 +5,30 @@ using Photon.Pun;
 using Photon.Realtime;
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
-    private void Start()
-    {
-        
-    }
-<<<<<<< HEAD
-    public void ConnectMainSever()
-    {
-        if(AuthManager.Instance.User == null)
-        {
-            Debug.LogError("AuthManager User is Null");
-            GameManager.Instance.ChangeState(GameState.Login);
-        }
+    private readonly string gameVersion = "1";
 
-    }
-  public void test()
+    private void Awake()
     {
-=======
->>>>>>> 40e6cbfd2d814b74c0b01c2e380baac49d7a44b0
+        GameManager.Instance.ConnectMainServer += ConnectUsingSetting;
+    }
 
+
+    void ConnectUsingSetting()
+    {
+        PhotonNetwork.GameVersion = gameVersion;
+        PhotonNetwork.ConnectUsingSettings();
+        UIManager.uiManager.OnDontClick();
+    }
     public override void OnConnectedToMaster()
     {
-        
+        UIManager.uiManager.OFFDontClick();
+
     }
 
     public override void OnDisconnected(DisconnectCause cause)
     {
-        
+
+        PhotonNetwork.ConnectUsingSettings();
     }
 
 }
