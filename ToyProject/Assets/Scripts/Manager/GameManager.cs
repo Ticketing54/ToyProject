@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour
                         yield break;
                     }
                     yield return SceneManager.LoadSceneAsync("LobbyScene");
+                    yield return StartCoroutine(CoLobby());
                     UIManager.uiManager.ChangeUINavgation(_state);
                 }
                 break;
@@ -137,6 +138,7 @@ public class GameManager : MonoBehaviour
     public Action ConnectMainServer { get; set; }
     IEnumerator CoLobby()
     {
+        ConnectMainServer();
         yield return null;
     }
         
