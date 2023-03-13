@@ -24,11 +24,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         UIManager.uiManager.OFFDontClick();
 
     }
-
     public override void OnDisconnected(DisconnectCause cause)
     {
 
         PhotonNetwork.ConnectUsingSettings();
     }
 
+    
 }
