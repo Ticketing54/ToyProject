@@ -157,8 +157,10 @@ public class AuthManager
                 {
                     UIManager.uiManager.OFFDontClick();
                      UIManager.uiManager.CurrentPop();
-                    User user = new User();                    
-                    string jsondata = JsonUtility.ToJson(user);                    
+                    User temp = new ();                    
+                    string jsondata = JsonUtility.ToJson(temp);
+                    Reference.Child("User").Child(task.Result.UserId).SetRawJsonValueAsync(jsondata);
+                  
                 }
             });
     }
@@ -185,6 +187,6 @@ public class AuthManager
                 }
             }
         );
-    }    
+    }  
     
 }
