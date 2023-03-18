@@ -5,7 +5,8 @@ using Firebase;
 using Firebase.Auth;
 using Firebase.Storage;
 using Firebase.Extensions;
-
+using Firebase.Database;
+using Photon.Pun;
 using System;
 public class AuthManager 
 {
@@ -33,6 +34,7 @@ public class AuthManager
                 {
                     Auth = FirebaseAuth.DefaultInstance;
                     App = FirebaseApp.DefaultInstance;
+                    Reference = FirebaseDatabase.DefaultInstance.RootReference;
                 }
                 else
                 {
@@ -46,6 +48,8 @@ public class AuthManager
     public FirebaseAuth Auth { get; private set; }
     public FirebaseApp App { get; private set; }
     public FirebaseUser User { get; private set; }
+    public DatabaseReference Reference { get; private set; }
+    
     /// <summary>
     /// Login : ID와 Password, 결과에대한 UI표시함수
     /// </summary>
@@ -95,8 +99,7 @@ public class AuthManager
                 }
                 else
                 {
-                    UIManager.uiManager.OFFDontClick();
-                    User = task.Result;
+                    UIManager.uiManager.OFFDontClick();                                
                     GameManager.Instance.ChangeState(GameState.Lobby);
                 }
             });
@@ -108,7 +111,7 @@ public class AuthManager
     /// <param name="ID"></param>
     /// <param name="PW"></param>
     /// <param name="UIAction"></param>
-    public void Regist(string _id,string _pw,Action _uiAction)
+    public void Regist(string _id,string _pw)
     {
         UIManager.uiManager.OnDontClick();
 
@@ -118,7 +121,7 @@ public class AuthManager
                 if (task.IsCanceled)
                 {
                     Debug.Log("Regist Canceled");
-                    UIManager.uiManager.OnErrorMessage("회원 가입이 취소 되었습니다.");
+                    //UIManager.uiManager.OnErrorMessage("회원 가입이 취소 되었습니다.");
                 }
                 else if (task.IsFaulted)
                 {
@@ -153,10 +156,35 @@ public class AuthManager
                 else
                 {
                     UIManager.uiManager.OFFDontClick();
-                    UIManager.uiManager.CurrentPop();
+                     UIManager.uiManager.CurrentPop();
+                    User user = new User();                    
+                    string jsondata = JsonUtility.ToJson(user);                    
                 }
             });
     }
 
+    public void ReadUser(string _userid)
+    {
+        Reference.Child(_userid).GetValueAsync().ContinueWith(
+            task =>
+            {
+                if(task.IsFaulted)
+                {
+                    Debug.LogError("Firebase ReadUser is fail");
+                }
+                else if (task.IsCompleted)
+                {
+                    DataSnapshot snapshot = task.Result;
+                    Debug.Log(snapshot.ChildrenCount);
 
+                    foreach(DataSnapshot data in snapshot.Children)
+                    {
+                        IDictionary personInfo = (IDictionary)data.Value;
+                        Debug.Log(personInfo["email"] + "  " + personInfo["nickname"]);
+                    }
+                }
+            }
+        );
+    }    
+    
 }

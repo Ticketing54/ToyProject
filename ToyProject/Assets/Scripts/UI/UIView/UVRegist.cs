@@ -39,7 +39,7 @@ public class UVRegist : UIView
             input_PWC.text = "";           
             return;
         }
-        AuthManager.Instance.Regist(input_ID.text, input_PW.text, () => { errorMsg_ID.gameObject.SetActive(true); });
+        AuthManager.Instance.Regist(input_ID.text, input_PW.text);
     }
     
     void ResetErrorMsg()

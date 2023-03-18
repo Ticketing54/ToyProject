@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "509718245769",
+    "firebase_url": "https://castledepence-default-rtdb.firebaseio.com",
     "project_id": "castledepence",
     "storage_bucket": "castledepence.appspot.com"
   },

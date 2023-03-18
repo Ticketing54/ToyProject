@@ -8,7 +8,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     private readonly string gameVersion = "1";
 
     private void Awake()
-    {
+    {   
         GameManager.Instance.ConnectMainServer += ConnectUsingSetting;
     }
 
@@ -16,6 +16,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     void ConnectUsingSetting()
     {
         PhotonNetwork.GameVersion = gameVersion;
+        PhotonNetwork.AuthValues.UserId = AuthManager.Instance.User.UserId;        
         PhotonNetwork.ConnectUsingSettings();
         UIManager.uiManager.OnDontClick();
     }
