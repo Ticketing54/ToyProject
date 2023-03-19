@@ -47,7 +47,7 @@ public class AuthManager
 
     public FirebaseAuth Auth { get; private set; }
     public FirebaseApp App { get; private set; }
-    public FirebaseUser User { get; private set; }
+    public FirebaseUser User { get; private set; }    
     public DatabaseReference Reference { get; private set; }
     
     /// <summary>
@@ -101,6 +101,7 @@ public class AuthManager
                 {
                     UIManager.uiManager.OFFDontClick();                                
                     GameManager.Instance.ChangeState(GameState.Lobby);
+                    User = task.Result;
                 }
             });
     }
@@ -166,7 +167,7 @@ public class AuthManager
     }
 
     public void ReadUser(string _userid)
-    {
+    {   
         Reference.Child(_userid).GetValueAsync().ContinueWith(
             task =>
             {
@@ -177,13 +178,8 @@ public class AuthManager
                 else if (task.IsCompleted)
                 {
                     DataSnapshot snapshot = task.Result;
-                    Debug.Log(snapshot.ChildrenCount);
-
-                    foreach(DataSnapshot data in snapshot.Children)
-                    {
-                        IDictionary personInfo = (IDictionary)data.Value;
-                        Debug.Log(personInfo["email"] + "  " + personInfo["nickname"]);
-                    }
+                    User user = JsonUtility.FromJson<User>(snapshot.GetRawJsonValue());
+                    
                 }
             }
         );

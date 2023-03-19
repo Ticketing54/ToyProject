@@ -45,7 +45,8 @@ public class GameManager : MonoBehaviour
                     // Login Scene에서는 RootView가 Patch일수도 Login일수도 있어서 
                     // ChangeUIVavgation을 사용하지 않았다.
                     yield return SceneManager.LoadSceneAsync("LoginScene");
-                    StartCoroutine(CoLogin());
+                    yield return StartCoroutine(CoLogin());
+                    UIManager.uiManager.CloseLoadingUI();
                 }
                 break;
             case GameState.Lobby:
@@ -56,7 +57,7 @@ public class GameManager : MonoBehaviour
                         yield break;
                     }
                     yield return SceneManager.LoadSceneAsync("LobbyScene");
-                    yield return StartCoroutine(CoLobby());
+                    LobbyManager.Instance.ConnectUsingSetting();
                     UIManager.uiManager.ChangeUINavgation(_state);
                 }
                 break;
@@ -73,9 +74,8 @@ public class GameManager : MonoBehaviour
                 break;
 
         }
-        yield return new WaitForSeconds(5f);
-        State = _state;
-        UIManager.uiManager.CloseLoadingUI();
+        
+        State = _state;        
     }
 
     #region Login    
@@ -125,24 +125,12 @@ public class GameManager : MonoBehaviour
     }
     IEnumerator UpdateUI(AsyncOperationHandle _handle)
     {
-        while(_handle.IsValid())
-        {   
-            DownloadStatus downstatus = _handle.GetDownloadStatus();
-            UpdatePatchUI(downstatus.DownloadedBytes, downstatus.TotalBytes, downstatus.Percent);
+        while(!_handle.IsValid())
+        {
             yield return null;
+            DownloadStatus downstatus = _handle.GetDownloadStatus();
+            UpdatePatchUI(downstatus.DownloadedBytes, downstatus.TotalBytes, downstatus.Percent);            
         }
     }
     #endregion
-
-    #region Lobby
-    public Action ConnectMainServer { get; set; }
-    IEnumerator CoLobby()
-    {
-        ConnectMainServer();
-        yield return null;
-    }
-        
-
-    #endregion
-
 }

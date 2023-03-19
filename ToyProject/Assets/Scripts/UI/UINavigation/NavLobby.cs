@@ -8,6 +8,11 @@ public class NavLobby : UINavigation
     UIView playRoom;
     [SerializeField]
     UIView nickNameSetting;
+    public override void Awake()
+    {
+        base.Awake();
+
+    }
     public void OnClickTutorialButton()
     {
 

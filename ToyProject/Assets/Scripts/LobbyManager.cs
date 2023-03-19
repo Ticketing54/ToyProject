@@ -6,14 +6,26 @@ using Photon.Realtime;
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
     private readonly string gameVersion = "1";
+    private static LobbyManager instance;
+    public static LobbyManager Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<LobbyManager>();
+                if(instance == null)
+                {
+                    GameObject obj = new GameObject("LobbyManager");                    
+                    instance =  obj.AddComponent<LobbyManager>();
+                    DontDestroyOnLoad(instance.gameObject);
+                }
+            }
 
-    private void Awake()
-    {   
-        GameManager.Instance.ConnectMainServer += ConnectUsingSetting;
-    }
-
-
-    void ConnectUsingSetting()
+            return instance;
+        }        
+    }    
+    public void ConnectUsingSetting()
     {
         PhotonNetwork.GameVersion = gameVersion;
         PhotonNetwork.AuthValues.UserId = AuthManager.Instance.User.UserId;        
