@@ -709,7 +709,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4559571066427991699
 Transform:
   m_ObjectHideFlags: 0
@@ -724,8 +724,8 @@ Transform:
   m_Children:
   - {fileID: 1519145967265149149}
   - {fileID: 8266306439111223793}
-  m_Father: {fileID: 6945298754469038878}
-  m_RootOrder: 1
+  m_Father: {fileID: 6945298754441514615}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3366746710018463779
 GameObject:
@@ -1425,7 +1425,7 @@ RectTransform:
   m_Children:
   - {fileID: 6945298753881469721}
   m_Father: {fileID: 6945298753949828397}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1514,7 +1514,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6945298753949828397}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6945298752984044039
 MonoBehaviour:
@@ -2469,7 +2469,7 @@ RectTransform:
   - {fileID: 8450798308123873995}
   - {fileID: 4070747091475183667}
   m_Father: {fileID: 6945298754469038878}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4849,7 +4849,7 @@ RectTransform:
   m_Children:
   - {fileID: 6945298753948776420}
   m_Father: {fileID: 6945298753949828397}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -5457,6 +5457,7 @@ RectTransform:
   m_Children:
   - {fileID: 6945298754441514615}
   - {fileID: 6945298754469038878}
+  - {fileID: 6945298754416297221}
   - {fileID: 6945298753904550405}
   - {fileID: 6945298752981089741}
   - {fileID: 6945298752984044038}
@@ -6283,7 +6284,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6945298754198084606
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6988,12 +6989,12 @@ GameObject:
   - component: {fileID: 6945298754416297220}
   - component: {fileID: 6945298754416297471}
   m_Layer: 5
-  m_Name: PatchMessage
+  m_Name: PatchUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6945298754416297221
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7007,7 +7008,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6945298754198084606}
-  m_Father: {fileID: 6945298754441514615}
+  m_Father: {fileID: 6945298753949828397}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -7115,8 +7116,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 795af668b65c5f041a58ea214e47e39e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvasGroup: {fileID: 6945298754416297220}
   sizeUI: {fileID: 6945298754899078588}
+  patchBox: {fileID: 6945298754198084607}
   downloadMessageUI: {fileID: 6945298753200926861}
   downloadProgress: {fileID: 6945298754110884211}
   progressBar: {fileID: 6945298754452054002}
@@ -7412,7 +7413,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6945298754441514615
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7427,7 +7428,7 @@ RectTransform:
   m_Children:
   - {fileID: 6945298753679572523}
   - {fileID: 6945298753522761833}
-  - {fileID: 6945298754416297221}
+  - {fileID: 4559571066427991699}
   m_Father: {fileID: 6945298753949828397}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7524,7 +7525,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25d5b357dc5f5b04786fccd19044c4e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  patch: {fileID: 6945298754416297471}
+  rootView: {fileID: 6945298753679572527}
   login: {fileID: 6945298753679572527}
   regist: {fileID: 6945298753522761834}
 --- !u!1 &6945298754452054012
@@ -7637,7 +7638,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 669479027966274525}
-  - {fileID: 4559571066427991699}
   - {fileID: 6945298753177907263}
   m_Father: {fileID: 6945298753949828397}
   m_RootOrder: 1
@@ -7705,6 +7705,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5ad732111ef5e045b8afab917dea0ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rootView: {fileID: 0}
   playRoom: {fileID: 0}
   nickNameSetting: {fileID: 0}
 --- !u!1 &6945298754482883729

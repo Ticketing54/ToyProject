@@ -5,10 +5,12 @@ using UnityEngine.UI;
 using TMPro;
 
 
-public class PatchUI : UIView
+public class PatchUI : MonoBehaviour
 {
     [SerializeField]
     TextMeshProUGUI sizeUI;
+    [SerializeField]
+    GameObject patchBox;
     [SerializeField]
     GameObject downloadMessageUI;
     [SerializeField]
@@ -19,10 +21,12 @@ public class PatchUI : UIView
     [SerializeField]
     TextMeshProUGUI ProgressMessage;
     
-    private void Awake()
+    private void Start()
     {
         GameManager.Instance.UpdatePatchUI += UpdatePatch;
-
+        GameManager.Instance.SettingPatch += SetPatchUI;
+        GameManager.Instance.OpenPatchUI += () => this.gameObject.SetActive(true);
+        GameManager.Instance.ClosePatchUI += () => this.gameObject.SetActive(false);
     }
     private void OnEnable()
     {   
@@ -35,6 +39,7 @@ public class PatchUI : UIView
     }
     public void SetPatchUI(long _size)
     {
+        patchBox.gameObject.SetActive(true);
         downloadMessageUI.gameObject.SetActive(true);
         sizeUI.text = ((float)_size / (1024f * 1024f)).ToString("F2") + " MB";
     }

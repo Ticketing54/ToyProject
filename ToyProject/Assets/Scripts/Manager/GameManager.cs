@@ -23,8 +23,8 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-        State = GameState.Login;
-        StartCoroutine(CoLogin());        
+        UIManager.uiManager.OpenLoadingUI();
+        StartCoroutine(CoPatchCheck());
     }
     public GameState State { get; private set; }
     /// <summary>
@@ -34,21 +34,22 @@ public class GameManager : MonoBehaviour
     public void ChangeState(GameState _state) { StartCoroutine(CoChangeState(_state)); }    
     IEnumerator CoChangeState(GameState _state)
     {
+        // 로딩 UI 열기
         UIManager.uiManager.OpenLoadingUI();
-
+        State = _state;
         yield return new WaitForSeconds(1f);                
 
         switch (_state)
         {
             case GameState.Login:
                 {   
-                    // Login Scene에서는 RootView가 Patch일수도 Login일수도 있어서 
-                    // ChangeUIVavgation을 사용하지 않았다.
-                    yield return SceneManager.LoadSceneAsync("LoginScene");
-                    yield return StartCoroutine(CoLogin());
-                    UIManager.uiManager.CloseLoadingUI();
+                    if(SceneManager.GetActiveScene().name != "LoginScene")
+                    {
+                        yield return SceneManager.LoadSceneAsync("LoginScene");
+                    }
+                    yield return CoPatchCheck();
                 }
-                break;
+                yield break;
             case GameState.Lobby:
                 {
                     if(AuthManager.Instance.User == null)
@@ -56,8 +57,8 @@ public class GameManager : MonoBehaviour
                         ChangeState(GameState.Login);
                         yield break;
                     }
-                    yield return SceneManager.LoadSceneAsync("LobbyScene");
                     LobbyManager.Instance.ConnectUsingSetting();
+                    yield return SceneManager.LoadSceneAsync("LobbyScene");
                     UIManager.uiManager.ChangeUINavgation(_state);
                 }
                 break;
@@ -72,65 +73,68 @@ public class GameManager : MonoBehaviour
                     Debug.LogError("GaemeState Error (Enum Default)");                    
                 }
                 break;
-
         }
-        
-        State = _state;        
+        UIManager.uiManager.CloseLoadingUI();
     }
 
-    #region Login    
-    IEnumerator CoLogin()
+    #region Patch
+    /// <summary>
+    /// PatchUI SizeSetting
+    /// </summary>
+    public Action<long> SettingPatch;
+    /// <summary>
+    /// OpenPatchUI
+    /// </summary>
+    public Action OpenPatchUI;
+    /// <summary>
+    /// ClosePatchUI
+    /// </summary>
+    public Action ClosePatchUI;
+    /// <summary>
+    /// UpdateCurent UpdateSize UpdateProgress
+    /// </summary>
+    public Action<long, long, float> UpdatePatchUI;
+    IEnumerator CoPatchCheck()
     {
+        yield return new WaitForSeconds(2f);
+        OpenPatchUI();
         yield return AuthManager.Instance.Init();
         AsyncOperationHandle<long> sizeCheck = Addressables.GetDownloadSizeAsync("Patch");
         yield return sizeCheck;
         if (sizeCheck.Result == 0)
         {
-            UIManager.uiManager.OpenLoginUI();
+            UIManager.uiManager.ChangeUINavgation(GameState.Login);
+            ClosePatchUI();
         }
         else
         {
-            UIManager.uiManager.OpenPatchUI(sizeCheck.Result);
+            SettingPatch(sizeCheck.Result);
         }
+        // 로딩화면 닫기
+        UIManager.uiManager.CloseLoadingUI();
     }
-
-    /// <summary>
-    /// UpdateCurent UpdateSize UpdateProgress
-    /// </summary>
-    public Action<long, long, float> UpdatePatchUI
-    {
-        get => updatePatchUI;
-        set
-        {
-            if (value == null)
-            {
-                Debug.LogError("value is null(GameManager->UpdatePatchUI)");
-            }
-            else
-                updatePatchUI = value;
-        }
-    }
-    private Action<long, long, float> updatePatchUI;    
     // UIPatchButton에 등록할 함수
     public void DownloadPatch()
     {
         StartCoroutine(CoPatchDownLoad());
     }
-   
+
     IEnumerator CoPatchDownLoad()
-    {   
-        AsyncOperationHandle patch = Addressables.DownloadDependenciesAsync("Patch", true);        
+    {
+        AsyncOperationHandle patch = Addressables.DownloadDependenciesAsync("Patch", true);
         yield return StartCoroutine(UpdateUI(patch));
-        UIManager.uiManager.OpenLoginUI();
+        UIManager.uiManager.ChangeUINavgation(GameState.Login);
+        ClosePatchUI();
     }
     IEnumerator UpdateUI(AsyncOperationHandle _handle)
     {
-        while(!_handle.IsValid())
-        {
-            yield return null;
+        while (_handle.IsValid())
+        {   
             DownloadStatus downstatus = _handle.GetDownloadStatus();
-            UpdatePatchUI(downstatus.DownloadedBytes, downstatus.TotalBytes, downstatus.Percent);            
+            UpdatePatchUI(downstatus.DownloadedBytes, downstatus.TotalBytes, downstatus.Percent);
+            yield return null;
         }
     }
     #endregion
+
 }

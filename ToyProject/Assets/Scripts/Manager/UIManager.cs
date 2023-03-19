@@ -17,7 +17,6 @@ public class UIManager : MonoBehaviour
         {
             Destroy(uiManager);
         }
-        Current = unLogin;
     }    
 
     // Current UINavigation
@@ -38,10 +37,14 @@ public class UIManager : MonoBehaviour
     /// <param name="GameState"></param>
     public void ChangeUINavgation(GameState _state)
     {
-        Current.gameObject.SetActive(false);
+        if(Current != null)
+        {
+            Current.gameObject.SetActive(false);
+        }
         Current = GetUINavigation(_state);
         Current.gameObject.SetActive(true);
         Current.gameObject.transform.localPosition= Vector3.zero;
+        Current.RootShow();
     }
     /// <summary>
     ///  GameState ·Î UINavigation ¹ÝÈ¯
@@ -75,69 +78,6 @@ public class UIManager : MonoBehaviour
         }
         Current.Pop();
     }
-
-    #region Login
-    
-    public Action OpenLoginUI
-    {
-        get
-        {
-            if(Current != unLogin)
-            {
-                Current.gameObject.SetActive(false);
-                Current = unLogin;
-            }
-            return openLoginUi;
-        }
-        set
-        {
-            if (value == null)
-            {
-                Debug.LogError("value is Null(OpenLoginUI)");
-            }
-            else
-                openLoginUi = value;
-        }
-
-
-    }
-    /// <summary>
-    /// PatchSize 
-    /// </summary>
-    public Action<long> OpenPatchUI
-    {
-        get
-        {
-            if (Current != unLogin)
-            {
-                Current.gameObject.SetActive(false);
-                Current = unLogin;
-            }
-            return openPatchUI;
-        }
-        set
-        {
-            if (value == null)
-            {
-                Debug.LogError("value is Null(OpenPatchUI");
-            }
-            else
-            {
-                openPatchUI = value;
-            }
-        }
-
-    }
-    private Action openLoginUi;
-    private Action<long> openPatchUI;
-    #endregion
-    #region Lobby
-
-
-    #endregion
-
-
-
 
     #region LoadingUI
     [SerializeField]

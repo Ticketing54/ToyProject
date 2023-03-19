@@ -48,6 +48,7 @@ public class AuthManager
     public FirebaseAuth Auth { get; private set; }
     public FirebaseApp App { get; private set; }
     public FirebaseUser User { get; private set; }    
+    public UserInfo UserData { get; private set; }
     public DatabaseReference Reference { get; private set; }
     
     /// <summary>
@@ -98,10 +99,34 @@ public class AuthManager
                     }
                 }
                 else
-                {
-                    UIManager.uiManager.OFFDontClick();                                
-                    GameManager.Instance.ChangeState(GameState.Lobby);
+                {   
                     User = task.Result;
+                    Reference.Child("User").Child(User.UserId).GetValueAsync().ContinueWith(
+                        (task) =>
+                        { 
+                            if(task.IsCompleted)
+                            {
+                                DataSnapshot datasnapshot = task.Result;
+                                UserData = JsonUtility.FromJson<UserInfo>(datasnapshot.GetRawJsonValue());
+
+                                if(UserData.nickname == "")
+                                {
+                                    // 닉네임 설정으로
+                                }
+                                else
+                                {
+                                    // 로비화면 으로 
+                                }
+                            }
+                            else
+                            {
+                                User = null;
+                                GameManager.Instance.ChangeState(GameState.Lobby);
+                            }
+                        });
+
+                    UIManager.uiManager.OFFDontClick();
+                    GameManager.Instance.ChangeState(GameState.Lobby);
                 }
             });
     }
@@ -158,7 +183,7 @@ public class AuthManager
                 {
                     UIManager.uiManager.OFFDontClick();
                      UIManager.uiManager.CurrentPop();
-                    User temp = new ();                    
+                    UserInfo temp = new ();                    
                     string jsondata = JsonUtility.ToJson(temp);
                     Reference.Child("User").Child(task.Result.UserId).SetRawJsonValueAsync(jsondata);
                   
@@ -178,7 +203,7 @@ public class AuthManager
                 else if (task.IsCompleted)
                 {
                     DataSnapshot snapshot = task.Result;
-                    User user = JsonUtility.FromJson<User>(snapshot.GetRawJsonValue());
+                    UserInfo user = JsonUtility.FromJson<UserInfo>(snapshot.GetRawJsonValue());
                     
                 }
             }

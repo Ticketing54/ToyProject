@@ -4,15 +4,22 @@ using UnityEngine;
 
 public abstract class UINavigation : MonoBehaviour
 {
+    [SerializeField]
+    protected UIView rootView;
     protected Stack<UIView> history;
-    protected UIView current;    
-
+    protected UIView current;
 
     public virtual void Awake()
     {   
         history = new Stack<UIView>();
     }
 
+    public void RootShow()
+    {
+        rootView.gameObject.SetActive(true);
+        current = rootView;
+        rootView.Show();
+    }
     
     public virtual void Push(UIView _uiview)
     {
