@@ -11,6 +11,11 @@ public class NavSign : UINavigation
     UIView regist;
     [SerializeField]
     UIView nickNameSetting;
+    public override void Awake()
+    {
+        base.Awake();
+        AuthManager.Instance.OpenNickNameUI += () => { Push(nickNameSetting); };
+    }
 
     public void OnClickRegistButton() { Push(regist); }    
     public void OnClickPopButton() { Pop(); }

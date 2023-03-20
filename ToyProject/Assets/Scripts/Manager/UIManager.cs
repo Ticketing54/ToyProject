@@ -81,16 +81,9 @@ public class UIManager : MonoBehaviour
 
     #region LoadingUI
     [SerializeField]
-    LoadingUI loadingUI;
-    public void OpenLoadingUI()
-    {
-        loadingUI.gameObject.SetActive(true);
-        loadingUI.Show();
-    }
-    /// <summary>
-    /// 종료 시 자동으로 SetActive False;
-    /// </summary>
-    public void CloseLoadingUI() { loadingUI.Hide(); }
+    GameObject loadingUI;
+    public void OpenLoadingUI() { loadingUI.gameObject.SetActive(true); }
+    public void CloseLoadingUI() { loadingUI.gameObject.SetActive(false); }
     #endregion
 
     #region DontClick && ErrorMessage    

@@ -17,6 +17,7 @@ public abstract class UINavigation : MonoBehaviour
     public void RootShow()
     {
         rootView.gameObject.SetActive(true);
+        history.Clear();
         current = rootView;
         rootView.Show();
     }

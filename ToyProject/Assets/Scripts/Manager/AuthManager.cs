@@ -50,6 +50,8 @@ public class AuthManager
     public FirebaseUser User { get; private set; }    
     public UserInfo UserData { get; private set; }
     public DatabaseReference Reference { get; private set; }
+
+    public Action OpenNickNameUI;
     
     /// <summary>
     /// Login : ID와 Password, 결과에대한 UI표시함수
@@ -68,8 +70,9 @@ public class AuthManager
             (task) =>
             {
                 if(task.IsCanceled)
-                {
+                {   
                     Debug.Log("Login Canceled");
+                    UIManager.uiManager.OnErrorMessage("로그인 취소");
                 }
                 else if (task.IsFaulted)
                 {   
@@ -101,32 +104,33 @@ public class AuthManager
                 else
                 {   
                     User = task.Result;
-                    Reference.Child("User").Child(User.UserId).GetValueAsync().ContinueWith(
+                    Reference.Child("User").Child(User.UserId).GetValueAsync().ContinueWithOnMainThread(
                         (task) =>
                         { 
                             if(task.IsCompleted)
                             {
                                 DataSnapshot datasnapshot = task.Result;
-                                UserData = JsonUtility.FromJson<UserInfo>(datasnapshot.GetRawJsonValue());
+                                string temp = datasnapshot.GetRawJsonValue();
+                                UserData = JsonUtility.FromJson<UserInfo>(temp);
 
                                 if(UserData.nickname == "")
-                                {
-                                    // 닉네임 설정으로
+                                {   
+                                    OpenNickNameUI();
+                                    UIManager.uiManager.OFFDontClick();
                                 }
                                 else
                                 {
-                                    // 로비화면 으로 
+                                    GameManager.Instance.ChangeState(GameState.Lobby);
                                 }
                             }
                             else
                             {
+                                // 따로 FirebaseDataBase에 입력하게 만들어 아이디 삭제 할 것
+                                //Reference.Child("Error").Child("AuthID").SetValueAsync(User.UserId);
                                 User = null;
-                                GameManager.Instance.ChangeState(GameState.Lobby);
+                                GameManager.Instance.ChangeState(GameState.Login);
                             }
                         });
-
-                    UIManager.uiManager.OFFDontClick();
-                    GameManager.Instance.ChangeState(GameState.Lobby);
                 }
             });
     }
@@ -147,7 +151,7 @@ public class AuthManager
                 if (task.IsCanceled)
                 {
                     Debug.Log("Regist Canceled");
-                    //UIManager.uiManager.OnErrorMessage("회원 가입이 취소 되었습니다.");
+                    UIManager.uiManager.OnErrorMessage("회원 가입이 취소 되었습니다.");
                 }
                 else if (task.IsFaulted)
                 {
@@ -186,28 +190,25 @@ public class AuthManager
                     UserInfo temp = new ();                    
                     string jsondata = JsonUtility.ToJson(temp);
                     Reference.Child("User").Child(task.Result.UserId).SetRawJsonValueAsync(jsondata);
-                  
                 }
             });
     }
+    public void SetNickName(string _nicName)
+    {
+        UIManager.uiManager.OnDontClick();
 
-    public void ReadUser(string _userid)
-    {   
-        Reference.Child(_userid).GetValueAsync().ContinueWith(
-            task =>
+        Reference.Child("User").Child(User.UserId).Child("nickname").SetValueAsync(_nicName).ContinueWithOnMainThread(
+            (task) =>
             {
-                if(task.IsFaulted)
+                if(task.IsCompleted)
                 {
-                    Debug.LogError("Firebase ReadUser is fail");
+                    GameManager.Instance.ChangeState(GameState.Lobby);
+                    UIManager.uiManager.OFFDontClick();
                 }
-                else if (task.IsCompleted)
+                else
                 {
-                    DataSnapshot snapshot = task.Result;
-                    UserInfo user = JsonUtility.FromJson<UserInfo>(snapshot.GetRawJsonValue());
-                    
+                    UIManager.uiManager.OnErrorMessage("NicName 등록 오류");
                 }
-            }
-        );
-    }  
-    
+            });
+    }
 }
