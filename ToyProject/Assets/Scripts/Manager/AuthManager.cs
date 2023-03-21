@@ -211,4 +211,36 @@ public class AuthManager
                 }
             });
     }
+    /// <summary>
+    /// 유저를 찾은 후 할 행동
+    /// </summary>
+    /// <param name="NickName"></param>
+    /// <param name="Action(UserID,UserInfo)"></param>
+    public void FindUser(string _nickName, Action<string,UserInfo> _action)
+    {
+        Reference.Child("User").OrderByChild("nickname").EqualTo(_nickName).GetValueAsync().ContinueWithOnMainThread(
+            (task) =>
+            {
+                if(task.IsFaulted)
+                {
+                    Debug.Log("없음");
+                }
+                else if(task.IsCompleted)
+                {
+                    DataSnapshot snapshot = task.Result;
+                    foreach(DataSnapshot child in snapshot.Children)
+                    {
+                        _action(child.Key.ToString(), new UserInfo(_nickName));
+                    }
+                }
+            });
+    }
+    /// <summary>
+    ///  계정에 등록된 친구 리스트 외 Action<UserID, UserInfo>
+    /// </summary>
+    /// <param name="Action(UserID,UserInfo)"></param>
+    public void FindFriends(Action<string,UserInfo> _action)
+    {
+
+    }
 }

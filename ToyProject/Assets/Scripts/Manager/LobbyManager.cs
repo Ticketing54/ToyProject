@@ -35,7 +35,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         UIManager.uiManager.OFFDontClick();
-
     }
     public override void OnDisconnected(DisconnectCause cause)
     {
