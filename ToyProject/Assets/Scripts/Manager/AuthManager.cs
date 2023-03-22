@@ -243,4 +243,12 @@ public class AuthManager
     {
 
     }
+    public void AddFriends()
+    {
+
+    }
+    public void RemoveFriend()
+    {
+
+    }
 }
