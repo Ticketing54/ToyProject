@@ -8,10 +8,6 @@ public class UserInfo
     public string UserId;
     public string NickName;
     public List<string> Friends;
-    public UserInfo(string _userId ,string _nickName="",List<string> _friends = null)
-    {
-        UserId = _userId;
-        NickName = _nickName;
-        Friends = _friends;
-    }
+    public List<string> AddFriendSendList;
+    public List<string> AddFriendReceiveList;
 }

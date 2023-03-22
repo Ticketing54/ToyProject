@@ -189,7 +189,8 @@ public class AuthManager
                 {
                     UIManager.uiManager.OFFDontClick();
                     UIManager.uiManager.CurrentPop();
-                    UserInfo temp = new (task.Result.UserId);
+                    UserInfo temp = new ();
+                    temp.UserId = task.Result.UserId;                    
                     string jsondata = JsonUtility.ToJson(temp);
                     Reference.Child("User").Child(task.Result.UserId).SetRawJsonValueAsync(jsondata);
                 }
@@ -258,7 +259,7 @@ public class AuthManager
     
 
     /// <summary>
-    /// [NickName] 을 사용하여 유저를 찾은 후 할 행동
+    /// [NickName] 을 사용하여 유저를 찾은 후 할 행동 (닉네임이라 여러명)
     /// </summary>
     /// <param name="NickName"></param>
     /// <param name="Action(UserID,UserInfo)"></param>
@@ -285,7 +286,7 @@ public class AuthManager
             });
     }
     /// <summary>
-    /// [UserID] 를 사용하여 유저를 찾은 후 할 행동
+    /// [UserID] 를 사용하여 유저를 찾은 후 할 행동 (UID라 한명)
     /// </summary>
     /// <param name="NickName"></param>
     /// <param name="Action(UserID,UserInfo)"></param>
