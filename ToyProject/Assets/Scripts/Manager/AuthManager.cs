@@ -27,7 +27,7 @@ public class AuthManager
     public IEnumerator Init()
     {
         User = null;
-        yield return FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(
+        yield return FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(
             (task) =>
             {
                 if(task.Result == DependencyStatus.Available)
@@ -35,6 +35,7 @@ public class AuthManager
                     Auth = FirebaseAuth.DefaultInstance;
                     App = FirebaseApp.DefaultInstance;
                     Reference = FirebaseDatabase.DefaultInstance.RootReference;
+                    Reference.Child("ChatRoom").ValueChanged += HandleMessageChanged;
                 }
                 else
                 {
@@ -52,7 +53,8 @@ public class AuthManager
     public DatabaseReference Reference { get; private set; }
 
     public Action OpenNickNameUI;
-    
+
+    #region Auth User
     /// <summary>
     /// Login : ID와 Password, 결과에대한 UI표시함수
     /// </summary>
@@ -113,7 +115,7 @@ public class AuthManager
                                 string temp = datasnapshot.GetRawJsonValue();
                                 UserData = JsonUtility.FromJson<UserInfo>(temp);
 
-                                if(UserData.nickname == "")
+                                if(UserData.NickName == "")
                                 {   
                                     OpenNickNameUI();
                                     UIManager.uiManager.OFFDontClick();
@@ -186,8 +188,8 @@ public class AuthManager
                 else
                 {
                     UIManager.uiManager.OFFDontClick();
-                     UIManager.uiManager.CurrentPop();
-                    UserInfo temp = new ();                    
+                    UIManager.uiManager.CurrentPop();
+                    UserInfo temp = new (task.Result.UserId);
                     string jsondata = JsonUtility.ToJson(temp);
                     Reference.Child("User").Child(task.Result.UserId).SetRawJsonValueAsync(jsondata);
                 }
@@ -212,15 +214,60 @@ public class AuthManager
             });
     }
     /// <summary>
-    /// 유저를 찾은 후 할 행동
+    /// UI활성화시에만 [친구찾기]
+    /// </summary>
+    public Action<UserInfo> AUpdateFriendsList
+    {
+        get => aUpdateFriendsList;
+        set
+        {
+            if(aUpdateFriendsList == null)
+            {
+                Debug.Log("(Action) updateFriendList is Null");
+                return;
+            }
+            else
+            {
+                aUpdateFriendsList = value;
+            }
+        }
+    }
+    /// <summary>
+    /// UI활성화시에만 [친구목록]
+    /// </summary>
+    public Action<UserInfo> AUpdateFindUser
+    {
+        get => aUpdateFindUser;
+        set
+        {
+            if (aUpdateFindUser == null)
+            {
+                Debug.Log("(Action) updateFriendList is Null");
+                return;
+            }
+            else
+            {
+                aUpdateFindUser = value;
+            }
+        }
+    }
+    private Action<UserInfo> aUpdateFriendsList;
+    private Action<UserInfo> aUpdateFindUser;
+    public void UpdateFindUser(string _userID) { FindUser_UserID(_userID, AUpdateFindUser); }
+    public void UpdateFriendsList(string _nickName) { FindUser_UserID(_nickName, AUpdateFriendsList); }
+    
+
+    /// <summary>
+    /// [NickName] 을 사용하여 유저를 찾은 후 할 행동
     /// </summary>
     /// <param name="NickName"></param>
     /// <param name="Action(UserID,UserInfo)"></param>
-    public void FindUser(string _nickName, Action<string,UserInfo> _action)
-    {
+    void FindUser_NickName(string _nickName, Action<UserInfo> _action)
+    {   
         Reference.Child("User").OrderByChild("nickname").EqualTo(_nickName).GetValueAsync().ContinueWithOnMainThread(
             (task) =>
             {
+                
                 if(task.IsFaulted)
                 {
                     Debug.Log("없음");
@@ -230,19 +277,37 @@ public class AuthManager
                     DataSnapshot snapshot = task.Result;
                     foreach(DataSnapshot child in snapshot.Children)
                     {
-                        _action(child.Key.ToString(), new UserInfo(_nickName));
+                        string temp = child.GetRawJsonValue();
+                        UserInfo newUser = JsonUtility.FromJson<UserInfo>(temp);
+                        _action(newUser);
                     }
                 }
             });
     }
     /// <summary>
-    ///  계정에 등록된 친구 리스트 외 Action<UserID, UserInfo>
+    /// [UserID] 를 사용하여 유저를 찾은 후 할 행동
     /// </summary>
+    /// <param name="NickName"></param>
     /// <param name="Action(UserID,UserInfo)"></param>
-    public void FindFriends(Action<string,UserInfo> _action)
+    void FindUser_UserID(string _userId, Action<UserInfo> _action)
     {
-
+        
+        Reference.Child("User").Child(_userId).GetValueAsync().ContinueWithOnMainThread(
+            (task) =>
+            {
+                if (task.IsFaulted)
+                {
+                    Debug.Log("없음");
+                }
+                else if (task.IsCompleted)
+                {
+                    string temp = task.Result.GetRawJsonValue();
+                    UserInfo newUser = JsonUtility.FromJson<UserInfo>(temp);
+                    _action(newUser);
+                }
+            });
     }
+
     public void AddFriends()
     {
 
@@ -251,4 +316,55 @@ public class AuthManager
     {
 
     }
+    #endregion
+    
+    #region  Chat
+    /// <summary>
+    /// SendMessage (UserID, Message)
+    /// </summary>
+    /// <param name="Receiver"></param>
+    /// <param name="_message"></param>
+    public void OpenChat(string _recevier)
+    {
+        Reference.Child("Chat").Child(RoomName(_recevier)).GetValueAsync().ContinueWithOnMainThread(
+            (task) =>
+            {
+                if(task.IsFaulted)
+                {
+                    Debug.Log("취소");
+                }
+                else if (task.IsCompleted)
+                {
+
+                }
+            });
+        
+    }
+    string RoomName(string _recevier)
+    {
+        string roomName = string.Empty;
+        for(int i=0;i<_recevier.Length;i++)
+        {
+            if(_recevier[i] > User.UserId[i])
+            {
+                roomName = User.UserId + "@" + _recevier;
+                break;
+            }
+            else if (_recevier[i] > User.UserId[i])
+            {
+                roomName = _recevier + "@" + User.UserId;
+                break;
+            }
+        }
+        return roomName;
+    }
+    public void SendMessage(string _receiver, string _message)
+    {
+
+    }
+    private void HandleMessageChanged(object _sender,ValueChangedEventArgs _arg)
+    {
+
+    }
+    #endregion
 }

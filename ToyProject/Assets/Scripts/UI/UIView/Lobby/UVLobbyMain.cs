@@ -10,7 +10,10 @@ public class UVLobbyMain : UIView
 
     private void OnEnable()
     {
-        idText.text = AuthManager.Instance.UserData.nickname;
+        idText.text = AuthManager.Instance.UserData.NickName;
     }
+    public void OnClickFriendButton()
+    {
 
+    }
 }

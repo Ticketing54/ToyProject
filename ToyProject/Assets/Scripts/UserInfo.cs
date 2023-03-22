@@ -2,17 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class UserInfo 
 {
-    public string nickname;
-    public bool playing;
-    public UserInfo(string _nicName="")
+    public string UserId;
+    public string NickName;
+    public List<string> Friends;
+    public UserInfo(string _userId ,string _nickName="",List<string> _friends = null)
     {
-        nickname = _nicName;
-        playing = false;
-    }
-    public UserInfo()
-    {
-        playing = false;
+        UserId = _userId;
+        NickName = _nickName;
+        Friends = _friends;
     }
 }

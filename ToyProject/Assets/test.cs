@@ -14,10 +14,7 @@ public class test : MonoBehaviour
         if (!check)
             return;
 
-        if(Input.GetKeyDown(KeyCode.A))
-        {
-            AuthManager.Instance.FindUser("test", (id,test) => { Debug.Log(id + " : " + test.nickname + "\n"); });
-        }
+        
     }
     IEnumerator cotest()
     {

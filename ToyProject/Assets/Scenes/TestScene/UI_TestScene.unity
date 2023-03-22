@@ -301,50 +301,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1309488972
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1309488973}
-  - component: {fileID: 1309488974}
-  m_Layer: 0
-  m_Name: test
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1309488973
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1309488972}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 960, y: 540, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1309488974
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1309488972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd5a593cdf6ce3e4baad5bec12cadd47, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &6945298754612647291
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -368,6 +324,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 363182044163280885, guid: 9ad6f97e2658c36458aaf0863dc4dd1a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 115
+      objectReference: {fileID: 0}
     - target: {fileID: 1070449981117058929, guid: 9ad6f97e2658c36458aaf0863dc4dd1a, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -399,6 +359,10 @@ PrefabInstance:
     - target: {fileID: 1136684573302796064, guid: 9ad6f97e2658c36458aaf0863dc4dd1a, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1144794891632023629, guid: 9ad6f97e2658c36458aaf0863dc4dd1a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 13.910706
       objectReference: {fileID: 0}
     - target: {fileID: 1239158472620472190, guid: 9ad6f97e2658c36458aaf0863dc4dd1a, type: 3}
       propertyPath: m_AnchorMax.y
@@ -447,6 +411,10 @@ PrefabInstance:
     - target: {fileID: 2560278927439607885, guid: 9ad6f97e2658c36458aaf0863dc4dd1a, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711424249837150163, guid: 9ad6f97e2658c36458aaf0863dc4dd1a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 13.910706
       objectReference: {fileID: 0}
     - target: {fileID: 2780262987763671697, guid: 9ad6f97e2658c36458aaf0863dc4dd1a, type: 3}
       propertyPath: m_AnchorMax.y
@@ -511,6 +479,10 @@ PrefabInstance:
     - target: {fileID: 3853881123355590640, guid: 9ad6f97e2658c36458aaf0863dc4dd1a, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4155424329839009524, guid: 9ad6f97e2658c36458aaf0863dc4dd1a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 13.910706
       objectReference: {fileID: 0}
     - target: {fileID: 4758641562997315509, guid: 9ad6f97e2658c36458aaf0863dc4dd1a, type: 3}
       propertyPath: m_AnchorMax.y
@@ -591,6 +563,10 @@ PrefabInstance:
     - target: {fileID: 6275224558780614563, guid: 9ad6f97e2658c36458aaf0863dc4dd1a, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6881720887728142389, guid: 9ad6f97e2658c36458aaf0863dc4dd1a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -14.611603
       objectReference: {fileID: 0}
     - target: {fileID: 6945298753177907256, guid: 9ad6f97e2658c36458aaf0863dc4dd1a, type: 3}
       propertyPath: m_IsActive
