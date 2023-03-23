@@ -23,7 +23,15 @@ public class AuthManager
             return instance;
         }
     }
+    public void Test()
+    {
+        Dictionary<string, object> dic = new Dictionary<string, object>();
+        dic["a"] = "test";
+        dic["b"] = "test1";
+        dic["c"] = "test2";
 
+        Reference.Child(User.UserId).Child("test").Push().SetValueAsync(dic);
+    }
     public IEnumerator Init()
     {
         User = null;
@@ -49,12 +57,12 @@ public class AuthManager
     public FirebaseAuth Auth { get; private set; }
     public FirebaseApp App { get; private set; }
     public FirebaseUser User { get; private set; }    
-    public UserInfo UserData { get; private set; }
     public DatabaseReference Reference { get; private set; }
 
     public Action OpenNickNameUI;
 
     #region Auth User
+    
     /// <summary>
     /// Login : ID와 Password, 결과에대한 UI표시함수
     /// </summary>
@@ -106,31 +114,26 @@ public class AuthManager
                 else
                 {   
                     User = task.Result;
-                    Reference.Child("User").Child(User.UserId).GetValueAsync().ContinueWithOnMainThread(
+                    Reference.Child("User").Child(User.UserId).Child("NickName").GetValueAsync().ContinueWithOnMainThread(
                         (task) =>
                         { 
-                            if(task.IsCompleted)
+                            if(task.IsFaulted || task.IsCanceled)
                             {
-                                DataSnapshot datasnapshot = task.Result;
-                                string temp = datasnapshot.GetRawJsonValue();
-                                UserData = JsonUtility.FromJson<UserInfo>(temp);
+                                GameManager.Instance.ChangeState(GameState.Login);
+                                UIManager.uiManager.OnErrorMessage("로그인 정보가 존재하지 않습니다.");
+                                return;
+                            }
 
-                                if(UserData.NickName == "")
-                                {   
-                                    OpenNickNameUI();
-                                    UIManager.uiManager.OFFDontClick();
-                                }
-                                else
-                                {
-                                    GameManager.Instance.ChangeState(GameState.Lobby);
-                                }
+                            DataSnapshot datasnapshot = task.Result;
+
+                            if(datasnapshot.Exists)             // 닉네임 설정이 되있는경우
+                            {
+                                GameManager.Instance.ChangeState(GameState.Lobby);
                             }
                             else
                             {
-                                // 따로 FirebaseDataBase에 입력하게 만들어 아이디 삭제 할 것
-                                //Reference.Child("Error").Child("AuthID").SetValueAsync(User.UserId);
-                                User = null;
-                                GameManager.Instance.ChangeState(GameState.Login);
+                                OpenNickNameUI();
+                                UIManager.uiManager.OFFDontClick();
                             }
                         });
                 }
@@ -189,10 +192,10 @@ public class AuthManager
                 {
                     UIManager.uiManager.OFFDontClick();
                     UIManager.uiManager.CurrentPop();
-                    UserInfo temp = new ();
-                    temp.UserId = task.Result.UserId;                    
-                    string jsondata = JsonUtility.ToJson(temp);
-                    Reference.Child("User").Child(task.Result.UserId).SetRawJsonValueAsync(jsondata);
+
+                    Dictionary<string, object> temp = new Dictionary<string, object>();
+                    temp["UserID"] = task.Result.UserId;
+                    Reference.Child("User").Child(task.Result.UserId).SetValueAsync(temp);
                 }
             });
     }
@@ -200,7 +203,7 @@ public class AuthManager
     {
         UIManager.uiManager.OnDontClick();
 
-        Reference.Child("User").Child(User.UserId).Child("nickname").SetValueAsync(_nicName).ContinueWithOnMainThread(
+        Reference.Child("User").Child(User.UserId).Child("NickName").SetValueAsync(_nicName).ContinueWithOnMainThread(
             (task) =>
             {
                 if(task.IsCompleted)
@@ -217,46 +220,55 @@ public class AuthManager
     /// <summary>
     /// UI활성화시에만 [친구찾기]
     /// </summary>
-    public Action<UserInfo> AUpdateFriendsList
-    {
-        get => aUpdateFriendsList;
-        set
-        {
-            if(aUpdateFriendsList == null)
-            {
-                Debug.Log("(Action) updateFriendList is Null");
-                return;
-            }
-            else
-            {
-                aUpdateFriendsList = value;
-            }
-        }
-    }
+    public Action<UserInfo> AUpdateFriendsList;
     /// <summary>
     /// UI활성화시에만 [친구목록]
     /// </summary>
-    public Action<UserInfo> AUpdateFindUser
-    {
-        get => aUpdateFindUser;
-        set
-        {
-            if (aUpdateFindUser == null)
-            {
-                Debug.Log("(Action) updateFriendList is Null");
-                return;
-            }
-            else
-            {
-                aUpdateFindUser = value;
-            }
-        }
-    }
-    private Action<UserInfo> aUpdateFriendsList;
-    private Action<UserInfo> aUpdateFindUser;
-    public void UpdateFindUser(string _userID) { FindUser_UserID(_userID, AUpdateFindUser); }
-    public void UpdateFriendsList(string _nickName) { FindUser_UserID(_nickName, AUpdateFriendsList); }
+    public Action<UserInfo,bool> AUpdateFindUser;
     
+    public void UpdateFriendList()
+    {
+
+    }
+    public void UpdateFindUserList(string _nickName)
+    {
+        //Reference.Child("User").Child(User.UserId).Child(AddFriendType.AddFriendSendList.ToString()).GetValueAsync().ContinueWithOnMainThread(
+        //   (task) =>
+        //   {
+        //       List<string> friendList = null;
+
+        //       if (task.IsFaulted)
+        //       {
+        //           Debug.Log("없음");
+        //       }
+        //       else if (task.IsCompleted)
+        //       {
+        //           friendList = task.Result;
+                
+        //       }
+        //   });
+        //Reference.Child("User").OrderByChild("nickname").EqualTo(_nickName).GetValueAsync().ContinueWithOnMainThread(
+        //   (task) =>
+        //   {
+        //       if (AUpdateFindUser == null)
+        //           return;
+
+        //       if (task.IsFaulted)
+        //       {
+        //           Debug.Log("없음");
+        //       }
+        //       else if (task.IsCompleted)
+        //       {
+        //           DataSnapshot snapshot = task.Result;
+        //           foreach (DataSnapshot child in snapshot.Children)
+        //           {
+        //               string temp = child.GetRawJsonValue();
+        //               UserInfo newUser = JsonUtility.FromJson<UserInfo>(temp);
+        //               _action(newUser);
+        //           }
+        //       }
+        //   });
+    }
 
     /// <summary>
     /// [NickName] 을 사용하여 유저를 찾은 후 할 행동 (닉네임이라 여러명)
@@ -265,25 +277,7 @@ public class AuthManager
     /// <param name="Action(UserID,UserInfo)"></param>
     void FindUser_NickName(string _nickName, Action<UserInfo> _action)
     {   
-        Reference.Child("User").OrderByChild("nickname").EqualTo(_nickName).GetValueAsync().ContinueWithOnMainThread(
-            (task) =>
-            {
-                
-                if(task.IsFaulted)
-                {
-                    Debug.Log("없음");
-                }
-                else if(task.IsCompleted)
-                {
-                    DataSnapshot snapshot = task.Result;
-                    foreach(DataSnapshot child in snapshot.Children)
-                    {
-                        string temp = child.GetRawJsonValue();
-                        UserInfo newUser = JsonUtility.FromJson<UserInfo>(temp);
-                        _action(newUser);
-                    }
-                }
-            });
+       
     }
     /// <summary>
     /// [UserID] 를 사용하여 유저를 찾은 후 할 행동 (UID라 한명)

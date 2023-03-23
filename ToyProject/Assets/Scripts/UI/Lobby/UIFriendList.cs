@@ -6,12 +6,12 @@ public class UIFriendList : MonoBehaviour
 {   
     // Sample
     [SerializeField]
-    UIFriend sampleUiFriend;
+    UIFriendSlot sampleUiFriend;
     [SerializeField]
     GameObject poolParent;
     
-    List<UIFriend> friendList;
-    Queue<UIFriend> uiFriendPool;
+    List<UIFriendSlot> friendList;
+    Queue<UIFriendSlot> uiFriendPool;
     GameObject contentObj;
 
     private void Awake()
@@ -31,31 +31,21 @@ public class UIFriendList : MonoBehaviour
 
     void SettingFriendList()
     {
-        UserInfo player = AuthManager.Instance.UserData;
-        if (player.Friends == null || player.Friends.Count == 0)
-        {
-            // 빈 화면의 UI표시
-            return;
-        }
-            
-        foreach(string s in player.Friends)
-        {
-            //// 
-        }
+        
     }
     private void Push(UserInfo _userinfo)
     {
-        UIFriend newfriend = uiFriendPool.Dequeue();
+        UIFriendSlot newfriend = uiFriendPool.Dequeue();
         if (newfriend == null)
         {
-            newfriend = Instantiate<UIFriend>(sampleUiFriend);
+            newfriend = Instantiate<UIFriendSlot>(sampleUiFriend);
         }
         newfriend.gameObject.SetActive(true);
         newfriend.transform.localScale = new Vector3(1, 1, 1);
         newfriend.transform.SetParent(contentObj.transform);
         friendList.Add(newfriend);
     }
-    private void Pop(UIFriend _uiFriend)
+    private void Pop(UIFriendSlot _uiFriend)
     {
         if(uiFriendPool.Count>=5)
         {
@@ -76,7 +66,7 @@ public class UIFriendList : MonoBehaviour
     private void Remove(string _userID)
     {
         
-        foreach(UIFriend one in friendList)
+        foreach(UIFriendSlot one in friendList)
         {
             if(one.UserInfo.UserId == _userID)
             {
@@ -91,7 +81,7 @@ public class UIFriendList : MonoBehaviour
     
     private void Reset()
     {
-        foreach(UIFriend one in friendList)
+        foreach(UIFriendSlot one in friendList)
         {
             Pop(one);
         }

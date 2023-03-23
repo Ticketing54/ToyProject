@@ -7,18 +7,15 @@ public class test : MonoBehaviour
     bool check = false;
     private void Start()
     {
-        StartCoroutine(cotest());
+        
     }
     private void Update()
     {
-        if (!check)
-            return;
-
+        if(Input.GetKeyDown(KeyCode.A))
+        {
+            AuthManager.Instance.Test();
+        }
         
     }
-    IEnumerator cotest()
-    {
-        yield return StartCoroutine(AuthManager.Instance.Init());
-        check = true;
-    }
+    
 }
