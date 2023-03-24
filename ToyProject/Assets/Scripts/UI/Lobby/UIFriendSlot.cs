@@ -7,15 +7,16 @@ public class UIFriendSlot : MonoBehaviour
 {
     [SerializeField]
     TextMeshProUGUI nicName;
-    public UserInfo UserInfo { get; private set; }
-    public virtual void SetProfile(string _userId,UserInfo _userinfo)
-    {  
-        UserInfo = _userinfo;
-        nicName.text = _userinfo.NickName;
+    string userId;
+    string userName;
+    public virtual void SetProfile(string _userId,string _userName)
+    {
+        userId = _userId;
+        nicName.text = _userName;
     }
     public virtual void Clear()
     {   
         nicName.text = "";
-        UserInfo = null;
+        userId = "";
     }
 }

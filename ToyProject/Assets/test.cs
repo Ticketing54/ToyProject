@@ -13,7 +13,7 @@ public class test : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.A))
         {
-            AuthManager.Instance.Test();
+            
         }
         
     }

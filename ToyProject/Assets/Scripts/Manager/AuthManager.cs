@@ -23,15 +23,7 @@ public class AuthManager
             return instance;
         }
     }
-    public void Test()
-    {
-        Dictionary<string, object> dic = new Dictionary<string, object>();
-        dic["a"] = "test";
-        dic["b"] = "test1";
-        dic["c"] = "test2";
-
-        Reference.Child(User.UserId).Child("test").Push().SetValueAsync(dic);
-    }
+    
     public IEnumerator Init()
     {
         User = null;
@@ -220,64 +212,37 @@ public class AuthManager
     /// <summary>
     /// UI활성화시에만 [친구찾기]
     /// </summary>
-    public Action<UserInfo> AUpdateFriendsList;
+    public Action<UserInfo> AUpdateFriendsList { get; set; }
     /// <summary>
     /// UI활성화시에만 [친구목록]
     /// </summary>
-    public Action<UserInfo,bool> AUpdateFindUser;
+    public Action<string,string> AUpdateFindUser { get; set; }
     
     public void UpdateFriendList()
     {
 
     }
-    public void UpdateFindUserList(string _nickName)
+    public void FindUserList(string _nickName)
     {
-        //Reference.Child("User").Child(User.UserId).Child(AddFriendType.AddFriendSendList.ToString()).GetValueAsync().ContinueWithOnMainThread(
-        //   (task) =>
-        //   {
-        //       List<string> friendList = null;
+        Reference.Child("User").OrderByChild("NickName").EqualTo(_nickName).GetValueAsync().ContinueWithOnMainThread(
+           (task) =>
+           {
+               if (AUpdateFindUser == null)
+                   return;
 
-        //       if (task.IsFaulted)
-        //       {
-        //           Debug.Log("없음");
-        //       }
-        //       else if (task.IsCompleted)
-        //       {
-        //           friendList = task.Result;
-                
-        //       }
-        //   });
-        //Reference.Child("User").OrderByChild("nickname").EqualTo(_nickName).GetValueAsync().ContinueWithOnMainThread(
-        //   (task) =>
-        //   {
-        //       if (AUpdateFindUser == null)
-        //           return;
-
-        //       if (task.IsFaulted)
-        //       {
-        //           Debug.Log("없음");
-        //       }
-        //       else if (task.IsCompleted)
-        //       {
-        //           DataSnapshot snapshot = task.Result;
-        //           foreach (DataSnapshot child in snapshot.Children)
-        //           {
-        //               string temp = child.GetRawJsonValue();
-        //               UserInfo newUser = JsonUtility.FromJson<UserInfo>(temp);
-        //               _action(newUser);
-        //           }
-        //       }
-        //   });
-    }
-
-    /// <summary>
-    /// [NickName] 을 사용하여 유저를 찾은 후 할 행동 (닉네임이라 여러명)
-    /// </summary>
-    /// <param name="NickName"></param>
-    /// <param name="Action(UserID,UserInfo)"></param>
-    void FindUser_NickName(string _nickName, Action<UserInfo> _action)
-    {   
-       
+               if (task.IsFaulted)
+               {
+                   Debug.Log("없음");
+               }
+               else if (task.IsCompleted)
+               {
+                   DataSnapshot snapshot = task.Result;
+                   foreach (DataSnapshot child in snapshot.Children)
+                   {
+                       // 여기부터 합시다
+                   }
+               }
+           });
     }
     /// <summary>
     /// [UserID] 를 사용하여 유저를 찾은 후 할 행동 (UID라 한명)
@@ -303,14 +268,6 @@ public class AuthManager
             });
     }
 
-    public void AddFriends()
-    {
-
-    }
-    public void RemoveFriend()
-    {
-
-    }
     #endregion
     
     #region  Chat

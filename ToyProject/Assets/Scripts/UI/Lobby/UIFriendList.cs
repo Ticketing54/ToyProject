@@ -18,22 +18,20 @@ public class UIFriendList : MonoBehaviour
     {
         friendList = new();
         uiFriendPool = new();
-        contentObj = GetComponent<ScrollRect>().content.gameObject;
+        
     }
 
     private void OnEnable()
     {
-        Reset();
-        if (AuthManager.Instance.User == null)
-            return;
-        SettingFriendList();
+        //Clear();
+        //SettingFriendList();
     }
 
     void SettingFriendList()
     {
         
     }
-    private void Push(UserInfo _userinfo)
+    private void Add(UserInfo _userinfo)
     {
         UIFriendSlot newfriend = uiFriendPool.Dequeue();
         if (newfriend == null)
@@ -45,7 +43,7 @@ public class UIFriendList : MonoBehaviour
         newfriend.transform.SetParent(contentObj.transform);
         friendList.Add(newfriend);
     }
-    private void Pop(UIFriendSlot _uiFriend)
+    private void PoolPush(UIFriendSlot _uiFriend)
     {
         if(uiFriendPool.Count>=5)
         {
@@ -59,31 +57,12 @@ public class UIFriendList : MonoBehaviour
             _uiFriend.gameObject.SetActive(false);
         }
     }
-    /// <summary>
-    /// userID 로 삭제
-    /// </summary>
-    /// <param name="User 고유번호 (UserID)"></param>
-    private void Remove(string _userID)
-    {
-        
-        foreach(UIFriendSlot one in friendList)
-        {
-            if(one.UserInfo.UserId == _userID)
-            {
-                one.transform.SetParent(poolParent.transform);
-                one.Clear();
-                Pop(one);
-                friendList.Remove(one);
-                break;
-            }
-        }
-    }
-    
-    private void Reset()
+
+    private void Clear()
     {
         foreach(UIFriendSlot one in friendList)
         {
-            Pop(one);
+            PoolPush(one);
         }
     }
 }

@@ -2,18 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class UIFindFriendSlot : UIFriendSlot
+public class UIFindUserSlot : UIFriendSlot
 {
     [SerializeField]
     Button AddButton;
 
-    public override void SetProfile(string _userId, UserInfo _userinfo)
+    public override void SetProfile(string _userId, string _userNickname)
     {
-        base.SetProfile(_userId, _userinfo);
+        base.SetProfile(_userId, _userNickname);
+        AddButton.gameObject.SetActive(true);
     }
-
-    public void SetButtonActive() { AddButton.gameObject.SetActive(true); }
-    
     public override void Clear()
     {
         base.Clear();
@@ -21,7 +19,7 @@ public class UIFindFriendSlot : UIFriendSlot
     }
     public void OnClickAddFriendButton()
     {
-        //
+        AddButton.gameObject.SetActive(false);
     }
 
 }
