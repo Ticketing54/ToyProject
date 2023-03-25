@@ -7,7 +7,19 @@ public class UserInfo
 {
     public string UserId;
     public string NickName;
-    public List<string> Friends;
-    public List<string> AddFriendSendList;
-    public List<string> AddFriendReceiveList;
+    public string RecentConnectTime;
+    public UserInfo()
+    {
+        UserId = "";
+        NickName = "";
+        RecentConnectTime = "";
+    }
+    public UserInfo(string _userId,string _nickName="",string _recentConnectTime = "")
+    {
+        UserId = _userId;
+        NickName = _nickName;
+        RecentConnectTime = _recentConnectTime;
+    }
 }
+
+

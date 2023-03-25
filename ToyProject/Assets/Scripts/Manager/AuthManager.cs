@@ -185,12 +185,11 @@ public class AuthManager
                 }
                 else
                 {
+                    Reference.Child("User").Child(task.Result.UserId).Child("UserInfo").SetRawJsonValueAsync(JsonUtility.ToJson(new UserInfo(task.Result.UserId)));
+                    Reference.Child("User").Child(task.Result.UserId).Child("Push").Child("FriendRequest").SetValueAsync(true);
+
                     UIManager.uiManager.OFFDontClick();
                     UIManager.uiManager.CurrentPop();
-
-                    Dictionary<string, object> temp = new Dictionary<string, object>();
-                    temp["UserID"] = task.Result.UserId;
-                    Reference.Child("User").Child(task.Result.UserId).SetValueAsync(temp);
                 }
             });
     }
@@ -198,7 +197,7 @@ public class AuthManager
     {
         UIManager.uiManager.OnDontClick();
 
-        Reference.Child("User").Child(User.UserId).Child("NickName").SetValueAsync(_nicName).ContinueWithOnMainThread(
+        Reference.Child("User").Child(User.UserId).Child("UserInfo").Child("NickName").SetValueAsync(_nicName).ContinueWithOnMainThread(
             (task) =>
             {
                 if(task.IsCompleted)
@@ -216,13 +215,13 @@ public class AuthManager
     public void AddEventListner()
     {
         DatabaseReference reference = Reference.Child("User").Child(User.UserId).Child("Push");
-        reference.Child("FriendRequest").ValueChanged += HandleFriendRequestChanged;
+        reference.Child("FriendRequest").ChildAdded += HandleFriendRequestChanged;
     }
     /// <summary>
     /// Action<UserNickName,UserID>
     /// </summary>
     public Action<string, string> AFriendRequestUI { get; set; }
-    void HandleFriendRequestChanged(object sender, ValueChangedEventArgs args)
+    void HandleFriendRequestChanged(object sender, ChildChangedEventArgs args)
     {
         if (AFriendRequestUI == null)
             return;
