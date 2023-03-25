@@ -3,20 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-public class UIFriendSlot : MonoBehaviour
+public class UIFriendSlot : UIUserSlot
 {
-    [SerializeField]
-    TextMeshProUGUI nicName;
-    string userId;
-    string userName;
-    public virtual void SetProfile(string _userId,string _userName)
+    public void OnClickFriendSlot()
     {
-        userId = _userId;
-        nicName.text = _userName;
-    }
-    public virtual void Clear()
-    {   
-        nicName.text = "";
-        userId = "";
+
     }
 }

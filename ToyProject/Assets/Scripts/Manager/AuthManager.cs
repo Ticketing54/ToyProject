@@ -23,7 +23,7 @@ public class AuthManager
             return instance;
         }
     }
-    
+   
     public IEnumerator Init()
     {
         User = null;
@@ -35,7 +35,6 @@ public class AuthManager
                     Auth = FirebaseAuth.DefaultInstance;
                     App = FirebaseApp.DefaultInstance;
                     Reference = FirebaseDatabase.DefaultInstance.RootReference;
-                    Reference.Child("ChatRoom").ValueChanged += HandleMessageChanged;
                 }
                 else
                 {
@@ -51,7 +50,7 @@ public class AuthManager
     public FirebaseUser User { get; private set; }    
     public DatabaseReference Reference { get; private set; }
 
-    public Action OpenNickNameUI;
+    public Action OpenNickNameUI { get; set; }
 
     #region Auth User
     
@@ -115,7 +114,8 @@ public class AuthManager
                                 UIManager.uiManager.OnErrorMessage("로그인 정보가 존재하지 않습니다.");
                                 return;
                             }
-
+                            // 이벤트 리스너 
+                            AddEventListner();
                             DataSnapshot datasnapshot = task.Result;
 
                             if(datasnapshot.Exists)             // 닉네임 설정이 되있는경우
@@ -124,7 +124,10 @@ public class AuthManager
                             }
                             else
                             {
-                                OpenNickNameUI();
+                                if(OpenNickNameUI != null)
+                                {
+                                    OpenNickNameUI();
+                                }
                                 UIManager.uiManager.OFFDontClick();
                             }
                         });
@@ -209,14 +212,37 @@ public class AuthManager
                 }
             });
     }
+
+    public void AddEventListner()
+    {
+        DatabaseReference reference = Reference.Child("User").Child(User.UserId).Child("Push");
+        reference.Child("FriendRequest").ValueChanged += HandleFriendRequestChanged;
+    }
     /// <summary>
-    /// UI활성화시에만 [친구찾기]
+    /// Action<UserNickName,UserID>
     /// </summary>
+    public Action<string, string> AFriendRequestUI { get; set; }
+    void HandleFriendRequestChanged(object sender, ValueChangedEventArgs args)
+    {
+        if (AFriendRequestUI == null)
+            return;
+
+        if(args.DatabaseError != null)
+        {
+            Debug.LogError(args.DatabaseError.Message);
+            return;
+        }
+
+        foreach(DataSnapshot snapshot in args.Snapshot.Children)
+        {
+            AFriendRequestUI(snapshot.Key, snapshot.Key);
+        }
+    }
     public Action<UserInfo> AUpdateFriendsList { get; set; }
     /// <summary>
-    /// UI활성화시에만 [친구목록]
+    /// UI활성화시에만 (NickName,UID)
     /// </summary>
-    public Action<string,string> AUpdateFindUser { get; set; }
+    public Action<string,string> AUpdateFindUserUI { get; set; }
     
     public void UpdateFriendList()
     {
@@ -227,7 +253,7 @@ public class AuthManager
         Reference.Child("User").OrderByChild("NickName").EqualTo(_nickName).GetValueAsync().ContinueWithOnMainThread(
            (task) =>
            {
-               if (AUpdateFindUser == null)
+               if (AUpdateFindUserUI == null)
                    return;
 
                if (task.IsFaulted)
@@ -239,11 +265,30 @@ public class AuthManager
                    DataSnapshot snapshot = task.Result;
                    foreach (DataSnapshot child in snapshot.Children)
                    {
-                       // 여기부터 합시다
+
+                       AUpdateFindUserUI(_nickName, child.Key);
+                       
                    }
                }
            });
     }
+    public void FriendRequest(string _targetUID)
+    {
+        Reference.Child("User").Child(_targetUID).Child("Push").Child("FriendRequest").SetValueAsync(User.UserId).ContinueWithOnMainThread(
+            (task) =>
+            {
+                if (task.IsCompleted)
+                {
+                    // 좀더 추가 할 예정                    
+                }
+                else
+                {
+                    UIManager.uiManager.OnErrorMessage("알수없는 오류가 발생했습니다.");
+                    Debug.Log(task.Exception);
+                }
+            });
+    }
+
     /// <summary>
     /// [UserID] 를 사용하여 유저를 찾은 후 할 행동 (UID라 한명)
     /// </summary>
@@ -310,13 +355,6 @@ public class AuthManager
         }
         return roomName;
     }
-    public void SendMessage(string _receiver, string _message)
-    {
-
-    }
-    private void HandleMessageChanged(object _sender,ValueChangedEventArgs _arg)
-    {
-
-    }
+  
     #endregion
 }

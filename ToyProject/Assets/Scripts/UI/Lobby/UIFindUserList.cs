@@ -30,11 +30,11 @@ public class UIFindUserList : MonoBehaviour
     private void OnEnable()
     {
         Clear();
-        AuthManager.Instance.AUpdateFindUser += Add;
+        AuthManager.Instance.AUpdateFindUserUI += Add;
     }
     private void OnDisable()
     {
-        AuthManager.Instance.AUpdateFindUser -= Add;
+        AuthManager.Instance.AUpdateFindUserUI -= Add;
     }
 
     public void OnClickFindButton()
@@ -55,6 +55,7 @@ public class UIFindUserList : MonoBehaviour
             newSlot = Instantiate<UIFindUserSlot>(sampleSlot);
         }
         newSlot.gameObject.SetActive(true);
+        newSlot.SetProfile(_userID, _userNickName);
         newSlot.transform.SetParent(contents.transform);
         newSlot.transform.localScale = new Vector3(1, 1, 1);        
         activeSlots.Add(newSlot);

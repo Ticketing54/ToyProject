@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class UIFindUserSlot : UIFriendSlot
+public class UIFindUserSlot : UIUserSlot
 {
     [SerializeField]
     Button AddButton;
@@ -20,6 +20,7 @@ public class UIFindUserSlot : UIFriendSlot
     public void OnClickAddFriendButton()
     {
         AddButton.gameObject.SetActive(false);
+        AuthManager.Instance.FriendRequest(userId);
     }
 
 }
