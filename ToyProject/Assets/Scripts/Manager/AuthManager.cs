@@ -49,7 +49,6 @@ public class AuthManager
     public FirebaseApp App { get; private set; }
     public FirebaseUser User { get; private set; }    
     public DatabaseReference Reference { get; private set; }
-
     public Action OpenNickNameUI { get; set; }
 
     #region Auth User
@@ -105,7 +104,7 @@ public class AuthManager
                 else
                 {   
                     User = task.Result;
-                    Reference.Child("User").Child(User.UserId).Child("NickName").GetValueAsync().ContinueWithOnMainThread(
+                    Reference.Child("User").Child(User.UserId).GetValueAsync().ContinueWithOnMainThread(
                         (task) =>
                         { 
                             if(task.IsFaulted || task.IsCanceled)
@@ -116,15 +115,14 @@ public class AuthManager
                             }
                             // 이벤트 리스너 
                             AddEventListner();
-                            DataSnapshot datasnapshot = task.Result;
 
-                            if(datasnapshot.Exists)             // 닉네임 설정이 되있는경우
+                            if(task.Result.Child("NickName").Exists)
                             {
                                 GameManager.Instance.ChangeState(GameState.Lobby);
                             }
                             else
                             {
-                                if(OpenNickNameUI != null)
+                                if (OpenNickNameUI != null)
                                 {
                                     OpenNickNameUI();
                                 }
@@ -186,8 +184,9 @@ public class AuthManager
                 else
                 {
                     Reference.Child("User").Child(task.Result.UserId).Child("Push").Child("FriendRequest").Child("Empty").SetValueAsync(true);
+                    Reference.Child("User").Child(task.Result.UserId).Child("Friend").Child("Empty").SetValueAsync(true);
                     Reference.Child("User").Child(task.Result.UserId).Child("UserID").SetValueAsync(task.Result.UserId);
-
+                    
                     UIManager.uiManager.OFFDontClick();
                     UIManager.uiManager.CurrentPop();
                 }
@@ -215,22 +214,41 @@ public class AuthManager
     public void AddEventListner()
     {
         Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").ChildAdded += HandleFriendRequestChanged;
+        Reference.Child("User").Child(User.UserId).Child("Friend").Child("Empty").ChildAdded += HandleFriend;
     }
     /// <summary>
-    /// Action<UserNickName,UserID>
+    /// Action FriendChanged (UID,NickName)
+    /// </summary>
+    public Action<string,string> AFriendUI { get; set; }
+    private void HandleFriend(object sender, ChildChangedEventArgs e)
+    {
+        if (AFriendUI == null)
+            return;
+        if (e.DatabaseError != null)
+        {
+            Debug.LogError(e.DatabaseError.Message);
+            return;
+        }
+        AFriendUI(e.Snapshot.Child("UID").Value.ToString(), e.Snapshot.Child("NickName").Value.ToString());
+        throw new NotImplementedException();
+    }
+
+
+    /// <summary>
+    /// Action FriendRequestChanged (UID,NickName)
     /// </summary>
     public Action<string, string> AFriendRequestUI { get; set; }
-    void HandleFriendRequestChanged(object sender, ChildChangedEventArgs args)
+    void HandleFriendRequestChanged(object sender, ChildChangedEventArgs e)
     {
         if (AFriendRequestUI == null)
             return;
 
-        if(args.DatabaseError != null)
+        if(e.DatabaseError != null)
         {
-            Debug.LogError(args.DatabaseError.Message);
+            Debug.LogError(e.DatabaseError.Message);
             return;
         }
-        AFriendRequestUI(args.Snapshot.Key, args.Snapshot.Key);
+        AFriendRequestUI(e.Snapshot.Key, e.Snapshot.Key);
     }
     /// <summary>
     /// UI활성화 시에만
@@ -243,7 +261,7 @@ public class AuthManager
     
     public void CheckFriendRequests(Action<string,string> _ui)
     {
-        Reference.Child("User").Child("Push").Child("FriendRequest").OrderByChild("Request").GetValueAsync().ContinueWithOnMainThread(
+        Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").OrderByChild("Send").GetValueAsync().ContinueWithOnMainThread(
            (task) =>
            {
                if (task.IsFaulted)
@@ -255,28 +273,12 @@ public class AuthManager
                    DataSnapshot friends = task.Result;
                    foreach(DataSnapshot datasnapshot in friends.Children)
                    {
-                       if(datasnapshot.Value.ToString() == "Request")
+                       if(datasnapshot.Child("UID").Exists)
                        {
-                           FindUserList_UserID(datasnapshot.Key, _ui);
+                           _ui(datasnapshot.Child("UID").Value.ToString(), datasnapshot.Child("NickName").Value.ToString());
                        }
                        
                    }
-               }
-           });
-    }
-
-    void FindUserList_UserID(string _userId , Action<string,string> _ui)
-    {
-        Reference.Child("User").Child("User").Child(_userId).Child("NickName").GetValueAsync().ContinueWithOnMainThread(
-           (task) =>
-           {
-               if (task.IsFaulted)
-               {
-                   Debug.Log("없음");
-               }
-               else if (task.IsCompleted)
-               {
-                   _ui(_userId, task.Result.ToString());
                }
            });
     }
@@ -304,14 +306,17 @@ public class AuthManager
                }
            });
     }
-    public void FriendRequest(string _targetUID)
+    public void SendFriendRequest(string _targetUID)
     {
-        Reference.Child("User").Child(_targetUID).Child("Push").Child("FriendRequest").Child(User.UserId).SetValueAsync("Request").ContinueWithOnMainThread(
+        Reference.Child("User").Child(User.UserId).Child("NickName").GetValueAsync().ContinueWithOnMainThread(
             (task) =>
             {
                 if (task.IsCompleted)
                 {
-                    // 좀더 추가 할 예정                    
+                    Dictionary<string, object> request = new Dictionary<string, object>();
+                    request["UID"] = User.UserId;
+                    request["NickName"] = task.Result.Value.ToString();
+                    Reference.Child("User").Child(_targetUID).Child("Push").Child("FriendRequest").Child(User.UserId).SetValueAsync(request);
                 }
                 else
                 {
@@ -320,7 +325,7 @@ public class AuthManager
                 }
             });
     }
-    public void RespondToFriendRequest(string _userID,bool _addFriend)
+    public void RespondToFriendRequest(string _userID,string _nickName,bool _addFriend)
     {
         Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").Child(_userID).RemoveValueAsync().ContinueWithOnMainThread(
            (task) =>
@@ -329,7 +334,15 @@ public class AuthManager
                {
                    if(_addFriend)
                    {
-                       Reference.Child("User").Child(User.UserId).Child("Friend").Child(_userID).SetValueAsync("Friend");
+                       Reference.Child("User").Child(User.UserId).Child("NickName").GetValueAsync().ContinueWithOnMainThread(
+                           (task) =>
+                           {
+                               FriendRequestInfo friendinfo = new FriendRequestInfo(_userID, _nickName);
+                               FriendRequestInfo myinfo = new FriendRequestInfo(User.UserId, task.Result.Value.ToString());
+                               Reference.Child("User").Child(User.UserId).Child("Friend").Child(_userID).SetRawJsonValueAsync(JsonUtility.ToJson(friendinfo));
+                               Reference.Child("User").Child(_userID).Child("Friend").Child(User.UserId).SetValueAsync(JsonUtility.ToJson(myinfo));
+
+                           });
                    }
                 }
                else

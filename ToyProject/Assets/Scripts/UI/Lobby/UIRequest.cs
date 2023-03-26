@@ -37,7 +37,7 @@ public class UIRequest : MonoBehaviour
     {
         foreach(UIRequestSlot one in activeSlots)
         {
-            Destroy(one);
+            Destroy(one.gameObject);
         }
         activeSlots.Clear();
     }

@@ -20,7 +20,7 @@ public class UIFindUserSlot : UIUserSlot
     public void OnClickAddFriendButton()
     {
         AddButton.gameObject.SetActive(false);
-        AuthManager.Instance.FriendRequest(userId);
+        AuthManager.Instance.SendFriendRequest(userId);
     }
 
 }
