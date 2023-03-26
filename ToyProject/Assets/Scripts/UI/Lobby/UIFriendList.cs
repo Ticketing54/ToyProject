@@ -23,24 +23,21 @@ public class UIFriendList : MonoBehaviour
 
     private void OnEnable()
     {
-        //Clear();
-        //SettingFriendList();
+        Clear();
+        //
     }
 
-    void SettingFriendList()
-    {
-        
-    }
-    private void Add(UserInfo _userinfo)
+    private void Add(string _userID,string _nickName)
     {
         UIFriendSlot newfriend = uiFriendPool.Dequeue();
         if (newfriend == null)
         {
             newfriend = Instantiate<UIFriendSlot>(sampleUiFriend);
         }
-        newfriend.gameObject.SetActive(true);
-        newfriend.transform.localScale = new Vector3(1, 1, 1);
+        newfriend.gameObject.SetActive(true);        
         newfriend.transform.SetParent(contentObj.transform);
+        newfriend.transform.localScale = new Vector3(1, 1, 1);
+        newfriend.SetProfile(_nickName, _userID);
         friendList.Add(newfriend);
     }
     private void PoolPush(UIFriendSlot _uiFriend)

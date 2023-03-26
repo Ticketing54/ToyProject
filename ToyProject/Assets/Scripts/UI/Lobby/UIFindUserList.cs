@@ -30,13 +30,8 @@ public class UIFindUserList : MonoBehaviour
     private void OnEnable()
     {
         Clear();
-        AuthManager.Instance.AUpdateFindUserUI += Add;
     }
-    private void OnDisable()
-    {
-        AuthManager.Instance.AUpdateFindUserUI -= Add;
-    }
-
+    
     public void OnClickFindButton()
     {   
         if (nickNameintput.text == "")
@@ -44,7 +39,7 @@ public class UIFindUserList : MonoBehaviour
         Clear();
         string nicName = nickNameintput.text;
         nickNameintput.text = "";
-        AuthManager.Instance.FindUserList(nicName);
+        AuthManager.Instance.FindUserList_NickName(nicName,Add);
     }
     
     void Add(string _userID,string _userNickName)

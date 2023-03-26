@@ -185,8 +185,8 @@ public class AuthManager
                 }
                 else
                 {
-                    Reference.Child("User").Child(task.Result.UserId).Child("UserInfo").SetRawJsonValueAsync(JsonUtility.ToJson(new UserInfo(task.Result.UserId)));
-                    Reference.Child("User").Child(task.Result.UserId).Child("Push").Child("FriendRequest").SetValueAsync(true);
+                    Reference.Child("User").Child(task.Result.UserId).Child("Push").Child("FriendRequest").Child("Empty").SetValueAsync(true);
+                    Reference.Child("User").Child(task.Result.UserId).Child("UserID").SetValueAsync(task.Result.UserId);
 
                     UIManager.uiManager.OFFDontClick();
                     UIManager.uiManager.CurrentPop();
@@ -197,7 +197,7 @@ public class AuthManager
     {
         UIManager.uiManager.OnDontClick();
 
-        Reference.Child("User").Child(User.UserId).Child("UserInfo").Child("NickName").SetValueAsync(_nicName).ContinueWithOnMainThread(
+        Reference.Child("User").Child(User.UserId).Child("NickName").SetValueAsync(_nicName).ContinueWithOnMainThread(
             (task) =>
             {
                 if(task.IsCompleted)
@@ -214,8 +214,7 @@ public class AuthManager
 
     public void AddEventListner()
     {
-        DatabaseReference reference = Reference.Child("User").Child(User.UserId).Child("Push");
-        reference.Child("FriendRequest").ChildAdded += HandleFriendRequestChanged;
+        Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").ChildAdded += HandleFriendRequestChanged;
     }
     /// <summary>
     /// Action<UserNickName,UserID>
@@ -231,30 +230,66 @@ public class AuthManager
             Debug.LogError(args.DatabaseError.Message);
             return;
         }
-
-        foreach(DataSnapshot snapshot in args.Snapshot.Children)
-        {
-            AFriendRequestUI(snapshot.Key, snapshot.Key);
-        }
+        AFriendRequestUI(args.Snapshot.Key, args.Snapshot.Key);
     }
+    /// <summary>
+    /// UI활성화 시에만
+    /// </summary>
     public Action<UserInfo> AUpdateFriendsList { get; set; }
     /// <summary>
     /// UI활성화시에만 (NickName,UID)
     /// </summary>
     public Action<string,string> AUpdateFindUserUI { get; set; }
     
-    public void UpdateFriendList()
+    public void CheckFriendRequests(Action<string,string> _ui)
     {
-
+        Reference.Child("User").Child("Push").Child("FriendRequest").OrderByChild("Request").GetValueAsync().ContinueWithOnMainThread(
+           (task) =>
+           {
+               if (task.IsFaulted)
+               {
+                   Debug.Log("없음");
+               }
+               else if (task.IsCompleted)
+               {
+                   DataSnapshot friends = task.Result;
+                   foreach(DataSnapshot datasnapshot in friends.Children)
+                   {
+                       if(datasnapshot.Value.ToString() == "Request")
+                       {
+                           FindUserList_UserID(datasnapshot.Key, _ui);
+                       }
+                       
+                   }
+               }
+           });
     }
-    public void FindUserList(string _nickName)
+
+    void FindUserList_UserID(string _userId , Action<string,string> _ui)
+    {
+        Reference.Child("User").Child("User").Child(_userId).Child("NickName").GetValueAsync().ContinueWithOnMainThread(
+           (task) =>
+           {
+               if (task.IsFaulted)
+               {
+                   Debug.Log("없음");
+               }
+               else if (task.IsCompleted)
+               {
+                   _ui(_userId, task.Result.ToString());
+               }
+           });
+    }
+    /// <summary>
+    /// FindUserList (SearchNickName)
+    /// </summary>
+    /// <param name="SearchNickName"></param>
+    /// <param name="Action(NickName,UID)"></param>
+    public void FindUserList_NickName(string _nickName, Action<string,string> _uiUpdate)
     {
         Reference.Child("User").OrderByChild("NickName").EqualTo(_nickName).GetValueAsync().ContinueWithOnMainThread(
            (task) =>
-           {
-               if (AUpdateFindUserUI == null)
-                   return;
-
+           {   
                if (task.IsFaulted)
                {
                    Debug.Log("없음");
@@ -264,16 +299,14 @@ public class AuthManager
                    DataSnapshot snapshot = task.Result;
                    foreach (DataSnapshot child in snapshot.Children)
                    {
-
-                       AUpdateFindUserUI(_nickName, child.Key);
-                       
+                       _uiUpdate(_nickName, child.Key);
                    }
                }
            });
     }
     public void FriendRequest(string _targetUID)
     {
-        Reference.Child("User").Child(_targetUID).Child("Push").Child("FriendRequest").SetValueAsync(User.UserId).ContinueWithOnMainThread(
+        Reference.Child("User").Child(_targetUID).Child("Push").Child("FriendRequest").Child(User.UserId).SetValueAsync("Request").ContinueWithOnMainThread(
             (task) =>
             {
                 if (task.IsCompleted)
@@ -287,29 +320,24 @@ public class AuthManager
                 }
             });
     }
-
-    /// <summary>
-    /// [UserID] 를 사용하여 유저를 찾은 후 할 행동 (UID라 한명)
-    /// </summary>
-    /// <param name="NickName"></param>
-    /// <param name="Action(UserID,UserInfo)"></param>
-    void FindUser_UserID(string _userId, Action<UserInfo> _action)
+    public void RespondToFriendRequest(string _userID,bool _addFriend)
     {
-        
-        Reference.Child("User").Child(_userId).GetValueAsync().ContinueWithOnMainThread(
-            (task) =>
-            {
-                if (task.IsFaulted)
-                {
-                    Debug.Log("없음");
+        Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").Child(_userID).RemoveValueAsync().ContinueWithOnMainThread(
+           (task) =>
+           {
+               if (task.IsCompleted)
+               {
+                   if(_addFriend)
+                   {
+                       Reference.Child("User").Child(User.UserId).Child("Friend").Child(_userID).SetValueAsync("Friend");
+                   }
                 }
-                else if (task.IsCompleted)
-                {
-                    string temp = task.Result.GetRawJsonValue();
-                    UserInfo newUser = JsonUtility.FromJson<UserInfo>(temp);
-                    _action(newUser);
-                }
-            });
+               else
+               {
+                   UIManager.uiManager.OnErrorMessage("알수없는 오류가 발생했습니다.");
+                   Debug.Log(task.Exception);
+               }
+           });
     }
 
     #endregion
