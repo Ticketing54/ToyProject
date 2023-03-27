@@ -9,10 +9,10 @@ public class UIRequest : MonoBehaviour
     UIRequestSlot sampleSlot;
     [SerializeField]
     GameObject Contents;
-    List<UIRequestSlot> activeSlots;
+    HashSet<UIRequestSlot> activeSlots;
     private void Awake()
     {
-        activeSlots = new List<UIRequestSlot>();
+        activeSlots = new HashSet<UIRequestSlot>();
     }
     private void OnEnable()
     {
@@ -37,7 +37,11 @@ public class UIRequest : MonoBehaviour
     {
         foreach(UIRequestSlot one in activeSlots)
         {
-            Destroy(one.gameObject);
+            if(one != null)
+            {
+                Destroy(one.gameObject);
+            }
+            
         }
         activeSlots.Clear();
     }

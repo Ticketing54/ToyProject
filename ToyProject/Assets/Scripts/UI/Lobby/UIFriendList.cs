@@ -9,10 +9,12 @@ public class UIFriendList : MonoBehaviour
     UIFriendSlot sampleUiFriend;
     [SerializeField]
     GameObject poolParent;
-    
-    List<UIFriendSlot> friendList;
-    Queue<UIFriendSlot> uiFriendPool;
+    [SerializeField]
     GameObject contentObj;
+
+    HashSet<UIFriendSlot> friendList;
+    Queue<UIFriendSlot> uiFriendPool;
+    
 
     private void Awake()
     {
@@ -24,13 +26,24 @@ public class UIFriendList : MonoBehaviour
     private void OnEnable()
     {
         Clear();
-        //
+        AuthManager.Instance.AFriendListClear += Clear;
+        AuthManager.Instance.AFriendAdd += Add;
+        AuthManager.Instance.UpdateFriendList();
+    }
+    private void OnDisable()
+    {
+        AuthManager.Instance.AFriendListClear -= Clear;
+        AuthManager.Instance.AFriendAdd -= Add;
     }
 
     private void Add(string _userID,string _nickName)
     {
-        UIFriendSlot newfriend = uiFriendPool.Dequeue();
-        if (newfriend == null)
+        UIFriendSlot newfriend = null;
+        if(uiFriendPool.Count != 0)
+        {
+            newfriend = uiFriendPool.Dequeue();
+        }
+        else
         {
             newfriend = Instantiate<UIFriendSlot>(sampleUiFriend);
         }

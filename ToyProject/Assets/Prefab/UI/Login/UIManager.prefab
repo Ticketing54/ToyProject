@@ -1439,7 +1439,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8914737435131808329
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1570,6 +1570,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sampleUiFriend: {fileID: 5227223238730697392}
   poolParent: {fileID: 808399535779175616}
+  contentObj: {fileID: 6306175365105288487}
 --- !u!1 &1680225517084156316
 GameObject:
   m_ObjectHideFlags: 0
@@ -2447,8 +2448,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 185, y: 50}
+  m_AnchoredPosition: {x: 84, y: 0}
+  m_SizeDelta: {x: 185, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7038305847491278637
 CanvasRenderer:
@@ -2471,7 +2472,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.24528301, g: 0.21612673, b: 0.21612673, a: 1}
+  m_Color: {r: 0.97520876, g: 1, b: 0.5226415, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4977,7 +4978,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &669479027966274525
 Transform:
   m_ObjectHideFlags: 0
@@ -11592,7 +11593,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6945298754416297221
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12224,7 +12225,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6945298754469038878
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15326,8 +15327,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 60, y: -10}
-  m_SizeDelta: {x: 100, y: 30}
+  m_AnchoredPosition: {x: 80, y: -13.7}
+  m_SizeDelta: {x: 100, y: 15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6257320077142405560
 CanvasRenderer:
@@ -15366,8 +15367,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278321666
+  m_fontColor: {r: 0.009433985, g: 0.009433985, b: 0.009433985, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
