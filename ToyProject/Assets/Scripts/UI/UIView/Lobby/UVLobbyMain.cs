@@ -7,20 +7,15 @@ public class UVLobbyMain : UIView
 {
     [SerializeField]
     TextMeshProUGUI idText;
-    [SerializeField]
-    GameObject friendRequestMarkUI;
     private void OnEnable()
-    {
-        AuthManager.Instance.ACheckFriendRequests += FriendRequestMark;
+    {   
+        AuthManager.Instance.AUserSetting += SetNickName;
+        AuthManager.Instance.LobbyMainSetting();
     }
     private void OnDisable()
-    {
-        AuthManager.Instance.ACheckFriendRequests -= FriendRequestMark;
+    {   
+        AuthManager.Instance.AUserSetting -= SetNickName;
     }
-    void FriendRequestMark(string _nickName, string _UID) { friendRequestMarkUI.gameObject.SetActive(true); }
-
-    public void OnClickFriendButton()
-    {
-
-    }
+    
+    void SetNickName(UserInfo _nickName) { idText.text = _nickName.NickName; }
 }

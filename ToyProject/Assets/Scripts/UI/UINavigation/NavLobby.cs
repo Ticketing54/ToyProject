@@ -13,6 +13,10 @@ public class NavLobby : UINavigation
         base.Awake();
 
     }
+    public override void RootShow()
+    {
+        base.RootShow();
+    }
     public void OnClickTutorialButton()
     {
 

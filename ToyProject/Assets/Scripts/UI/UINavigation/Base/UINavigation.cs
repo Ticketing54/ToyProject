@@ -14,7 +14,7 @@ public abstract class UINavigation : MonoBehaviour
         history = new Stack<UIView>();
     }
 
-    public void RootShow()
+    public virtual void RootShow()
     {
         rootView.gameObject.SetActive(true);
         history.Clear();

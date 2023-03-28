@@ -17,6 +17,5 @@ public class UserInfo
     {
         UID = _userId;
         NickName = _nickName;
-        
     }
 }

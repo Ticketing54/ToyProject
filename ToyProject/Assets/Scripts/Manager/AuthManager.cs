@@ -49,10 +49,246 @@ public class AuthManager
     public FirebaseApp App { get; private set; }
     public FirebaseUser User { get; private set; }    
     public DatabaseReference Reference { get; private set; }
-    public Action OpenNickNameUI { get; set; }
+    public Action AOpenNickNameUI { get; set; }
+
+    #region Lobby
+    /// <summary>
+    /// Action FriendChanged (UID,NickName)
+    /// </summary>
+    public Action<string, string> AFriendAdd { get; set; }
+    /// <summary>
+    /// UI활성화 시에만
+    /// </summary>
+    public Action AFriendListClear { get; set; }
+    /// <summary>
+    /// UI활성화시에만 (NickName,UID)
+    /// </summary>
+    public Action<string, string> ACheckFriendRequests { get; set; }
+    public Action AMarkingFriendButton { get; set; }
+    public Action<UserInfo> AUserSetting { get; set; }
+
+    public void LobbyMainSetting()
+    {
+        Reference.Child("User").Child(User.UserId).GetValueAsync().ContinueWithOnMainThread(
+            (task) =>
+            {
+                if (task.IsCompleted)
+                {
+                    CheckFriendRequests();
+                    if(AUserSetting != null)
+                    {
+                        UserInfo player = JsonUtility.FromJson<UserInfo>(task.Result.GetRawJsonValue());
+                        AUserSetting(player);
+                    }
+
+                }
+                else
+                {
+                    Debug.Log("AuthManager:: LobbyMainsetting() Error");
+                    UIManager.uiManager.OnErrorMessage("로그인 정보를 불러올 수 없습니다.");
+                    GameManager.Instance.ChangeState(GameState.Login);
+                }
+            });
+    }
+
+
+    public void CheckFriendRequests()
+    {
+        Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").GetValueAsync().ContinueWithOnMainThread(
+           (task) =>
+           {
+               if (task.IsFaulted)
+               {
+                   Debug.Log("없음");
+               }
+               else if (task.IsCompleted)
+               {
+                   if (task.Result.Exists)
+                   {
+                       if (AMarkingFriendButton != null)
+                           AMarkingFriendButton();
+
+                       if (ACheckFriendRequests == null)
+                           return;
+
+                       DataSnapshot friends = task.Result;
+                       foreach (DataSnapshot datasnapshot in friends.Children)
+                       {
+                         
+                           FindUser_UID(datasnapshot.Key, ACheckFriendRequests);
+                       }
+                   }
+               }
+           });
+    }
+    /// <summary>
+    /// FindUserList (SearchNickName)
+    /// </summary>
+    /// <param name="SearchNickName"></param>
+    /// <param name="Action(NickName,UID)"></param>
+    public void FindUserList_NickName(string _nickName, Action<string, string> _uiUpdate)
+    {
+        Reference.Child("User").OrderByChild("NickName").EqualTo(_nickName).GetValueAsync().ContinueWithOnMainThread(
+           (task) =>
+           {
+               if (task.IsFaulted)
+               {
+                   Debug.Log("없음");
+               }
+               else if (task.IsCompleted)
+               {
+                   DataSnapshot snapshot = task.Result; // 찾은 유저 목록
+
+                   Reference.Child("User").Child(User.UserId).Child("Friend").GetValueAsync().ContinueWithOnMainThread(
+                       (friend) =>
+                       {
+                           DataSnapshot friends = friend.Result;
+                           foreach (DataSnapshot child in snapshot.Children)
+                           {
+                               bool isFriend = false;
+                               foreach (DataSnapshot f in friends.Children)
+                               {
+                                   if(f.Key == child.Key || child.Key == User.UserId)
+                                   {
+                                       isFriend = true;
+                                       break;
+                                   }
+                               }
+                               if(!isFriend)
+                               {
+                                   FindUser_UID(child.Key, _uiUpdate);
+                               }
+                           }
+                       });
+                   
+               }
+           });
+    }
+    /// <summary>
+    /// UID로 유저찾기  닉네임이 없는경우를 생각하기
+    /// </summary>
+    /// <param name="UID"></param>
+    /// <param name="Action(UID,NickName)"></param>
+    void FindUser_UID(string _uid, Action<string, string> _ui)
+    {
+        Reference.Child("User").Child(_uid).GetValueAsync().ContinueWithOnMainThread(
+           (task) =>
+           {
+               if (task.IsFaulted)
+               {
+                   Debug.Log("없음");
+               }
+               else if (task.IsCompleted)
+               {
+                   if (task.Result.Exists)
+                   {
+                       DataSnapshot userdata = task.Result;
+                       UserInfo userinfo = JsonUtility.FromJson<UserInfo>(userdata.GetRawJsonValue());
+                       _ui(userinfo.UID, userinfo.NickName);
+                   }
+               }
+           });
+    }
+    public void SendFriendRequest(string _targetUID)
+    {
+        Reference.Child("User").Child(User.UserId).GetValueAsync().ContinueWithOnMainThread(
+            (task) =>
+            {
+                if (task.IsCompleted)
+                {
+                    Reference.Child("User").Child(_targetUID).Child("Push").Child("FriendRequest").Child(User.UserId).SetValueAsync(true);
+                }
+                else
+                {
+                    UIManager.uiManager.OnErrorMessage("알수없는 오류가 발생했습니다.");
+                    Debug.Log(task.Exception);
+                }
+            });
+    }
+    public void RespondToFriendRequest(string _userID, string _nickName, bool _addFriend)
+    {
+        Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").Child(_userID).RemoveValueAsync().ContinueWithOnMainThread(
+           (task) =>
+           {
+               if (task.IsCompleted)
+               {
+                   if (_addFriend)
+                   {
+                       Reference.Child("User").Child(User.UserId).Child("Friend").Child(_userID).SetValueAsync(true);
+                       Reference.Child("User").Child(_userID).Child("Friend").Child(User.UserId).SetValueAsync(true);
+                   }
+               }
+               else
+               {
+                   UIManager.uiManager.OnErrorMessage("알수없는 오류가 발생했습니다.");
+                   Debug.Log(task.Exception);
+               }
+           });
+    }
+
+
+    public void UpdateFriendList()
+    {
+        Reference.Child("User").Child(User.UserId).Child("Friend").GetValueAsync().ContinueWithOnMainThread(
+            (task) =>
+            {
+                if (task.IsCompleted)
+                {
+                    DataSnapshot friendsData = task.Result;
+                    if (friendsData.Exists)
+                    {
+                        foreach (DataSnapshot friend in friendsData.Children)
+                        {
+                            FindUser_UID(friend.Key, AFriendAdd);
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.Log("(AuthManager)UpdateFriendList Error");
+                }
+            });
+    }
+
+    #endregion
+
+    #region FirebaseDataBase Handler
+    public void AddEventListner()
+    {
+        Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").ValueChanged += HandleFriendRequestChanged;
+        Reference.Child("User").Child(User.UserId).Child("Friend").ValueChanged += HandleFriend;
+    }
+
+    private void HandleFriend(object sender, ValueChangedEventArgs e)
+    {
+        if (AFriendListClear == null || AFriendAdd == null)
+            return;
+        AFriendListClear();
+
+        if (e.DatabaseError != null)
+        {
+            Debug.LogError(e.DatabaseError.Message);
+            return;
+        }
+        UpdateFriendList();
+    }
+    private void HandleFriendRequestChanged(object sender, ValueChangedEventArgs e)
+    {
+        if (ACheckFriendRequests == null)
+            return;
+
+        if (e.DatabaseError != null)
+        {
+            Debug.LogError(e.DatabaseError.Message);
+            return;
+        }
+        FindUser_UID(e.Snapshot.Key, ACheckFriendRequests);
+        CheckFriendRequests();
+    }
+    #endregion
 
     #region Auth User
-    
+
     /// <summary>
     /// Login : ID와 Password, 결과에대한 UI표시함수
     /// </summary>
@@ -122,9 +358,9 @@ public class AuthManager
                             }
                             else
                             {
-                                if (OpenNickNameUI != null)
+                                if (AOpenNickNameUI != null)
                                 {
-                                    OpenNickNameUI();
+                                    AOpenNickNameUI();
                                 }
                                 UIManager.uiManager.OFFDontClick();
                             }
@@ -184,7 +420,6 @@ public class AuthManager
                 else
                 {   
                     Reference.Child("User").Child(task.Result.UserId).Child("UID").SetValueAsync(task.Result.UserId);
-                    
                     UIManager.uiManager.OFFDontClick();
                     UIManager.uiManager.CurrentPop();
                 }
@@ -207,192 +442,6 @@ public class AuthManager
                     UIManager.uiManager.OnErrorMessage("NicName 등록 오류");
                 }
             });
-    }
-
-    public void AddEventListner()
-    {
-        Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").ValueChanged += HandleFriendRequestChanged;
-        Reference.Child("User").Child(User.UserId).Child("Friend").ValueChanged += HandleFriend;
-
-    }
-
-    /// <summary>
-    /// Action FriendChanged (UID,NickName)
-    /// </summary>
-    public Action<string,string> AFriendAdd { get; set; }
-    public Action AFriendListClear { get; set; }
-    private void HandleFriend(object sender, ValueChangedEventArgs e)
-    {
-        if (AFriendListClear == null || AFriendAdd == null)
-            return;
-        AFriendListClear();
-
-        if (e.DatabaseError != null)
-        {
-            Debug.LogError(e.DatabaseError.Message);
-            return;
-        }
-        UpdateFriendList();
-    }
-
-    public void UpdateFriendList()
-    {
-        Reference.Child("User").Child(User.UserId).Child("Friend").GetValueAsync().ContinueWithOnMainThread(
-            (task) =>
-            {
-                if(task.IsCompleted)
-                {
-                    DataSnapshot friendsData = task.Result;
-                    if(friendsData.Exists)
-                    {
-                        foreach(DataSnapshot friend in friendsData.Children)
-                        {
-                            FindUser_UID(friend.Key, AFriendAdd);
-                        }
-                    }
-                }
-                else
-                {
-                    Debug.Log("(AuthManager)UpdateFriendList Error");
-                }
-            });
-    }
-
-    void HandleFriendRequestChanged(object sender, ValueChangedEventArgs e)
-    {
-        if (ACheckFriendRequests == null)
-            return;
-
-        if(e.DatabaseError != null)
-        {
-            Debug.LogError(e.DatabaseError.Message);
-            return;
-        }
-        FindUser_UID(e.Snapshot.Key,ACheckFriendRequests);
-        CheckFriendRequests();
-    }
-    /// <summary>
-    /// UI활성화 시에만
-    /// </summary>
-    public Action<UserInfo> AUpdateFriendsList { get; set; }
-    /// <summary>
-    /// UI활성화시에만 (NickName,UID)
-    /// </summary>
-    public Action<string,string> AUpdateFindUserUI { get; set; }
-    /// <summary>
-    /// UI활성화시에만 (NickName,UID)
-    /// </summary>
-    public Action<string,string> ACheckFriendRequests { get; set; }
-   
-    public void CheckFriendRequests()
-    {
-        Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").GetValueAsync().ContinueWithOnMainThread(
-           (task) =>
-           {
-               if (ACheckFriendRequests == null)
-                   return;
-
-               if (task.IsFaulted)
-               {
-                   Debug.Log("없음");
-               }
-               else if (task.IsCompleted)
-               {
-                   if(task.Result.Exists)
-                   {
-                       DataSnapshot friends = task.Result;
-                       foreach (DataSnapshot datasnapshot in friends.Children)
-                       {   
-                           FindUser_UID(datasnapshot.Key, ACheckFriendRequests);
-                       }
-                   }
-               }
-           });
-    }
-    /// <summary>
-    /// FindUserList (SearchNickName)
-    /// </summary>
-    /// <param name="SearchNickName"></param>
-    /// <param name="Action(NickName,UID)"></param>
-    public void FindUserList_NickName(string _nickName, Action<string,string> _uiUpdate)
-    {
-        Reference.Child("User").OrderByChild("NickName").EqualTo(_nickName).GetValueAsync().ContinueWithOnMainThread(
-           (task) =>
-           {   
-               if (task.IsFaulted)
-               {
-                   Debug.Log("없음");
-               }
-               else if (task.IsCompleted)
-               {
-                   DataSnapshot snapshot = task.Result;
-                   foreach (DataSnapshot child in snapshot.Children)
-                   {
-                       _uiUpdate(_nickName, child.Key);
-                   }
-               }
-           });
-    }
-    /// <summary>
-    /// UID로 유저찾기  닉네임이 없는경우를 생각하기
-    /// </summary>
-    /// <param name="UID"></param>
-    /// <param name="Action(UID,NickName)"></param>
-    void FindUser_UID(string _uid,Action<string,string> _ui)
-    {
-        Reference.Child("User").Child(_uid).GetValueAsync().ContinueWithOnMainThread(
-           (task) =>
-           {
-               if (task.IsFaulted)
-               {
-                   Debug.Log("없음");
-               }
-               else if (task.IsCompleted)
-               {
-                   if(task.Result.Exists)
-                   {
-                       DataSnapshot userdata = task.Result;
-                       UserInfo userinfo = JsonUtility.FromJson<UserInfo>(userdata.GetRawJsonValue());
-                       _ui(userinfo.UID, userinfo.NickName);
-                   }
-               }
-           });
-    }
-    public void SendFriendRequest(string _targetUID)
-    {
-        Reference.Child("User").Child(User.UserId).GetValueAsync().ContinueWithOnMainThread(
-            (task) =>
-            {
-                if (task.IsCompleted)
-                {   
-                    Reference.Child("User").Child(_targetUID).Child("Push").Child("FriendRequest").Child(User.UserId).SetValueAsync(true);
-                }
-                else
-                {
-                    UIManager.uiManager.OnErrorMessage("알수없는 오류가 발생했습니다.");
-                    Debug.Log(task.Exception);
-                }
-            });
-    }
-    public void RespondToFriendRequest(string _userID,string _nickName,bool _addFriend)
-    {
-        Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").Child(_userID).RemoveValueAsync().ContinueWithOnMainThread(
-           (task) =>
-           {
-               if (task.IsCompleted)
-               {
-                   if(_addFriend)
-                   {   
-                       Reference.Child("User").Child(User.UserId).Child("Friend").Child(_userID).SetValueAsync(true);
-                       Reference.Child("User").Child(_userID).Child("Friend").Child(User.UserId).SetValueAsync(true);
-                   }
-                }
-               else
-               {
-                   UIManager.uiManager.OnErrorMessage("알수없는 오류가 발생했습니다.");
-                   Debug.Log(task.Exception);
-               }
-           });
     }
 
     #endregion

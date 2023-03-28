@@ -43,7 +43,7 @@ public class UIFindUserList : MonoBehaviour
     }
     
     void Add(string _userID,string _userNickName)
-    {
+    {   
         UIFindUserSlot newSlot = null; 
         if (slotPool.Count != 0)
         {
@@ -53,7 +53,6 @@ public class UIFindUserList : MonoBehaviour
         {
             newSlot = Instantiate<UIFindUserSlot>(sampleSlot);
         }
-        
         newSlot.gameObject.SetActive(true);
         newSlot.SetProfile(_userID, _userNickName);
         newSlot.transform.SetParent(contents.transform);
