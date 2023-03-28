@@ -211,8 +211,8 @@ public class AuthManager
 
     public void AddEventListner()
     {
-        Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").ChildAdded += HandleFriendRequestChanged;
-        Reference.Child("User").Child(User.UserId).Child("Friend").ChildChanged += HandleFriend;
+        Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").ValueChanged += HandleFriendRequestChanged;
+        Reference.Child("User").Child(User.UserId).Child("Friend").ValueChanged += HandleFriend;
 
     }
 
@@ -221,7 +221,7 @@ public class AuthManager
     /// </summary>
     public Action<string,string> AFriendAdd { get; set; }
     public Action AFriendListClear { get; set; }
-    private void HandleFriend(object sender, ChildChangedEventArgs e)
+    private void HandleFriend(object sender, ValueChangedEventArgs e)
     {
         if (AFriendListClear == null || AFriendAdd == null)
             return;
@@ -258,13 +258,9 @@ public class AuthManager
             });
     }
 
-    /// <summary>
-    /// Action FriendRequestChanged (UID,NickName)
-    /// </summary>
-    public Action<string, string> AFriendRequestUI { get; set; }
-    void HandleFriendRequestChanged(object sender, ChildChangedEventArgs e)
+    void HandleFriendRequestChanged(object sender, ValueChangedEventArgs e)
     {
-        if (AFriendRequestUI == null)
+        if (ACheckFriendRequests == null)
             return;
 
         if(e.DatabaseError != null)
@@ -272,7 +268,8 @@ public class AuthManager
             Debug.LogError(e.DatabaseError.Message);
             return;
         }
-        FindUser_UID(e.Snapshot.Key,AFriendRequestUI);
+        FindUser_UID(e.Snapshot.Key,ACheckFriendRequests);
+        CheckFriendRequests();
     }
     /// <summary>
     /// UI활성화 시에만
@@ -282,12 +279,19 @@ public class AuthManager
     /// UI활성화시에만 (NickName,UID)
     /// </summary>
     public Action<string,string> AUpdateFindUserUI { get; set; }
-    
-    public void CheckFriendRequests(Action<string,string> _ui)
+    /// <summary>
+    /// UI활성화시에만 (NickName,UID)
+    /// </summary>
+    public Action<string,string> ACheckFriendRequests { get; set; }
+   
+    public void CheckFriendRequests()
     {
         Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").GetValueAsync().ContinueWithOnMainThread(
            (task) =>
            {
+               if (ACheckFriendRequests == null)
+                   return;
+
                if (task.IsFaulted)
                {
                    Debug.Log("없음");
@@ -298,8 +302,8 @@ public class AuthManager
                    {
                        DataSnapshot friends = task.Result;
                        foreach (DataSnapshot datasnapshot in friends.Children)
-                       {
-                           FindUser_UID(datasnapshot.Key, _ui);
+                       {   
+                           FindUser_UID(datasnapshot.Key, ACheckFriendRequests);
                        }
                    }
                }

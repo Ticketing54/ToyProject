@@ -17,13 +17,14 @@ public class UIRequest : MonoBehaviour
     private void OnEnable()
     {
         Clear();
-        CheckFriendRequest();
+        AuthManager.Instance.ACheckFriendRequests += Add;
+        AuthManager.Instance.CheckFriendRequests();
     }
-
-    void CheckFriendRequest()
+    private void OnDisable()
     {
-        AuthManager.Instance.CheckFriendRequests(Add);
+        AuthManager.Instance.ACheckFriendRequests -= Add;
     }
+    
     void Add(string _userId,string _nickName)
     {
         UIRequestSlot slot = Instantiate<UIRequestSlot>(sampleSlot);

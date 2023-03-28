@@ -11,11 +11,11 @@ public class UVLobbyMain : UIView
     GameObject friendRequestMarkUI;
     private void OnEnable()
     {
-        AuthManager.Instance.AFriendRequestUI += FriendRequestMark;
+        AuthManager.Instance.ACheckFriendRequests += FriendRequestMark;
     }
     private void OnDisable()
     {
-        AuthManager.Instance.AFriendRequestUI -= FriendRequestMark;
+        AuthManager.Instance.ACheckFriendRequests -= FriendRequestMark;
     }
     void FriendRequestMark(string _nickName, string _UID) { friendRequestMarkUI.gameObject.SetActive(true); }
 
