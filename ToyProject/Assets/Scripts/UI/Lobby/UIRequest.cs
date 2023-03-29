@@ -9,10 +9,10 @@ public class UIRequest : MonoBehaviour
     UIRequestSlot sampleSlot;
     [SerializeField]
     GameObject Contents;
-    HashSet<UIRequestSlot> activeSlots;
+    Stack<UIRequestSlot> activeSlots;
     private void Awake()
     {
-        activeSlots = new HashSet<UIRequestSlot>();
+        activeSlots = new Stack<UIRequestSlot>();
     }
     private void OnEnable()
     {
@@ -31,19 +31,14 @@ public class UIRequest : MonoBehaviour
         slot.gameObject.SetActive(true);
         slot.transform.SetParent(Contents.transform);
         slot.transform.localScale = new Vector3(1, 1, 1);
-        slot.SetProfile(_nickName, _userId);
-        activeSlots.Add(slot);
+        slot.SetProfile(_userId, _nickName);
+        activeSlots.Push(slot);
     }
     void Clear()
     {
-        foreach(UIRequestSlot one in activeSlots)
+       while(activeSlots.Count != 0)
         {
-            if(one != null)
-            {
-                Destroy(one.gameObject);
-            }
-            
+            Destroy(activeSlots.Pop().gameObject);
         }
-        activeSlots.Clear();
     }
 }

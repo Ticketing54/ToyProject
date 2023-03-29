@@ -79,5 +79,6 @@ public class UIFindUserList : MonoBehaviour
         {
             PoolPush(slot);
         }
+        activeSlots.Clear();
     }
 }

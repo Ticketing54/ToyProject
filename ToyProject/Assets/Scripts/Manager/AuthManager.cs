@@ -105,9 +105,6 @@ public class AuthManager
                {
                    if (task.Result.Exists)
                    {
-                       if (AMarkingFriendButton != null)
-                           AMarkingFriendButton();
-
                        if (ACheckFriendRequests == null)
                            return;
 
@@ -145,10 +142,13 @@ public class AuthManager
                            DataSnapshot friends = friend.Result;
                            foreach (DataSnapshot child in snapshot.Children)
                            {
+                               if (child.Key == User.UserId)
+                                   continue;
+
                                bool isFriend = false;
                                foreach (DataSnapshot f in friends.Children)
                                {
-                                   if(f.Key == child.Key || child.Key == User.UserId)
+                                   if(f.Key == child.Key )
                                    {
                                        isFriend = true;
                                        break;
@@ -274,9 +274,11 @@ public class AuthManager
     }
     private void HandleFriendRequestChanged(object sender, ValueChangedEventArgs e)
     {
+        if (AMarkingFriendButton != null)
+            AMarkingFriendButton();
+
         if (ACheckFriendRequests == null)
             return;
-
         if (e.DatabaseError != null)
         {
             Debug.LogError(e.DatabaseError.Message);

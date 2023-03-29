@@ -50,7 +50,7 @@ public class UIFriendList : MonoBehaviour
         newfriend.gameObject.SetActive(true);        
         newfriend.transform.SetParent(contentObj.transform);
         newfriend.transform.localScale = new Vector3(1, 1, 1);
-        newfriend.SetProfile(_nickName, _userID);
+        newfriend.SetProfile(_userID,_nickName);
         friendList.Add(newfriend);
     }
     private void PoolPush(UIFriendSlot _uiFriend)
@@ -74,5 +74,6 @@ public class UIFriendList : MonoBehaviour
         {
             PoolPush(one);
         }
+        friendList.Clear();
     }
 }

@@ -57,8 +57,8 @@ public class GameManager : MonoBehaviour
                         ChangeState(GameState.Login);
                         yield break;
                     }
-                    LobbyManager.Instance.ConnectUsingSetting();
                     yield return SceneManager.LoadSceneAsync("LobbyScene");
+                    LobbyManager.Instance.ConnectSetting();
                     UIManager.uiManager.ChangeUINavgation(_state);
                 }
                 break;

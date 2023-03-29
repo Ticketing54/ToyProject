@@ -25,7 +25,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             return instance;
         }        
     }    
-    public void ConnectUsingSetting()
+    public void ConnectSetting()
     {
         PhotonNetwork.GameVersion = gameVersion;
         PhotonNetwork.AuthValues = new AuthenticationValues(AuthManager.Instance.User.UserId);
