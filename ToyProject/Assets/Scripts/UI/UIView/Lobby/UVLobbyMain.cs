@@ -18,4 +18,5 @@ public class UVLobbyMain : UIView
     }
     
     void SetNickName(UserInfo _nickName) { idText.text = _nickName.NickName; }
+    
 }

@@ -7,6 +7,7 @@ public class UserInfo
 {
     public string UID;
     public string NickName;
+    public bool Connect;
     public UserInfo()
     {
         UID = "";
@@ -17,5 +18,6 @@ public class UserInfo
     {
         UID = _userId;
         NickName = _nickName;
+        Connect = false;
     }
 }

@@ -36,7 +36,7 @@ public class UIFriendList : MonoBehaviour
         AuthManager.Instance.AFriendAdd -= Add;
     }
 
-    private void Add(string _userID,string _nickName)
+    private void Add(UserInfo _userinfo)
     {
         UIFriendSlot newfriend = null;
         if(uiFriendPool.Count != 0)
@@ -50,7 +50,7 @@ public class UIFriendList : MonoBehaviour
         newfriend.gameObject.SetActive(true);        
         newfriend.transform.SetParent(contentObj.transform);
         newfriend.transform.localScale = new Vector3(1, 1, 1);
-        newfriend.SetProfile(_userID,_nickName);
+        newfriend.SetProfile(_userinfo);
         friendList.Add(newfriend);
     }
     private void PoolPush(UIFriendSlot _uiFriend)

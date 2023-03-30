@@ -55,7 +55,7 @@ public class AuthManager
     /// <summary>
     /// Action FriendChanged (UID,NickName)
     /// </summary>
-    public Action<string, string> AFriendAdd { get; set; }
+    public Action<UserInfo> AFriendAdd { get; set; }
     /// <summary>
     /// UI활성화 시에만
     /// </summary>
@@ -63,10 +63,11 @@ public class AuthManager
     /// <summary>
     /// UI활성화시에만 (NickName,UID)
     /// </summary>
-    public Action<string, string> ACheckFriendRequests { get; set; }
+    public Action<UserInfo> ACheckFriendRequests { get; set; }
     public Action AMarkingFriendButton { get; set; }
     public Action<UserInfo> AUserSetting { get; set; }
-
+    public Action<UserInfo> AsettingRoomSlot { get; set; }
+    
     public void LobbyMainSetting()
     {
         Reference.Child("User").Child(User.UserId).GetValueAsync().ContinueWithOnMainThread(
@@ -90,8 +91,6 @@ public class AuthManager
                 }
             });
     }
-
-
     public void CheckFriendRequests()
     {
         Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").GetValueAsync().ContinueWithOnMainThread(
@@ -123,7 +122,7 @@ public class AuthManager
     /// </summary>
     /// <param name="SearchNickName"></param>
     /// <param name="Action(NickName,UID)"></param>
-    public void FindUserList_NickName(string _nickName, Action<string, string> _uiUpdate)
+    public void FindUserList_NickName(string _nickName, Action<UserInfo> _uiUpdate)
     {
         Reference.Child("User").OrderByChild("NickName").EqualTo(_nickName).GetValueAsync().ContinueWithOnMainThread(
            (task) =>
@@ -169,7 +168,7 @@ public class AuthManager
     /// </summary>
     /// <param name="UID"></param>
     /// <param name="Action(UID,NickName)"></param>
-    void FindUser_UID(string _uid, Action<string, string> _ui)
+    void FindUser_UID(string _uid, Action<UserInfo> _ui)
     {
         Reference.Child("User").Child(_uid).GetValueAsync().ContinueWithOnMainThread(
            (task) =>
@@ -184,7 +183,7 @@ public class AuthManager
                    {
                        DataSnapshot userdata = task.Result;
                        UserInfo userinfo = JsonUtility.FromJson<UserInfo>(userdata.GetRawJsonValue());
-                       _ui(userinfo.UID, userinfo.NickName);
+                       _ui(userinfo);
                    }
                }
            });
@@ -225,8 +224,6 @@ public class AuthManager
                }
            });
     }
-
-
     public void UpdateFriendList()
     {
         Reference.Child("User").Child(User.UserId).Child("Friend").GetValueAsync().ContinueWithOnMainThread(
@@ -249,7 +246,34 @@ public class AuthManager
                 }
             });
     }
+    public void CreateRoom(Action _openRoom)
+    {
+        UIManager.uiManager.OnDontClick();
+        Dictionary<string, object> masterInfo = new Dictionary<string, object>();
+        masterInfo["Master"] = User.UserId;
+        masterInfo["Count"] = 1;
+        Reference.Child("Room").Child(User.UserId).SetValueAsync(masterInfo).ContinueWithOnMainThread(
+            (task)=>
+            {
+                UIManager.uiManager.OFFDontClick();
+                if (task.IsCompleted)
+                {
+                    _openRoom();
+                }
+                else
+                {
+                    Debug.Log("AuthManger :: CreateRoomError");
+                }
+            });
+    }
+    public void JoinRoom(string _roomName)
+    {
+        Reference.Child("Room").Child(_roomName).GetValueAsync().ContinueWithOnMainThread(
+            (task)=>
+            {
 
+            });
+    }
     #endregion
 
     #region FirebaseDataBase Handler

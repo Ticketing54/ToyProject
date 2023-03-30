@@ -25,13 +25,13 @@ public class UIRequest : MonoBehaviour
         AuthManager.Instance.ACheckFriendRequests -= Add;
     }
     
-    void Add(string _userId,string _nickName)
+    void Add(UserInfo _userinfo)
     {
         UIRequestSlot slot = Instantiate<UIRequestSlot>(sampleSlot);
         slot.gameObject.SetActive(true);
         slot.transform.SetParent(Contents.transform);
         slot.transform.localScale = new Vector3(1, 1, 1);
-        slot.SetProfile(_userId, _nickName);
+        slot.SetProfile(_userinfo);
         activeSlots.Push(slot);
     }
     void Clear()

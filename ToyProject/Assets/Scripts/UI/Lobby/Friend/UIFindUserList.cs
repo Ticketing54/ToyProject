@@ -42,7 +42,7 @@ public class UIFindUserList : MonoBehaviour
         AuthManager.Instance.FindUserList_NickName(nicName,Add);
     }
     
-    void Add(string _userID,string _userNickName)
+    void Add(UserInfo _userinfo)
     {   
         UIFindUserSlot newSlot = null; 
         if (slotPool.Count != 0)
@@ -54,7 +54,7 @@ public class UIFindUserList : MonoBehaviour
             newSlot = Instantiate<UIFindUserSlot>(sampleSlot);
         }
         newSlot.gameObject.SetActive(true);
-        newSlot.SetProfile(_userID, _userNickName);
+        newSlot.SetProfile(_userinfo);
         newSlot.transform.SetParent(contents.transform);
         newSlot.transform.localScale = new Vector3(1, 1, 1);        
         activeSlots.Add(newSlot);

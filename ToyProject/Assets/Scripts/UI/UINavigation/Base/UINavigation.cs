@@ -46,21 +46,25 @@ public abstract class UINavigation : MonoBehaviour
 
     IEnumerator CoPushUIView(UIView _uiview)
     {
-        if(current != null)
+        UIManager.uiManager.OnDontClick();
+        _uiview.gameObject.SetActive(true);
+        if (current != null)
         {
             current.Hide();
             yield return new WaitWhile(() => current.State != UIView.VisibleState.Disappeared);
             current.gameObject.SetActive(false);
         }
-        _uiview.gameObject.SetActive(true);
+        UIManager.uiManager.OFFDontClick();
         _uiview.Show();
         history.Push(current);
         current = _uiview;
     }
     IEnumerator CoPopUIView()
     {
+        UIManager.uiManager.OnDontClick();
         yield return new WaitWhile(() => current.State != UIView.VisibleState.Disappeared);        
         current.gameObject.SetActive(false);
+        UIManager.uiManager.OFFDontClick();
         UIView prevView = history.Pop();
         prevView.gameObject.SetActive(true);
         prevView.Show();

@@ -17,13 +17,19 @@ public class NavLobby : UINavigation
     {
         base.RootShow();
     }
+    public void OnClickCreateRoom()
+    {
+        AuthManager.Instance.CreateRoom(CreateRoom);
+    }
+    void CreateRoom()
+    {
+        Push(playRoom);
+
+    }
     public void OnClickTutorialButton()
     {
 
     }
-    public void OnClickNomalPlayButton()
-    {
-
-    }
+    
 
 }

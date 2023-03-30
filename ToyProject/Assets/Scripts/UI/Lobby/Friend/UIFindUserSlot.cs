@@ -7,9 +7,9 @@ public class UIFindUserSlot : UIUserSlot
     [SerializeField]
     Button AddButton;
 
-    public override void SetProfile(string _userId, string _userNickname)
+    public override void SetProfile(UserInfo _userinfo)
     {
-        base.SetProfile(_userId, _userNickname);
+        base.SetProfile(_userinfo);
         AddButton.gameObject.SetActive(true);
     }
     public override void Clear()

@@ -9,10 +9,10 @@ public class UIUserSlot : MonoBehaviour
     TextMeshProUGUI nicName;
     protected string userId;
     protected string userName;
-    public virtual void SetProfile(string _userId,string _userName)
+    public virtual void SetProfile(UserInfo _userinfo)
     {
-        userId = _userId;
-        nicName.text = _userName;
+        userId = _userinfo.UID;
+        nicName.text = _userinfo.NickName;
     }
     public virtual void Clear()
     {

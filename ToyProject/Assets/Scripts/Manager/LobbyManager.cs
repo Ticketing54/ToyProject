@@ -25,6 +25,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             return instance;
         }        
     }    
+    public void CreatRoom(string _roomName)
+    {
+        RoomOptions roomOptions = new RoomOptions();
+        roomOptions.MaxPlayers = 4;
+        roomOptions.IsOpen = true;
+        PhotonNetwork.CreateRoom(_roomName, roomOptions);
+    }
     public void ConnectSetting()
     {
         PhotonNetwork.GameVersion = gameVersion;
