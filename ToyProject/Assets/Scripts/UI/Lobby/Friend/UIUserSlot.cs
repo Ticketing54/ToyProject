@@ -6,17 +6,17 @@ using TMPro;
 public class UIUserSlot : MonoBehaviour
 {
     [SerializeField]
-    TextMeshProUGUI nicName;
+    protected TextMeshProUGUI nickName;
     protected string userId;
     protected string userName;
     public virtual void SetProfile(UserInfo _userinfo)
     {
         userId = _userinfo.UID;
-        nicName.text = _userinfo.NickName;
+        nickName.text = _userinfo.NickName;
     }
     public virtual void Clear()
     {
-        nicName.text = "";
+        nickName.text = "";
         userId = "";
     }
 

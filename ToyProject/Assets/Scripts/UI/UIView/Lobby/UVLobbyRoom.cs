@@ -6,48 +6,62 @@ using TMPro;
 public class UVLobbyRoom : UIView
 {
     [SerializeField]
-    UIRoomUserSolt master;  // == user0
+    UIRoomUserSlot master;  // == user0
     [SerializeField]
-    UIRoomUserSolt user1;
+    UIRoomUserSlot user1;
     [SerializeField]
-    UIRoomUserSolt user2;
+    UIRoomUserSlot user2;
     [SerializeField]
-    UIRoomUserSolt user3;
-
+    UIRoomUserSlot user3;
+    [SerializeField]
     Button playerButton;
 
 
-    private void Awake()
+    private void OnEnable()
     {
-        
+        AuthManager.Instance.AUpdateRoom += SettingSlot;
     }
-
-    void SettingSlot(int _index, UserInfo _userinfo)
+    private void OnDisable()
     {
-        UIRoomUserSolt controlslot;
-        switch(_index)
+        AuthManager.Instance.AUpdateRoom -= SettingSlot;
+    }
+    void SettingSlot(FBRoomData _data,bool _isMaster)
+    {
+        playerButton.gameObject.SetActive(_isMaster);
+
+        if (_data.Master != "")
         {
-            case 0:
-                controlslot = master;
-                break;
-            case 1:
-                controlslot = user1;
-                break;
-            case 2:
-                controlslot = user2;
-                break;
-            case 3:
-                controlslot = user3;
-                break;
-            default:
-                controlslot = null;
-                Debug.Log("UVLobbyRoom :: SettingSlot Number is Error");
-                break;
+            AuthManager.Instance.FindUser_UID(_data.Master, master.SetProfile);
+        }
+        else
+        {
+            master.Clear();
         }
 
-        if(controlslot != null)
+        if (_data.User1 != "")
         {
-            controlslot.SetProfile(_userinfo);
+            AuthManager.Instance.FindUser_UID(_data.User1, user1.SetProfile);
+        }
+        else
+        {
+            user1.Clear();
+        }
+        if (_data.User2 != "")
+        {
+            AuthManager.Instance.FindUser_UID(_data.User2, user2.SetProfile);
+        }
+        else
+        {
+            user2.Clear();
+        }
+
+        if (_data.User3 != "")
+        {
+            AuthManager.Instance.FindUser_UID(_data.User3, user3.SetProfile);
+        }
+        else
+        {
+            user3.Clear();
         }
     }
 

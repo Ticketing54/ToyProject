@@ -168,7 +168,7 @@ public class AuthManager
     /// </summary>
     /// <param name="UID"></param>
     /// <param name="Action(UID,NickName)"></param>
-    void FindUser_UID(string _uid, Action<UserInfo> _ui)
+    public void FindUser_UID(string _uid, Action<UserInfo> _ui)
     {
         Reference.Child("User").Child(_uid).GetValueAsync().ContinueWithOnMainThread(
            (task) =>
@@ -249,20 +249,49 @@ public class AuthManager
     public void CreateRoom(Action _openRoom)
     {
         UIManager.uiManager.OnDontClick();
-        Dictionary<string, object> masterInfo = new Dictionary<string, object>();
-        masterInfo["Master"] = User.UserId;
-        masterInfo["Count"] = 1;
-        Reference.Child("Room").Child(User.UserId).SetValueAsync(masterInfo).ContinueWithOnMainThread(
+        FBRoomData newRoom = new FBRoomData(User.UserId);
+        Reference.Child("Room").Child(User.UserId).SetRawJsonValueAsync(JsonUtility.ToJson(newRoom)).ContinueWithOnMainThread(
             (task)=>
             {
                 UIManager.uiManager.OFFDontClick();
                 if (task.IsCompleted)
                 {
                     _openRoom();
+                    UpdateRoom(User.UserId);
+                    Reference.Child("Room").Child(User.UserId).ValueChanged += RoomHandle;
                 }
                 else
                 {
                     Debug.Log("AuthManger :: CreateRoomError");
+                }
+            });
+    }
+    public Action<FBRoomData,bool> AUpdateRoom { get; set; }
+    public void UpdateRoom(string _roomName)
+    {
+        if (AUpdateRoom == null)
+            return;
+
+        Reference.Child("Room").Child(_roomName).GetValueAsync().ContinueWith(
+            (task) =>
+            { 
+                if(task.IsCompleted)
+                {
+                    if(task.Result.Exists)
+                    {
+                        FBRoomData data = JsonUtility.FromJson<FBRoomData>(task.Result.GetRawJsonValue());
+                        bool isMaster = (data.Master == User.UserId) ? true : false;
+                        AUpdateRoom(data, isMaster);
+                    }
+                    else
+                    {
+                        UIManager.uiManager.OnErrorMessage("방이 존재하지 않습니다.");
+                        UIManager.uiManager.CurrentPop();
+                    }
+                }
+                else
+                {
+
                 }
             });
     }
@@ -311,6 +340,16 @@ public class AuthManager
         FindUser_UID(e.Snapshot.Key, ACheckFriendRequests);
         CheckFriendRequests();
     }
+    private void RoomHandle(object sender, ValueChangedEventArgs e)
+    {
+        if (e.DatabaseError != null)
+        {
+            Debug.LogError(e.DatabaseError.Message);
+            return;
+        }
+        UpdateRoom(e.Snapshot.Key);
+    }
+
     #endregion
 
     #region Auth User
