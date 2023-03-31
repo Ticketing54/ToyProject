@@ -7,12 +7,12 @@ public class UIRequestSlot : UIUserSlot
 {   
     public void OnClickAcceptButton()
     {
-        AuthManager.Instance.RespondToFriendRequest(userId,userName, true);
+        AuthManager.Instance.RespondToFriendRequest(userId,true);
         Destroy(this.gameObject);
     }
     public void OnClickRefuseButton()
     {
-        AuthManager.Instance.RespondToFriendRequest(userId,userName, false);
+        AuthManager.Instance.RespondToFriendRequest(userId,false);
         Destroy(this.gameObject);
     }
     

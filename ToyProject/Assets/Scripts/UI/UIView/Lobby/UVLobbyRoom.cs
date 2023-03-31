@@ -31,7 +31,7 @@ public class UVLobbyRoom : UIView
 
         if (_data.Master != "")
         {
-            AuthManager.Instance.FindUser_UID(_data.Master, master.SetProfile);
+            
         }
         else
         {
@@ -40,7 +40,7 @@ public class UVLobbyRoom : UIView
 
         if (_data.User1 != null)
         {
-            AuthManager.Instance.FindUser_UID(_data.User1, user1.SetProfile);
+            
         }
         else
         {
@@ -48,7 +48,7 @@ public class UVLobbyRoom : UIView
         }
         if (_data.User2 != null)
         {
-            AuthManager.Instance.FindUser_UID(_data.User2, user2.SetProfile);
+            
         }
         else
         {
@@ -56,7 +56,7 @@ public class UVLobbyRoom : UIView
         }
         if (_data.User3 != null)
         {
-            AuthManager.Instance.FindUser_UID(_data.User3, user3.SetProfile);
+            
         }
         else
         {

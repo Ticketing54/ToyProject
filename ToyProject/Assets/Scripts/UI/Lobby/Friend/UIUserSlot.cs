@@ -13,7 +13,7 @@ public class UIUserSlot : MonoBehaviour
     public virtual void SetProfile(UserInfo _userinfo)
     {
         userId = _userinfo.UID;
-        nickName.text = _userinfo.NickName;
+            nickName.text = _userinfo.NickName;
     }
     public virtual void Clear()
     {

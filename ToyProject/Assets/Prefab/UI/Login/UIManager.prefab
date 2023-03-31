@@ -753,7 +753,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8123cd58a18215047b258fac3370dfc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nickName: {fileID: 0}
+  nickName: {fileID: 5431410897279326271}
 --- !u!1 &1087442835521449054
 GameObject:
   m_ObjectHideFlags: 0
@@ -3647,7 +3647,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a52444539fd135b4fa91e6ac3b067128, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nickName: {fileID: 0}
+  nickName: {fileID: 6166620437070983800}
   connectImage: {fileID: 5472405329871125490}
 --- !u!1 &2905964715899809917
 GameObject:
@@ -4445,7 +4445,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74465e37754e57f4c8772113e7c57e3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nickName: {fileID: 0}
+  nickName: {fileID: 8157703157148277976}
   AddButton: {fileID: 1959291241661721800}
 --- !u!1 &3514715860146874969
 GameObject:
