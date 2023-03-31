@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using TMPro;
 
 public class UIUserSlot : MonoBehaviour
-{
+{   
     [SerializeField]
     protected TextMeshProUGUI nickName;
     protected string userId;

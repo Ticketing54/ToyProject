@@ -27,7 +27,7 @@ public class UVLobbyRoom : UIView
     }
     void SettingSlot(FBRoomData _data,bool _isMaster)
     {
-        playerButton.gameObject.SetActive(_isMaster);
+        playerButton.interactable =_isMaster;
 
         if (_data.Master != "")
         {
@@ -38,7 +38,7 @@ public class UVLobbyRoom : UIView
             master.Clear();
         }
 
-        if (_data.User1 != "")
+        if (_data.User1 != null)
         {
             AuthManager.Instance.FindUser_UID(_data.User1, user1.SetProfile);
         }
@@ -46,7 +46,7 @@ public class UVLobbyRoom : UIView
         {
             user1.Clear();
         }
-        if (_data.User2 != "")
+        if (_data.User2 != null)
         {
             AuthManager.Instance.FindUser_UID(_data.User2, user2.SetProfile);
         }
@@ -54,8 +54,7 @@ public class UVLobbyRoom : UIView
         {
             user2.Clear();
         }
-
-        if (_data.User3 != "")
+        if (_data.User3 != null)
         {
             AuthManager.Instance.FindUser_UID(_data.User3, user3.SetProfile);
         }
@@ -63,6 +62,6 @@ public class UVLobbyRoom : UIView
         {
             user3.Clear();
         }
-    }
 
+    }
 }

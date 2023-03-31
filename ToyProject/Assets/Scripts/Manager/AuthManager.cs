@@ -122,46 +122,20 @@ public class AuthManager
     /// </summary>
     /// <param name="SearchNickName"></param>
     /// <param name="Action(NickName,UID)"></param>
-    public void FindUserList_NickName(string _nickName, Action<UserInfo> _uiUpdate)
+    public async void FindUserList_NickName(string _nickName, Action<UserInfo> _uiUpdate)
     {
-        Reference.Child("User").OrderByChild("NickName").EqualTo(_nickName).GetValueAsync().ContinueWithOnMainThread(
-           (task) =>
-           {
-               if (task.IsFaulted)
-               {
-                   Debug.Log("없음");
-               }
-               else if (task.IsCompleted)
-               {
-                   DataSnapshot snapshot = task.Result; // 찾은 유저 목록
+        DataSnapshot sanpShot = await Reference.Child("User").Child(User.UserId).Child("Friend").GetValueAsync();
+        Dictionary<string, object> friends = (Dictionary<string, object>)sanpShot.Value;
 
-                   Reference.Child("User").Child(User.UserId).Child("Friend").GetValueAsync().ContinueWithOnMainThread(
-                       (friend) =>
-                       {
-                           DataSnapshot friends = friend.Result;
-                           foreach (DataSnapshot child in snapshot.Children)
-                           {
-                               if (child.Key == User.UserId)
-                                   continue;
+        DataSnapshot findUser = await Reference.Child("User").OrderByChild("NickName").EqualTo(_nickName).GetValueAsync();
+        foreach (DataSnapshot user in findUser.Children)
+        {
+            if(!friends.ContainsKey(user.Key))
+            {
+                // 여기부터 하면 될듯
+            }
+        }
 
-                               bool isFriend = false;
-                               foreach (DataSnapshot f in friends.Children)
-                               {
-                                   if(f.Key == child.Key )
-                                   {
-                                       isFriend = true;
-                                       break;
-                                   }
-                               }
-                               if(!isFriend)
-                               {
-                                   FindUser_UID(child.Key, _uiUpdate);
-                               }
-                           }
-                       });
-                   
-               }
-           });
     }
     /// <summary>
     /// UID로 유저찾기  닉네임이 없는경우를 생각하기
@@ -246,19 +220,16 @@ public class AuthManager
                 }
             });
     }
-    public void CreateRoom(Action _openRoom)
-    {
+    public void CreateRoom(string _roomInfo)
+    {   
         UIManager.uiManager.OnDontClick();
-        FBRoomData newRoom = new FBRoomData(User.UserId);
-        Reference.Child("Room").Child(User.UserId).SetRawJsonValueAsync(JsonUtility.ToJson(newRoom)).ContinueWithOnMainThread(
+        Reference.Child("Room").Child(_roomInfo).Child("Master").SetValueAsync(User.UserId).ContinueWithOnMainThread(
             (task)=>
             {
                 UIManager.uiManager.OFFDontClick();
                 if (task.IsCompleted)
-                {
-                    _openRoom();
-                    UpdateRoom(User.UserId);
-                    Reference.Child("Room").Child(User.UserId).ValueChanged += RoomHandle;
+                {   
+                    UpdateRoom(_roomInfo);
                 }
                 else
                 {
@@ -272,7 +243,7 @@ public class AuthManager
         if (AUpdateRoom == null)
             return;
 
-        Reference.Child("Room").Child(_roomName).GetValueAsync().ContinueWith(
+        Reference.Child("Room").Child(_roomName).GetValueAsync().ContinueWithOnMainThread(
             (task) =>
             { 
                 if(task.IsCompleted)
@@ -485,6 +456,7 @@ public class AuthManager
                 else
                 {   
                     Reference.Child("User").Child(task.Result.UserId).Child("UID").SetValueAsync(task.Result.UserId);
+                    Reference.Child("User").Child(task.Result.UserId).Child("Connect").SetValueAsync(false);
                     UIManager.uiManager.OFFDontClick();
                     UIManager.uiManager.CurrentPop();
                 }

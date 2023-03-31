@@ -38,7 +38,11 @@ public class UIRequest : MonoBehaviour
     {
        while(activeSlots.Count != 0)
         {
-            Destroy(activeSlots.Pop().gameObject);
+            UIRequestSlot popSlot = activeSlots.Pop();
+            if(popSlot != null)
+            {
+                Destroy(popSlot.gameObject);
+            }
         }
     }
 }

@@ -49,6 +49,10 @@ public class UIFriendList : MonoBehaviour
         }
         newfriend.gameObject.SetActive(true);        
         newfriend.transform.SetParent(contentObj.transform);
+        if(_userinfo.Connect == false)
+        {
+            newfriend.transform.SetAsLastSibling();
+        }
         newfriend.transform.localScale = new Vector3(1, 1, 1);
         newfriend.SetProfile(_userinfo);
         friendList.Add(newfriend);

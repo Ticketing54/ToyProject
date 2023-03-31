@@ -19,12 +19,8 @@ public class NavLobby : UINavigation
     }
     public void OnClickCreateRoom()
     {
-        AuthManager.Instance.CreateRoom(CreateRoom);
-    }
-    void CreateRoom()
-    {
         Push(playRoom);
-
+        LobbyManager.Instance.CreatRoom();
     }
     public void OnClickTutorialButton()
     {

@@ -25,18 +25,28 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             return instance;
         }        
     }    
-    public void CreatRoom(string _roomName)
+    public void CreatRoom()
     {
+        if (PhotonNetwork.InRoom)
+            return;
+
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 4;
         roomOptions.IsOpen = true;
-        PhotonNetwork.CreateRoom(_roomName, roomOptions);
+        PhotonNetwork.CreateRoom(null, roomOptions);
     }
+    public override void OnCreatedRoom()
+    {   
+        AuthManager.Instance.CreateRoom(PhotonNetwork.AuthValues.UserId);
+    }
+
+
     public void ConnectSetting()
     {
         PhotonNetwork.GameVersion = gameVersion;
         PhotonNetwork.AuthValues = new AuthenticationValues(AuthManager.Instance.User.UserId);
         PhotonNetwork.ConnectUsingSettings();
+        PhotonNetwork.LocalPlayer.CustomProperties["UID"] = AuthManager.Instance.User.UserId;
         UIManager.uiManager.OnDontClick();
     }
     public override void OnConnectedToMaster()
