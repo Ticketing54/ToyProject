@@ -5654,9 +5654,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UIFindUserSlot, Assembly-CSharp
-        m_MethodName: OnClickAddFriendButton
+      - m_Target: {fileID: 5772972242848477455}
+        m_TargetAssemblyTypeName: UIInviteFriendSlot, Assembly-CSharp
+        m_MethodName: OnClickSendInviteRequest
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6394,6 +6394,7 @@ GameObject:
   - component: {fileID: 346826567429674024}
   - component: {fileID: 4198989571564020232}
   - component: {fileID: 2420206771144207410}
+  - component: {fileID: 5772972242848477455}
   m_Layer: 5
   m_Name: Sampleinvite
   m_TagString: Untagged
@@ -6462,6 +6463,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5772972242848477455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5112225906271425680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 849c9365191154b40af6641d5149f805, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nickName: {fileID: 2161036539277955000}
+  sendButton: {fileID: 2509343464479166998}
 --- !u!1 &5129766115488391317
 GameObject:
   m_ObjectHideFlags: 0
@@ -8128,6 +8143,7 @@ GameObject:
   - component: {fileID: 1025071827098135312}
   - component: {fileID: 6479045554780346576}
   - component: {fileID: 608850562256879913}
+  - component: {fileID: 1620491960754637441}
   m_Layer: 5
   m_Name: FindFriend
   m_TagString: Untagged
@@ -8195,6 +8211,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1620491960754637441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6005596552603234431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ac62a771e646d84d8aab983b33f58a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sampleSlot: {fileID: 5772972242848477455}
+  contentObj: {fileID: 6369489265875448938}
 --- !u!1 &6054927278869266393
 GameObject:
   m_ObjectHideFlags: 0

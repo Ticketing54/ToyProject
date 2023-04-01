@@ -47,16 +47,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         PhotonNetwork.AuthValues = new AuthenticationValues(AuthManager.Instance.User.UserId);
         PhotonNetwork.ConnectUsingSettings();
         PhotonNetwork.LocalPlayer.CustomProperties["UID"] = AuthManager.Instance.User.UserId;
-        UIManager.uiManager.OnDontClick();
     }
-    public override void OnConnectedToMaster()
-    {
-        UIManager.uiManager.OFFDontClick();
-    }
+    
     public override void OnDisconnected(DisconnectCause cause)
     {
-
-        PhotonNetwork.ConnectUsingSettings();
+        AuthManager.Instance.LogOut();
     }
 
     

@@ -47,7 +47,7 @@ public class AuthManager
 
     public FirebaseAuth Auth { get; private set; }
     public FirebaseApp App { get; private set; }
-    public FirebaseUser User { get; private set; }    
+    public FirebaseUser User { get; private set; }    // 나중에 다시 설정할 것 ( 접속 끊겼을떄 대응)
     public DatabaseReference Reference { get; private set; }
     public Action AOpenNickNameUI { get; set; }
 
@@ -123,14 +123,9 @@ public class AuthManager
         }
     }
 
-    public async void SendFriendRequest(string _targetUID)
+    public void SendFriendRequest(string _targetUID)
     {
-        DataSnapshot userSnapshot = await Reference.Child("User").Child(_targetUID).GetValueAsync();
-
-        if(userSnapshot.Exists)
-        {
-            var task = Reference.Child("User").Child(_targetUID).Child("Push").Child("FriendRequest").Child(User.UserId).SetValueAsync(true);
-        }
+        Reference.Child("User").Child(_targetUID).Child("Push").Child("FriendRequest").Child(User.UserId).SetValueAsync(true);
     }
     public async void RespondToFriendRequest(string _userID,bool _addFriend)
     {
@@ -154,60 +149,7 @@ public class AuthManager
             }
         }
     }
-    public void CreateRoom(string _roomInfo)
-    {   
-        UIManager.uiManager.OnDontClick();
-        Reference.Child("Room").Child(_roomInfo).Child("Master").SetValueAsync(User.UserId).ContinueWithOnMainThread(
-            (task)=>
-            {
-                UIManager.uiManager.OFFDontClick();
-                if (task.IsCompleted)
-                {   
-                    UpdateRoom(_roomInfo);
-                }
-                else
-                {
-                    Debug.Log("AuthManger :: CreateRoomError");
-                }
-            });
-    }
-    public Action<FBRoomData,bool> AUpdateRoom { get; set; }
-    public void UpdateRoom(string _roomName)
-    {
-        if (AUpdateRoom == null)
-            return;
-
-        Reference.Child("Room").Child(_roomName).GetValueAsync().ContinueWithOnMainThread(
-            (task) =>
-            { 
-                if(task.IsCompleted)
-                {
-                    if(task.Result.Exists)
-                    {
-                        FBRoomData data = JsonUtility.FromJson<FBRoomData>(task.Result.GetRawJsonValue());
-                        bool isMaster = (data.Master == User.UserId) ? true : false;
-                        AUpdateRoom(data, isMaster);
-                    }
-                    else
-                    {
-                        UIManager.uiManager.OnErrorMessage("방이 존재하지 않습니다.");
-                        UIManager.uiManager.CurrentPop();
-                    }
-                }
-                else
-                {
-
-                }
-            });
-    }
-    public void JoinRoom(string _roomName)
-    {
-        Reference.Child("Room").Child(_roomName).GetValueAsync().ContinueWithOnMainThread(
-            (task)=>
-            {
-
-            });
-    }
+   
     #endregion
 
     #region FirebaseDataBase Handler
@@ -246,7 +188,7 @@ public class AuthManager
             Debug.LogError(e.DatabaseError.Message);
             return;
         }
-        UpdateRoom(e.Snapshot.Key);
+        UpdateRoom(e.Snapshot);
     }
 
     #endregion
@@ -327,7 +269,6 @@ public class AuthManager
             }
             if (userinfo.NickName == null && AOpenNickNameUI != null)
             {   
-                UIManager.uiManager.OFFDontClick();
                 AOpenNickNameUI();
             }
             else
@@ -340,7 +281,14 @@ public class AuthManager
             GameManager.Instance.ChangeState(GameState.Login);
             UIManager.uiManager.OnErrorMessage("로그인 정보가 존재하지 않습니다.");
         }
+        UIManager.uiManager.OFFDontClick();
     }
+    public void LogOut()
+    {
+        Reference.Child("User").Child(User.UserId).Child("Connect").SetValueAsync(false);
+        User = null;
+    }
+
     /// <summary>
     /// Regist : ID와 Password, 결과에대한 UI표시함수
     /// </summary>
@@ -418,7 +366,76 @@ public class AuthManager
     }
 
     #endregion
+    #region Room
+    public async void CreateRoom(string _roomInfo)
+    {
+        UIManager.uiManager.OnDontClick();
+        await Reference.Child("Room").Child(_roomInfo).Child("Master").SetValueAsync(User.UserId);
+        DataSnapshot roomSnapshot = await Reference.Child("Room").Child(_roomInfo).GetValueAsync();
+        if (roomSnapshot.Exists)
+        {
+            UpdateRoom(roomSnapshot);
+        }
+        UIManager.uiManager.OFFDontClick();
+    }
+
+
+    public void UpdateRoom(DataSnapshot _roomSnapShot)
+    {
+        if (!_roomSnapShot.Exists)
+        {
+            UIManager.uiManager.CurrentPop();
+            UIManager.uiManager.OnErrorMessage("방이 존재하지 않습니다.");
+        }
+        // 여기부터 하자!
+            
+
+    }
+    public void JoinRoom(string _roomName)
+    {
+        Reference.Child("Room").Child(_roomName).GetValueAsync().ContinueWithOnMainThread(
+            (task) =>
+            {
+
+            });
+    }
+    public void SendInviteMessage(string _targetID)
+    {
+        Reference.Child("User").Child("Push").Child("RoomInviteRequest").Child(User.UserId).SetValueAsync(true);
+    }
     
+    /// <summary>
+    /// RoomInviteList Update
+    /// </summary>
+    /// <param name="Action(UserInfo)"></param>
+    async void UpdateInviteList(Action _add)
+    {
+        DataSnapshot friendsSnapshot = await Reference.Child("User").Child(User.UserId).Child("Friend").GetValueAsync();
+        DataSnapshot roomSnapshot = await Reference.Child("Room").Child(User.UserId).GetValueAsync();
+        if(roomSnapshot.Exists == false)
+        {
+            UIManager.uiManager.OnErrorMessage("방정보가 없습니다!!");
+            return;
+        }
+        DataSnapshot guestsnapShot = roomSnapshot.Child("guest");
+        Dictionary<string, object> guest = null;
+        if (guestsnapShot.Exists)
+        {
+            guest = (Dictionary<string, object>)guestsnapShot.Value;
+        }
+
+        if(friendsSnapshot.Exists)
+        {
+            foreach(DataSnapshot friend in friendsSnapshot.Children)
+            {
+                if (guest != null && guest.ContainsKey(friend.Key))
+                    continue;
+                DataSnapshot frienddata = await Reference.Child("User").Child(friend.Key).GetValueAsync();
+                UserInfo friendinfo = JsonUtility.FromJson<UserInfo>(frienddata.GetRawJsonValue());
+            }
+        }
+    }
+    #endregion
     #region  Chat
     /// <summary>
     /// SendMessage (UserID, Message)
