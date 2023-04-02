@@ -371,25 +371,36 @@ public class AuthManager
     {
         UIManager.uiManager.OnDontClick();
         await Reference.Child("Room").Child(_roomInfo).Child("Master").SetValueAsync(User.UserId);
-        DataSnapshot roomSnapshot = await Reference.Child("Room").Child(_roomInfo).GetValueAsync();
-        if (roomSnapshot.Exists)
-        {
-            UpdateRoom(roomSnapshot);
-        }
+        DataSnapshot _roomSnapshot = await Reference.Child("Room").Child(_roomInfo).GetValueAsync();
+        UpdateRoom(_roomSnapshot);
         UIManager.uiManager.OFFDontClick();
     }
+    public Action<List<UserInfo>> ARoomUpdate;
 
-
-    public void UpdateRoom(DataSnapshot _roomSnapShot)
+    public async void UpdateRoom(DataSnapshot _roomSnapshot)
     {
-        if (!_roomSnapShot.Exists)
-        {
-            UIManager.uiManager.CurrentPop();
-            UIManager.uiManager.OnErrorMessage("방이 존재하지 않습니다.");
-        }
-        // 여기부터 하자!
-            
+        if (ARoomUpdate == null)
+            return;
 
+        if (_roomSnapshot.Exists)
+        {   
+            //Reference.Child("Room").Child(_roomSnapShot.Key).ValueChanged -= ;
+            List<UserInfo> userinfoList = new List<UserInfo>();
+            DataSnapshot masterDs = await Reference.Child("User").Child(_roomSnapshot.Child("Master").Value.ToString()).GetValueAsync();
+            UserInfo master = JsonUtility.FromJson<UserInfo>(masterDs.GetRawJsonValue());
+            userinfoList.Add(master);
+            DataSnapshot guestinfo = _roomSnapshot.Child("Guest");
+            if (guestinfo.Exists)
+            {
+                foreach (DataSnapshot guestsanpShot in guestinfo.Children)
+                {
+                    DataSnapshot guestDs = await Reference.Child("User").Child(guestsanpShot.Key).GetValueAsync();
+                    UserInfo guest = JsonUtility.FromJson<UserInfo>(guestDs.GetRawJsonValue());
+                    userinfoList.Add(guest);
+                }
+            }
+            ARoomUpdate(userinfoList);
+        }
     }
     public void JoinRoom(string _roomName)
     {

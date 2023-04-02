@@ -6,24 +6,45 @@ using TMPro;
 public class UVLobbyRoom : UIView
 {
     [SerializeField]
-    UIRoomUserSlot master;  // == user0
+    UIRoomUserSlot masterSlot;  // == user0
     [SerializeField]
-    UIRoomUserSlot user1;
-    [SerializeField]
-    UIRoomUserSlot user2;
-    [SerializeField]
-    UIRoomUserSlot user3;
+    List<UIRoomUserSlot> guestSlot;
     [SerializeField]
     Button playerButton;
 
 
     private void OnEnable()
     {
-        
+        AuthManager.Instance.ARoomUpdate += SettingRoom;
     }
     private void OnDisable()
     {
-        
+        AuthManager.Instance.ARoomUpdate -= SettingRoom;
+    }
+    void SettingRoom(List<UserInfo> _userInfo)
+    {
+        int index = 1;
+        masterSlot.SetProfile(_userInfo[0]);
+        foreach(UIRoomUserSlot slot in guestSlot)
+        {
+            if(_userInfo.Count <=index)
+            {
+                slot.Clear();
+            }
+            else
+            {
+                slot.SetProfile(_userInfo[index++]);
+            }
+        }
+
+        if(_userInfo[0].UID == AuthManager.Instance.User.UserId)
+        {
+            playerButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            playerButton.gameObject.SetActive(false);
+        }
     }
 
 }

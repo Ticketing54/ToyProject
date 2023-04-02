@@ -10295,10 +10295,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvasGroup: {fileID: 4858944269981357618}
-  master: {fileID: 6605018212101541568}
-  user1: {fileID: 2238923839552049588}
-  user2: {fileID: 7926513455914580146}
-  user3: {fileID: 8519248072158462608}
+  masterSlot: {fileID: 6605018212101541568}
+  guestSlot:
+  - {fileID: 2238923839552049588}
+  - {fileID: 7926513455914580146}
+  - {fileID: 8519248072158462608}
   playerButton: {fileID: 7798782801984195269}
 --- !u!225 &4858944269981357618
 CanvasGroup:
