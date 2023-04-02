@@ -35,11 +35,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         roomOptions.IsOpen = true;
         PhotonNetwork.CreateRoom(null, roomOptions);
     }
-    public override void OnCreatedRoom()
-    {   
-        AuthManager.Instance.CreateRoom(PhotonNetwork.AuthValues.UserId);
+    public void SendInviteMessage(string _targetUID)
+    {
+        AuthManager.Instance.SendInviteMessage(_targetUID,PhotonNetwork.CurrentRoom.Name);
     }
 
+    public override void OnCreatedRoom()
+    {
+        AuthManager.Instance.CreateRoom(PhotonNetwork.CurrentRoom.Name);
+    }
 
     public void ConnectSetting()
     {

@@ -15,6 +15,6 @@ public class UIInviteFriendSlot : UIUserSlot
     public void OnClickSendInviteRequest()
     {
         sendButton.gameObject.SetActive(false);
-
+        LobbyManager.Instance.SendInviteMessage(userId);
     }
 }

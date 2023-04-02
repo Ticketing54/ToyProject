@@ -46,5 +46,13 @@ public class UVLobbyRoom : UIView
             playerButton.gameObject.SetActive(false);
         }
     }
-
+    public override void Show()
+    {
+        canvasGroup.alpha = 1;
+        state = VisibleState.Appeared;
+    }
+    public override void Hide()
+    {
+        state = VisibleState.Disappeared;
+    }
 }

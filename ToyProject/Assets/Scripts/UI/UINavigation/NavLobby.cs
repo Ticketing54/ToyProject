@@ -11,20 +11,16 @@ public class NavLobby : UINavigation
     public override void Awake()
     {
         base.Awake();
-
+        AuthManager.Instance.AOpenRoom += () => { Push(playRoom); };
     }
     public override void RootShow()
     {
         base.RootShow();
     }
-    public void OnClickCreateRoom()
-    {
-        Push(playRoom);
-        LobbyManager.Instance.CreatRoom();
-    }
+    public void OnClickCreateRoom() { LobbyManager.Instance.CreatRoom(); }
     public void OnClickTutorialButton()
     {
-
+        // 제작 예정
     }
     
 

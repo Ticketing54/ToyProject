@@ -369,13 +369,29 @@ public class AuthManager
     #region Room
     public async void CreateRoom(string _roomInfo)
     {
-        UIManager.uiManager.OnDontClick();
+        UIManager.uiManager.OpenLoadingUI();
+        AOpenRoom();
+        if (ARoomUpdate == null || AOpenRoom == null)
+        {
+            UIManager.uiManager.CloseLoadingUI();
+            return;
+        }
         await Reference.Child("Room").Child(_roomInfo).Child("Master").SetValueAsync(User.UserId);
-        DataSnapshot _roomSnapshot = await Reference.Child("Room").Child(_roomInfo).GetValueAsync();
-        UpdateRoom(_roomSnapshot);
-        UIManager.uiManager.OFFDontClick();
+        DataSnapshot roomSnapshot = await Reference.Child("Room").Child(_roomInfo).GetValueAsync();
+        
+        if (roomSnapshot.Exists)
+        {
+            //Reference.Child("Room").Child(_roomSnapShot.Key).ValueChanged -= ; 핸들러 등록
+            List<UserInfo> userinfoList = new List<UserInfo>();
+            DataSnapshot masterDs = await Reference.Child("User").Child(roomSnapshot.Child("Master").Value.ToString()).GetValueAsync();
+            UserInfo master = JsonUtility.FromJson<UserInfo>(masterDs.GetRawJsonValue());
+            userinfoList.Add(master);
+            ARoomUpdate(userinfoList);
+        }
+        UIManager.uiManager.CloseLoadingUI();
     }
-    public Action<List<UserInfo>> ARoomUpdate;
+    public Action<List<UserInfo>> ARoomUpdate { get; set; }
+    public Action AOpenRoom { get; set; }
 
     public async void UpdateRoom(DataSnapshot _roomSnapshot)
     {
@@ -384,7 +400,6 @@ public class AuthManager
 
         if (_roomSnapshot.Exists)
         {   
-            //Reference.Child("Room").Child(_roomSnapShot.Key).ValueChanged -= ;
             List<UserInfo> userinfoList = new List<UserInfo>();
             DataSnapshot masterDs = await Reference.Child("User").Child(_roomSnapshot.Child("Master").Value.ToString()).GetValueAsync();
             UserInfo master = JsonUtility.FromJson<UserInfo>(masterDs.GetRawJsonValue());
@@ -410,9 +425,9 @@ public class AuthManager
 
             });
     }
-    public void SendInviteMessage(string _targetID)
+    public void SendInviteMessage(string _targetUID, string _roomName)
     {
-        Reference.Child("User").Child("Push").Child("RoomInviteRequest").Child(User.UserId).SetValueAsync(true);
+        Reference.Child("User").Child(_targetUID).Child("Push").Child("RoomInviteRequest").Child(_roomName).SetValueAsync(User.UserId);
     }
     
     /// <summary>
