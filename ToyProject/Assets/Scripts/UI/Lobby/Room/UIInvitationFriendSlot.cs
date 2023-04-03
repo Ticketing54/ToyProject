@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIInviteFriendSlot : UIUserSlot
+public class UIInvitationFriendSlot : UIUserSlot
 {
     [SerializeField]
     Button sendButton;
@@ -15,6 +15,6 @@ public class UIInviteFriendSlot : UIUserSlot
     public void OnClickSendInviteRequest()
     {
         sendButton.gameObject.SetActive(false);
-        LobbyManager.Instance.SendInviteMessage(userId);
+        LobbyManager.Instance.SendInvitationMessage(userId);
     }
 }

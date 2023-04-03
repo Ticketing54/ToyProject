@@ -8,11 +8,11 @@ public class TBUser : TopBarIcon
     GameObject userUI;
     private void OnEnable()
     {
-        AuthManager.Instance.AMarkingFriendButton += Mark;
+        UIManager.uiManager.AMarkingFriendButton += Mark;
     }
     private void OnDisable()
     {
-        AuthManager.Instance.AMarkingFriendButton -= Mark;
+        UIManager.uiManager.AMarkingFriendButton -= Mark;
     }
     public override void OnClickButton()
     {

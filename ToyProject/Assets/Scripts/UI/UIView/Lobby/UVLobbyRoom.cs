@@ -15,12 +15,13 @@ public class UVLobbyRoom : UIView
 
     private void OnEnable()
     {
-        AuthManager.Instance.ARoomUpdate += SettingRoom;
+        UIManager.uiManager.ARoomUpdate += SettingRoom;
     }
     private void OnDisable()
     {
-        AuthManager.Instance.ARoomUpdate -= SettingRoom;
+        UIManager.uiManager.ARoomUpdate -= SettingRoom;
     }
+    public void OnLeaveRoomButton() { LobbyManager.Instance.LeaveRoom(); }
     void SettingRoom(List<UserInfo> _userInfo)
     {
         int index = 1;

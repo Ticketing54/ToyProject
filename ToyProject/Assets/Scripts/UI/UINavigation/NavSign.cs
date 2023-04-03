@@ -14,7 +14,7 @@ public class NavSign : UINavigation
     public override void Awake()
     {
         base.Awake();
-        AuthManager.Instance.AOpenNickNameUI += () => { Push(nickNameSetting); };
+        UIManager.uiManager.AOpenNickNameUI += () => { Push(nickNameSetting); };
     }
 
     public void OnClickRegistButton() { Push(regist); }    

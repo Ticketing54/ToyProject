@@ -23,7 +23,14 @@ public class AuthManager
             return instance;
         }
     }
-   
+
+    public FirebaseAuth Auth { get; private set; }
+    public FirebaseApp App { get; private set; }
+    public FirebaseUser User { get; private set; }    // 나중에 다시 설정할 것 ( 접속 끊겼을떄 대응)
+    public DatabaseReference Reference { get; private set; }
+
+
+    // Firebase접속
     public IEnumerator Init()
     {
         User = null;
@@ -43,41 +50,21 @@ public class AuthManager
                 }
             });
     }
-    
-
-    public FirebaseAuth Auth { get; private set; }
-    public FirebaseApp App { get; private set; }
-    public FirebaseUser User { get; private set; }    // 나중에 다시 설정할 것 ( 접속 끊겼을떄 대응)
-    public DatabaseReference Reference { get; private set; }
-    public Action AOpenNickNameUI { get; set; }
 
     #region Lobby
     /// <summary>
-    /// Action FriendChanged (UID,NickName)
+    /// 로비 User정보를 얻어 초기세팅
     /// </summary>
-    public Action<UserInfo> AFriendAdd { get; set; }
-    /// <summary>
-    /// UI활성화 시에만
-    /// </summary>
-    public Action AFriendListClear { get; set; }
-    /// <summary>
-    /// UI활성화시에만 (NickName,UID)
-    /// </summary>
-    public Action<UserInfo> ACheckFriendRequests { get; set; }
-    public Action AMarkingFriendButton { get; set; }
-    public Action<UserInfo> AUserSetting { get; set; }
-    public Action<UserInfo> AsettingRoomSlot { get; set; }
-    
     public async void LobbyMainSetting()
     {
         DataSnapshot data = await Reference.Child("User").Child(User.UserId).GetValueAsync();
         if(data.Exists)
         {
             CheckFriendRequests();
-            if (AUserSetting != null)
+            if (UIManager.uiManager.ALobbyPlayerSetting != null)
             {
                 UserInfo player = JsonUtility.FromJson<UserInfo>(data.GetRawJsonValue());
-                AUserSetting(player);
+                UIManager.uiManager.ALobbyPlayerSetting(player);
             }
         }
         else
@@ -87,16 +74,19 @@ public class AuthManager
             GameManager.Instance.ChangeState(GameState.Login);
         }
     }
-    public async void CheckFriendRequests()
+    /// <summary>
+    /// Push알람 체크 확인용
+    /// </summary>
+    public async void CheckFriendRequests()         // 나중에 PushCheck로 바꿀것
     {
         DataSnapshot data = await Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").GetValueAsync();
-        if(data.Exists&& ACheckFriendRequests != null)
+        if(data.Exists&& UIManager.uiManager.ACheckFriendRequests != null)
         {
             foreach(DataSnapshot request in data.Children)
             {
                 DataSnapshot userSnapshot =  await Reference.Child("User").Child(request.Key).GetValueAsync();
                 UserInfo userinfo = JsonUtility.FromJson<UserInfo>(userSnapshot.GetRawJsonValue());
-                ACheckFriendRequests(userinfo);
+                UIManager.uiManager.ACheckFriendRequests(userinfo);
             }
         }
     }
@@ -122,11 +112,19 @@ public class AuthManager
             _uiUpdate(userinfo);
         }
     }
-
+    /// <summary>
+    /// SendRequest
+    /// </summary>
+    /// <param name="TargetUID"></param>
     public void SendFriendRequest(string _targetUID)
     {
         Reference.Child("User").Child(_targetUID).Child("Push").Child("FriendRequest").Child(User.UserId).SetValueAsync(true);
     }
+    /// <summary>
+    /// Respond to a friend request
+    /// </summary>
+    /// <param name="Sender"></param>
+    /// <param name="Choice"></param>
     public async void RespondToFriendRequest(string _userID,bool _addFriend)
     {
         await Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").Child(_userID).RemoveValueAsync();
@@ -136,6 +134,9 @@ public class AuthManager
             await Reference.Child("User").Child(_userID).Child("Friend").Child(User.UserId).SetValueAsync(true);
         }
     }
+    /// <summary>
+    /// UpdateFriendList with FirebaseDatabase
+    /// </summary>
     public async void UpdateFriendList()
     {
         DataSnapshot friendsSnapshot= await Reference.Child("User").Child(User.UserId).Child("Friend").GetValueAsync();
@@ -145,11 +146,30 @@ public class AuthManager
             {
                 DataSnapshot friendSnapshot = await Reference.Child("User").Child(friend.Key).GetValueAsync();
                 UserInfo userinfo = JsonUtility.FromJson<UserInfo>(friendSnapshot.GetRawJsonValue());
-                AFriendAdd(userinfo);
+                UIManager.uiManager.AFriendAdd(userinfo);
             }
         }
     }
-
+    /// <summary>
+    /// SendInvitationMessage
+    /// </summary>
+    /// <param name="TargetUserUID"></param>
+    /// <param name="RoomName"></param>
+    public void SendInvitationMessage(string _targetUID, string _roomName)
+    {
+        Reference.Child("User").Child(_targetUID).Child("Push").Child("RoomInviteRequest").Child(_roomName).SetValueAsync(User.UserId);
+    }
+    /// <summary>
+    /// ReceiveinvitationMessage
+    /// </summary>
+    /// <param name="MessageDataSnapshot"></param>
+    async void ReceiveinvitationMessage(DataSnapshot _inviteMessage)
+    {
+        DataSnapshot senderinfo = await Reference.Child("User").Child(_inviteMessage.Value.ToString()).GetValueAsync();
+        UserInfo user = JsonUtility.FromJson<UserInfo>(senderinfo.GetRawJsonValue());
+        string roomName = _inviteMessage.Key;
+        UIManager.uiManager.AOpenInvitationMessage(user, roomName);
+    }
     #endregion
 
     #region FirebaseDataBase Handler
@@ -158,17 +178,16 @@ public class AuthManager
     {
         DataSnapshot invite = e.Snapshot;
         Reference.Child("User").Child(User.UserId).Child("Push").Child("RoomInviteRequest").Child(e.Snapshot.Key).RemoveValueAsync();
-        if (AOpenInviteMessage != null)
+        if (UIManager.uiManager.AOpenInvitationMessage != null)
         {
-            ReceiveInviteMessage(e.Snapshot);
+            ReceiveinvitationMessage(e.Snapshot);
         }
     }
-
     private void HandleFriend(object sender, ValueChangedEventArgs e)
     {
-        if (AFriendListClear == null || AFriendAdd == null)
+        if (UIManager.uiManager.AFriendListClear == null || UIManager.uiManager.AFriendAdd == null)
             return;
-        AFriendListClear();
+        UIManager.uiManager.AFriendListClear();
 
         if (e.DatabaseError != null)
         {
@@ -179,10 +198,11 @@ public class AuthManager
     }
     private void HandleFriendRequestChanged(object sender, ValueChangedEventArgs e)
     {
-        if (AMarkingFriendButton != null)
-            AMarkingFriendButton();
 
-        if (ACheckFriendRequests == null)
+        if (UIManager.uiManager.AMarkingFriendButton != null)
+            UIManager.uiManager.AMarkingFriendButton();
+
+        if (UIManager.uiManager.ACheckFriendRequests == null)
             return;
         if (e.DatabaseError != null)
         {
@@ -191,28 +211,13 @@ public class AuthManager
         }
         CheckFriendRequests();
     }
-    private void RoomHandle(object sender, ValueChangedEventArgs e)
-    {
-        if (e.DatabaseError != null)
-        {
-            Debug.LogError(e.DatabaseError.Message);
-            return;
-        }
-
-        if (ARoomUpdate != null)
-        {
-            UpdateRoom(e.Snapshot);
-        }
-    }
-
+  
     #endregion
 
     #region Auth User
 
-    public Action<string, UserInfo> AOpenInviteMessage { get; set; }
-
     /// <summary>
-    /// Login : ID와 Password, 결과에대한 UI표시함수
+    /// Login : ID와 Password
     /// </summary>
     /// <param name="ID"></param>
     /// <param name="PW"></param>
@@ -266,6 +271,9 @@ public class AuthManager
                 }
             });
     }
+    /// <summary>
+    /// 사용자의 FirebaseDatabase 정보확인
+    /// </summary>
     async void LoginFirebase()
     {
         await Reference.Child("User").Child(User.UserId).Child("Connect").SetValueAsync(true);
@@ -273,8 +281,11 @@ public class AuthManager
         if(snapshot.Exists)
         {
             UserInfo userinfo = JsonUtility.FromJson<UserInfo>(snapshot.GetRawJsonValue());
+            // 핸들러 등록
             Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").ValueChanged        += HandleFriendRequestChanged;
             Reference.Child("User").Child(User.UserId).Child("Friend").ValueChanged                             += HandleFriend;
+
+            await Reference.Child("User").Child(User.UserId).Child("Push").Child("RoomInviteRequest").SetValueAsync(true); // 초대 메세지 초기화
             Reference.Child("User").Child(User.UserId).Child("Push").Child("RoomInviteRequest").ValueChanged    += HandleInviteRequest;
             DataSnapshot friends = await Reference.Child("User").Child(User.UserId).Child("Friend").GetValueAsync();
             if(friends.Exists)
@@ -284,9 +295,15 @@ public class AuthManager
                     Reference.Child("User").Child(friend.Key).Child("Connect").ValueChanged += HandleFriend;
                 }
             }
-            if (userinfo.NickName == null && AOpenNickNameUI != null)
-            {   
-                AOpenNickNameUI();
+            
+            if(UIManager.uiManager.AOpenNickNameUI==null)
+            {
+                GameManager.Instance.ChangeState(GameState.Login);
+            }
+            else if (userinfo.NickName == null)
+            {
+
+                UIManager.uiManager.AOpenNickNameUI();
             }
             else
             {
@@ -300,21 +317,21 @@ public class AuthManager
         }
         UIManager.uiManager.OFFDontClick();
     }
-   
+    /// <summary>
+    /// Firebase Logout
+    /// </summary>
     public void LogOut()
     {
         if (User == null)
             return;
         Reference.Child("User").Child(User.UserId).Child("Connect").SetValueAsync(false);
         User = null;
-    }
-    
+    }    
     /// <summary>
-    /// Regist : ID와 Password, 결과에대한 UI표시함수
+    /// Regist : ID와 Password
     /// </summary>
     /// <param name="ID"></param>
     /// <param name="PW"></param>
-    /// <param name="UIAction"></param>
     public void Regist(string _id,string _pw)
     {
         UIManager.uiManager.OnDontClick();
@@ -366,125 +383,79 @@ public class AuthManager
                 }
             });
     }
-    public void SetNickName(string _nicName)
+    /// <summary>
+    /// NickNameSetting
+    /// </summary>
+    /// <param name="NickName"></param>
+    public async void SetNickName(string _nicName)
     {
         UIManager.uiManager.OnDontClick();
-
-        Reference.Child("User").Child(User.UserId).Child("NickName").SetValueAsync(_nicName).ContinueWithOnMainThread(
-            (task) =>
-            {
-                if(task.IsCompleted)
-                {
-                    GameManager.Instance.ChangeState(GameState.Lobby);
-                    UIManager.uiManager.OFFDontClick();
-                }
-                else
-                {
-                    UIManager.uiManager.OnErrorMessage("NicName 등록 오류");
-                }
-            });
+        await Reference.Child("User").Child(User.UserId).Child("NickName").SetValueAsync(_nicName);
+        UIManager.uiManager.OFFDontClick();
+        GameManager.Instance.ChangeState(GameState.Lobby);
     }
 
     #endregion
     #region Room
+    /// <summary>
+    /// CreateRoom with FirebaseDataBase
+    /// </summary>
+    /// <param name="RoomInfo"></param>
     public async void CreateRoom(string _roomInfo)
     {
         UIManager.uiManager.OpenLoadingUI();
-        AOpenRoom();
-        if (ARoomUpdate == null || AOpenRoom == null)
+        if (UIManager.uiManager.AOpenRoom == null)
         {
             UIManager.uiManager.CloseLoadingUI();
             return;
         }
+        UIManager.uiManager.AOpenRoom();
+
         await Reference.Child("Room").Child(_roomInfo).Child("Master").SetValueAsync(User.UserId);
         DataSnapshot roomSnapshot = await Reference.Child("Room").Child(_roomInfo).GetValueAsync();
         
-        if (roomSnapshot.Exists)
-        {
-            //Reference.Child("Room").Child(_roomSnapShot.Key).ValueChanged -= ; 핸들러 등록
+        if (roomSnapshot.Exists && UIManager.uiManager.ARoomUpdate != null)
+        {   
             List<UserInfo> userinfoList = new List<UserInfo>();
             DataSnapshot masterDs = await Reference.Child("User").Child(roomSnapshot.Child("Master").Value.ToString()).GetValueAsync();
             UserInfo master = JsonUtility.FromJson<UserInfo>(masterDs.GetRawJsonValue());
             userinfoList.Add(master);
-            ARoomUpdate(userinfoList);
+            UIManager.uiManager.ARoomUpdate(userinfoList);
         }
+
         UIManager.uiManager.CloseLoadingUI();
     }
-    public Action<List<UserInfo>> ARoomUpdate { get; set; }
-    public Action AOpenRoom { get; set; }
-    
-
-    public async void UpdateRoom(DataSnapshot _roomSnapshot)
+    /// <summary>
+    /// RoomStateUpdate
+    /// </summary>
+    /// <param name="RoomDataSnapshot"></param>
+    public async void UpdateRoom(List<string> _userUID)
     {
-        if (_roomSnapshot.Exists)
-        {   
-            List<UserInfo> userinfoList = new List<UserInfo>();
-            DataSnapshot masterDs = await Reference.Child("User").Child(_roomSnapshot.Child("Master").Value.ToString()).GetValueAsync();
-            UserInfo master = JsonUtility.FromJson<UserInfo>(masterDs.GetRawJsonValue());
-            userinfoList.Add(master);
-            DataSnapshot guestinfo = _roomSnapshot.Child("Guest");
-            if (guestinfo.Exists)
-            {
-                foreach (DataSnapshot guestsanpShot in guestinfo.Children)
-                {
-                    DataSnapshot guestDs = await Reference.Child("User").Child(guestsanpShot.Key).GetValueAsync();
-                    UserInfo guest = JsonUtility.FromJson<UserInfo>(guestDs.GetRawJsonValue());
-                    userinfoList.Add(guest);
-                }
-            }
-            ARoomUpdate(userinfoList);
+        List<UserInfo> userinfoList = new List<UserInfo>();
+        for(int i=0;i<_userUID.Count;i++)
+        {
+            DataSnapshot guestDs = await Reference.Child("User").Child(_userUID[i]).GetValueAsync();
+            UserInfo guest = JsonUtility.FromJson<UserInfo>(guestDs.GetRawJsonValue());
+            userinfoList.Add(guest);
         }
+        UIManager.uiManager.ARoomUpdate(userinfoList);
     }
+    /// <summary>
+    ///  DestroyRoom
+    /// </summary>
+    /// <param name="RoomName"></param>
+    public void DestroyRoom(string _roomName) { Reference.Child("Room").Child(_roomName).RemoveValueAsync(); }
+    /// <summary>
+    /// JoinRoom with FirebaseDatabase
+    /// </summary>
+    /// <param name="RoomName"></param>
     public async void JoinRoom(string _roomName)
     {
         UIManager.uiManager.OpenLoadingUI();
         await Reference.Child("Room").Child(_roomName).Child("Guest").Child(User.UserId).SetValueAsync(true);
         DataSnapshot roomdata = await Reference.Child("Room").Child(_roomName).GetValueAsync();
-        UpdateRoom(roomdata);
-    }
-    public void SendInviteMessage(string _targetUID, string _roomName)
-    {
-        Reference.Child("User").Child(_targetUID).Child("Push").Child("RoomInviteRequest").Child(_roomName).SetValueAsync(User.UserId);
-    }
+    }    
     
-    async void ReceiveInviteMessage(DataSnapshot _inviteMessage)
-    {
-        DataSnapshot senderinfo = await Reference.Child("User").Child(_inviteMessage.Value.ToString()).GetValueAsync();
-        UserInfo user = JsonUtility.FromJson<UserInfo>(senderinfo.GetRawJsonValue());
-        string roomName = _inviteMessage.Key;
-        AOpenInviteMessage(roomName, user);
-    }
-    /// <summary>
-    /// RoomInviteList Update
-    /// </summary>
-    /// <param name="Action(UserInfo)"></param>
-    async void UpdateInviteList(Action _add)
-    {
-        DataSnapshot friendsSnapshot = await Reference.Child("User").Child(User.UserId).Child("Friend").GetValueAsync();
-        DataSnapshot roomSnapshot = await Reference.Child("Room").Child(User.UserId).GetValueAsync();
-        if(roomSnapshot.Exists == false)
-        {
-            UIManager.uiManager.OnErrorMessage("방정보가 없습니다!!");
-            return;
-        }
-        DataSnapshot guestsnapShot = roomSnapshot.Child("guest");
-        Dictionary<string, object> guest = null;
-        if (guestsnapShot.Exists)
-        {
-            guest = (Dictionary<string, object>)guestsnapShot.Value;
-        }
-
-        if(friendsSnapshot.Exists)
-        {
-            foreach(DataSnapshot friend in friendsSnapshot.Children)
-            {
-                if (guest != null && guest.ContainsKey(friend.Key))
-                    continue;
-                DataSnapshot frienddata = await Reference.Child("User").Child(friend.Key).GetValueAsync();
-                UserInfo friendinfo = JsonUtility.FromJson<UserInfo>(frienddata.GetRawJsonValue());
-            }
-        }
-    }
     #endregion
     #region  Chat
     /// <summary>

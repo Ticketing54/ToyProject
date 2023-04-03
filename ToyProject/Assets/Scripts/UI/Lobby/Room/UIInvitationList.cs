@@ -2,25 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIInviteFriendList : MonoBehaviour
+public class UIInvitationList : MonoBehaviour
 {
-    Stack<UIInviteFriendSlot> activeSlots;
+    Stack<UIInvitationFriendSlot> activeSlots;
     [SerializeField]
-    UIInviteFriendSlot sampleSlot;
+    UIInvitationFriendSlot sampleSlot;
     [SerializeField]
     GameObject contentObj;
 
 
     private void Awake()
     {
-        activeSlots = new Stack<UIInviteFriendSlot>();
+        activeSlots = new Stack<UIInvitationFriendSlot>();
     }
 
 
 
     void Add(UserInfo _friendinfo)
     {
-        UIInviteFriendSlot newSlot = Instantiate(sampleSlot);
+        UIInvitationFriendSlot newSlot = Instantiate(sampleSlot);
         newSlot.gameObject.SetActive(true);
         newSlot.transform.SetParent(contentObj.transform);
         newSlot.transform.localScale = new Vector3(1, 1, 1);
@@ -37,7 +37,7 @@ public class UIInviteFriendList : MonoBehaviour
     {
         while(activeSlots.Count != 0)
         {
-            UIInviteFriendSlot slot = activeSlots.Pop();
+            UIInvitationFriendSlot slot = activeSlots.Pop();
             if(slot != null)
             {
                 Destroy(slot.gameObject);

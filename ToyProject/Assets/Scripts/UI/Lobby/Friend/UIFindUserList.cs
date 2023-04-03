@@ -19,12 +19,12 @@ public class UIFindUserList : MonoBehaviour
     GameObject contents;
 
     List<UIFindUserSlot> activeSlots;
-    Queue<UIFindUserSlot> slotPool;
+    ObjectPool<UIFindUserSlot> pool;
     
     private void Awake()
     {
         activeSlots = new List<UIFindUserSlot>();
-        slotPool = new Queue<UIFindUserSlot>();
+        pool = new ObjectPool<UIFindUserSlot>(sampleSlot, poolParent.transform);
 
     }
     private void OnEnable()
@@ -43,16 +43,8 @@ public class UIFindUserList : MonoBehaviour
     }
     
     void Add(UserInfo _userinfo)
-    {   
-        UIFindUserSlot newSlot = null; 
-        if (slotPool.Count != 0)
-        {
-            newSlot = slotPool.Dequeue();
-        }
-        else
-        {
-            newSlot = Instantiate<UIFindUserSlot>(sampleSlot);
-        }
+    {
+        UIFindUserSlot newSlot = pool.Get();
         newSlot.gameObject.SetActive(true);
         newSlot.SetProfile(_userinfo);
         newSlot.transform.SetParent(contents.transform);
@@ -61,17 +53,8 @@ public class UIFindUserList : MonoBehaviour
     }
     void PoolPush(UIFindUserSlot _uiFindUserSlot)
     {
-        if (slotPool.Count >= 5)
-        {
-            Destroy(_uiFindUserSlot);
-        }
-        else
-        {
-            _uiFindUserSlot.transform.SetParent(poolParent.transform);
-            _uiFindUserSlot.Clear();
-            slotPool.Enqueue(_uiFindUserSlot);
-            _uiFindUserSlot.gameObject.SetActive(false);
-        }
+        _uiFindUserSlot.Clear();
+        pool.Push(_uiFindUserSlot);
     }
     void Clear()
     {

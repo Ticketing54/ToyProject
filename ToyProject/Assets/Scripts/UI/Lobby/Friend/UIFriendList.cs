@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 public class UIFriendList : MonoBehaviour
 {   
-    // Sample
     [SerializeField]
     UIFriendSlot sampleUiFriend;
     [SerializeField]
@@ -13,40 +12,32 @@ public class UIFriendList : MonoBehaviour
     GameObject contentObj;
 
     HashSet<UIFriendSlot> friendList;
-    Queue<UIFriendSlot> uiFriendPool;
+    ObjectPool<UIFriendSlot> pool;
     
 
     private void Awake()
     {
         friendList = new();
-        uiFriendPool = new();
+        pool = new ObjectPool<UIFriendSlot>(sampleUiFriend, poolParent.transform);
         
     }
 
     private void OnEnable()
     {
         Clear();
-        AuthManager.Instance.AFriendListClear += Clear;
-        AuthManager.Instance.AFriendAdd += Add;
+        UIManager.uiManager.AFriendListClear += Clear;
+        UIManager.uiManager.AFriendAdd += Add;
         AuthManager.Instance.UpdateFriendList();
     }
     private void OnDisable()
     {
-        AuthManager.Instance.AFriendListClear -= Clear;
-        AuthManager.Instance.AFriendAdd -= Add;
+        UIManager.uiManager.AFriendListClear -= Clear;
+        UIManager.uiManager.AFriendAdd -= Add;
     }
 
     private void Add(UserInfo _userinfo)
     {
-        UIFriendSlot newfriend = null;
-        if(uiFriendPool.Count != 0)
-        {
-            newfriend = uiFriendPool.Dequeue();
-        }
-        else
-        {
-            newfriend = Instantiate<UIFriendSlot>(sampleUiFriend);
-        }
+        UIFriendSlot newfriend = pool.Get();
         newfriend.gameObject.SetActive(true);        
         newfriend.transform.SetParent(contentObj.transform);
         if(_userinfo.Connect == false)
@@ -59,17 +50,8 @@ public class UIFriendList : MonoBehaviour
     }
     private void PoolPush(UIFriendSlot _uiFriend)
     {
-        if(uiFriendPool.Count>=5)
-        {
-            Destroy(_uiFriend);
-        }
-        else
-        {
-            _uiFriend.transform.SetParent(poolParent.transform);
-            _uiFriend.Clear();
-            uiFriendPool.Enqueue(_uiFriend);
-            _uiFriend.gameObject.SetActive(false);
-        }
+        _uiFriend.Clear();
+        pool.Push(_uiFriend);
     }
 
     private void Clear()

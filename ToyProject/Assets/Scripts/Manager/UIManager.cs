@@ -66,6 +66,7 @@ public class UIManager : MonoBehaviour
                 return null;
         }
     }    
+
     /// <summary>
     /// Back Button
     /// </summary>
@@ -106,5 +107,50 @@ public class UIManager : MonoBehaviour
         OnDontClick();
         dontClick.SetErrorMessage(_msg);
     }
-    #endregion    
+    #endregion
+
+
+    #region Login
+    /// <summary>
+    /// NickNameSettingUI On
+    /// </summary>
+    public Action AOpenNickNameUI { get; set; }
+
+    #endregion
+
+    #region Lobby
+    /// <summary>
+    /// Open UIView Room
+    /// </summary>
+    public Action AOpenRoom { get; set; }
+    /// <summary>
+    /// LobbyMainSetting
+    /// </summary>
+    public Action<UserInfo> ALobbyPlayerSetting { get; set; }
+    /// <summary>
+    /// Push Marking
+    /// </summary>
+    public Action AMarkingFriendButton { get; set; }
+    /// <summary>
+    ///  Check FriendRequestMessage
+    /// </summary>
+    public Action<UserInfo> ACheckFriendRequests { get; set; }
+    /// <summary>
+    /// FriendListClear(UI)
+    /// </summary>
+    public Action AFriendListClear { get; set; }
+    /// <summary>
+    /// UIFriendList Add Friend
+    /// </summary>
+    public Action<UserInfo> AFriendAdd { get; set; }
+    /// <summary>
+    /// InvitationMessageOpen (Userinfo,RoomName)
+    /// </summary>
+    public Action<UserInfo, string> AOpenInvitationMessage { get; set; }
+    /// <summary>
+    /// UI RoomStateUpdate
+    /// </summary>
+    public Action<List<UserInfo>> ARoomUpdate { get; set; }
+
+    #endregion
 }

@@ -46,14 +46,49 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         UIManager.uiManager.OnErrorMessage(message);
     }
 
-    public void SendInviteMessage(string _targetUID)
+    public void SendInvitationMessage(string _targetUID)
     {
-        AuthManager.Instance.SendInviteMessage(_targetUID,PhotonNetwork.CurrentRoom.Name);
+        AuthManager.Instance.SendInvitationMessage(_targetUID,PhotonNetwork.CurrentRoom.Name);
     }
 
     public override void OnCreatedRoom()
     {
         AuthManager.Instance.CreateRoom(PhotonNetwork.CurrentRoom.Name);
+    }
+
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        List<string> playersUID = new List<string>();
+        playersUID.Add(PhotonNetwork.MasterClient.UserId);
+        foreach(Player player in PhotonNetwork.PlayerList)
+        {
+            if(player.UserId != playersUID[0])
+            {
+                playersUID.Add(player.UserId);
+            }
+        }
+        AuthManager.Instance.UpdateRoom(playersUID);
+    }
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        List<string> playersUID = new List<string>();
+        playersUID.Add(PhotonNetwork.MasterClient.UserId);
+        foreach (Player player in PhotonNetwork.PlayerList)
+        {
+            if (player.UserId != playersUID[0])
+            {
+                playersUID.Add(player.UserId);
+            }
+        }
+        AuthManager.Instance.UpdateRoom(playersUID);
+    }
+    public void LeaveRoom()
+    {
+        if(PhotonNetwork.CurrentRoom.PlayerCount == 1)
+        {
+            AuthManager.Instance.DestroyRoom(PhotonNetwork.CurrentRoom.Name);
+        }
+        PhotonNetwork.LeaveRoom();
     }
 
     public void ConnectSetting()
