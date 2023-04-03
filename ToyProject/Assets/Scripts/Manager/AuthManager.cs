@@ -149,11 +149,21 @@ public class AuthManager
             }
         }
     }
-   
+
     #endregion
 
     #region FirebaseDataBase Handler
-   
+
+    private void HandleInviteRequest(object sender, ValueChangedEventArgs e)
+    {
+        DataSnapshot invite = e.Snapshot;
+        Reference.Child("User").Child(User.UserId).Child("Push").Child("RoomInviteRequest").Child(e.Snapshot.Key).RemoveValueAsync();
+        if (AOpenInviteMessage != null)
+        {
+            ReceiveInviteMessage(e.Snapshot);
+        }
+    }
+
     private void HandleFriend(object sender, ValueChangedEventArgs e)
     {
         if (AFriendListClear == null || AFriendAdd == null)
@@ -188,12 +198,18 @@ public class AuthManager
             Debug.LogError(e.DatabaseError.Message);
             return;
         }
-        UpdateRoom(e.Snapshot);
+
+        if (ARoomUpdate != null)
+        {
+            UpdateRoom(e.Snapshot);
+        }
     }
 
     #endregion
 
     #region Auth User
+
+    public Action<string, UserInfo> AOpenInviteMessage { get; set; }
 
     /// <summary>
     /// Login : ID와 Password, 결과에대한 UI표시함수
@@ -257,8 +273,9 @@ public class AuthManager
         if(snapshot.Exists)
         {
             UserInfo userinfo = JsonUtility.FromJson<UserInfo>(snapshot.GetRawJsonValue());
-            Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").ValueChanged += HandleFriendRequestChanged;
-            Reference.Child("User").Child(User.UserId).Child("Friend").ValueChanged += HandleFriend;
+            Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").ValueChanged        += HandleFriendRequestChanged;
+            Reference.Child("User").Child(User.UserId).Child("Friend").ValueChanged                             += HandleFriend;
+            Reference.Child("User").Child(User.UserId).Child("Push").Child("RoomInviteRequest").ValueChanged    += HandleInviteRequest;
             DataSnapshot friends = await Reference.Child("User").Child(User.UserId).Child("Friend").GetValueAsync();
             if(friends.Exists)
             {
@@ -283,12 +300,15 @@ public class AuthManager
         }
         UIManager.uiManager.OFFDontClick();
     }
+   
     public void LogOut()
     {
+        if (User == null)
+            return;
         Reference.Child("User").Child(User.UserId).Child("Connect").SetValueAsync(false);
         User = null;
     }
-
+    
     /// <summary>
     /// Regist : ID와 Password, 결과에대한 UI표시함수
     /// </summary>
@@ -392,12 +412,10 @@ public class AuthManager
     }
     public Action<List<UserInfo>> ARoomUpdate { get; set; }
     public Action AOpenRoom { get; set; }
+    
 
     public async void UpdateRoom(DataSnapshot _roomSnapshot)
     {
-        if (ARoomUpdate == null)
-            return;
-
         if (_roomSnapshot.Exists)
         {   
             List<UserInfo> userinfoList = new List<UserInfo>();
@@ -417,19 +435,25 @@ public class AuthManager
             ARoomUpdate(userinfoList);
         }
     }
-    public void JoinRoom(string _roomName)
+    public async void JoinRoom(string _roomName)
     {
-        Reference.Child("Room").Child(_roomName).GetValueAsync().ContinueWithOnMainThread(
-            (task) =>
-            {
-
-            });
+        UIManager.uiManager.OpenLoadingUI();
+        await Reference.Child("Room").Child(_roomName).Child("Guest").Child(User.UserId).SetValueAsync(true);
+        DataSnapshot roomdata = await Reference.Child("Room").Child(_roomName).GetValueAsync();
+        UpdateRoom(roomdata);
     }
     public void SendInviteMessage(string _targetUID, string _roomName)
     {
         Reference.Child("User").Child(_targetUID).Child("Push").Child("RoomInviteRequest").Child(_roomName).SetValueAsync(User.UserId);
     }
     
+    async void ReceiveInviteMessage(DataSnapshot _inviteMessage)
+    {
+        DataSnapshot senderinfo = await Reference.Child("User").Child(_inviteMessage.Value.ToString()).GetValueAsync();
+        UserInfo user = JsonUtility.FromJson<UserInfo>(senderinfo.GetRawJsonValue());
+        string roomName = _inviteMessage.Key;
+        AOpenInviteMessage(roomName, user);
+    }
     /// <summary>
     /// RoomInviteList Update
     /// </summary>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
     private readonly string gameVersion = "1";
@@ -35,6 +36,16 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         roomOptions.IsOpen = true;
         PhotonNetwork.CreateRoom(null, roomOptions);
     }
+    public void JoinRoom(string _roomName) { PhotonNetwork.JoinRoom(_roomName); }
+    public override void OnJoinedRoom()
+    {
+        AuthManager.Instance.JoinRoom(PhotonNetwork.CurrentRoom.Name);
+    }
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        UIManager.uiManager.OnErrorMessage(message);
+    }
+
     public void SendInviteMessage(string _targetUID)
     {
         AuthManager.Instance.SendInviteMessage(_targetUID,PhotonNetwork.CurrentRoom.Name);
@@ -52,11 +63,4 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         PhotonNetwork.ConnectUsingSettings();
         PhotonNetwork.LocalPlayer.CustomProperties["UID"] = AuthManager.Instance.User.UserId;
     }
-    
-    public override void OnDisconnected(DisconnectCause cause)
-    {
-        AuthManager.Instance.LogOut();
-    }
-
-    
 }

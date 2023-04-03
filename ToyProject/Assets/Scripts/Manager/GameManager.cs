@@ -137,4 +137,8 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
+    private void OnApplicationQuit()
+    {
+        AuthManager.Instance.LogOut();
+    }
 }
