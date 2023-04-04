@@ -29,6 +29,7 @@ public class UIInvitationRequestList : MonoBehaviour
         UIInvitationSlot slot = Instantiate(sampleSlot);
         slot.gameObject.SetActive(true);
         slot.transform.SetParent(contents.transform);
+        slot.transform.localScale = new Vector3(1f, 1f, 1f);
         slot.RoomName = _roomName;
         slot.SetProfile(_userinfo);
         activeSlot.Push(slot);

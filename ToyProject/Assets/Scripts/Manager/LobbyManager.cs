@@ -35,11 +35,24 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         roomOptions.MaxPlayers = 4;
         roomOptions.IsOpen = true;
         PhotonNetwork.CreateRoom(null, roomOptions);
+        AuthManager.Instance.CreateRoom(PhotonNetwork.CurrentRoom.Name);
     }
-    public void JoinRoom(string _roomName) { PhotonNetwork.JoinRoom(_roomName); }
-    public override void OnJoinedRoom()
+    public void JoinRoom(string _roomName) 
     {
-        AuthManager.Instance.JoinRoom(PhotonNetwork.CurrentRoom.Name);
+        UIManager.uiManager.OpenLoadingUI();
+        PhotonNetwork.JoinRoom(_roomName);
+    }
+    
+    public override void OnJoinedRoom()
+    {   
+        UIManager.uiManager.AOpenRoom();
+        List<string> playersUID = new List<string>();
+        foreach (Player player in PhotonNetwork.PlayerList)
+        {
+            playersUID.Add(player.UserId);
+        }
+        AuthManager.Instance.JoinRoom(PhotonNetwork.CurrentRoom.Name, playersUID, false);
+        //AuthManager.Instance.UpdateRoom(PhotonNetwork.CurrentRoom.Name,playersUID,false);
     }
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
@@ -51,23 +64,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         AuthManager.Instance.SendInvitationMessage(_targetUID,PhotonNetwork.CurrentRoom.Name);
     }
 
-    public override void OnCreatedRoom()
-    {
-        AuthManager.Instance.CreateRoom(PhotonNetwork.CurrentRoom.Name);
-    }
-
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
+        UIManager.uiManager.AOpenRoom();
         List<string> playersUID = new List<string>();
-        playersUID.Add(PhotonNetwork.MasterClient.UserId);
         foreach(Player player in PhotonNetwork.PlayerList)
         {
-            if(player.UserId != playersUID[0])
-            {
-                playersUID.Add(player.UserId);
-            }
+            playersUID.Add(player.UserId);
         }
-        AuthManager.Instance.UpdateRoom(playersUID);
+        AuthManager.Instance.UpdateRoom(PhotonNetwork.CurrentRoom.Name,playersUID,true);
     }
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
@@ -80,7 +85,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                 playersUID.Add(player.UserId);
             }
         }
-        AuthManager.Instance.UpdateRoom(playersUID);
+        AuthManager.Instance.UpdateRoom(PhotonNetwork.CurrentRoom.Name,playersUID,true);
     }
     public void LeaveRoom()
     {

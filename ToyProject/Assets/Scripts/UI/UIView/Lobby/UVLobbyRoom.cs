@@ -22,29 +22,35 @@ public class UVLobbyRoom : UIView
         UIManager.uiManager.ARoomUpdate -= SettingRoom;
     }
     public void OnLeaveRoomButton() { LobbyManager.Instance.LeaveRoom(); }
-    void SettingRoom(List<UserInfo> _userInfo)
+    void SettingRoom(Queue<UserInfo> _userInfo)
     {
-        int index = 1;
-        masterSlot.SetProfile(_userInfo[0]);
-        foreach(UIRoomUserSlot slot in guestSlot)
-        {
-            if(_userInfo.Count <=index)
-            {
-                slot.Clear();
-            }
-            else
-            {
-                slot.SetProfile(_userInfo[index++]);
-            }
-        }
-
-        if(_userInfo[0].UID == AuthManager.Instance.User.UserId)
+        UserInfo masterUser = _userInfo.Dequeue();
+        masterSlot.SetProfile(masterUser);
+        if (masterUser.UID == AuthManager.Instance.User.UserId)
         {
             playerButton.gameObject.SetActive(true);
         }
         else
         {
             playerButton.gameObject.SetActive(false);
+        }
+        
+        foreach(UIRoomUserSlot slot in guestSlot)
+        {
+            UserInfo user = null;
+            if (_userInfo.Count != 0)
+            {
+                user = _userInfo.Dequeue();
+            }
+
+            if(user == null)
+            {
+                slot.Clear();
+            }
+            else
+            {
+                slot.SetProfile(user);
+            }
         }
     }
     public override void Show()

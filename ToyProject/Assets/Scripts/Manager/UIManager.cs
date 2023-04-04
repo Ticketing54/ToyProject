@@ -150,7 +150,7 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// UI RoomStateUpdate
     /// </summary>
-    public Action<List<UserInfo>> ARoomUpdate { get; set; }
+    public Action<Queue<UserInfo>> ARoomUpdate { get; set; }
 
     #endregion
 }

@@ -30,9 +30,13 @@ public class UIInvitationList : MonoBehaviour
     private void OnEnable()
     {
         Clear();
+        UIManager.uiManager.AFriendAdd += Add;
         AuthManager.Instance.UpdateFriendList();
     }
-
+    private void OnDisable()
+    {
+        UIManager.uiManager.AFriendAdd -= Add;
+    }
     void Clear()
     {
         while(activeSlots.Count != 0)

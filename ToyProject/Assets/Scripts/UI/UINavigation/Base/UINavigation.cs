@@ -14,14 +14,9 @@ public abstract class UINavigation : MonoBehaviour
         history = new Stack<UIView>();
     }
 
-    public virtual void RootShow()
-    {
-        rootView.gameObject.SetActive(true);
-        history.Clear();
-        current = rootView;
-        rootView.Show();
-    }
+    public virtual void RootShow() { StartCoroutine(CoRootShow()); }
     
+
     public virtual void Push(UIView _uiview)
     {
         if(current != null&& current.State != UIView.VisibleState.Appeared)
@@ -43,7 +38,21 @@ public abstract class UINavigation : MonoBehaviour
 
         return popUIView;
     }
-
+    protected virtual IEnumerator CoRootShow()
+    {
+        UIManager.uiManager.OnDontClick();
+        rootView.gameObject.SetActive(true);
+        if (current != null)
+        {
+            current.Hide();
+            yield return new WaitWhile(() => current.State != UIView.VisibleState.Disappeared);
+            current.gameObject.SetActive(false);
+        }
+        UIManager.uiManager.OFFDontClick();
+        rootView.Show();
+        history.Clear();
+        current = rootView;
+    }
     IEnumerator CoPushUIView(UIView _uiview)
     {
         UIManager.uiManager.OnDontClick();
