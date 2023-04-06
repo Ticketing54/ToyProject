@@ -29,7 +29,7 @@ public class AuthManager
     public FirebaseUser User { get; private set; }    // 나중에 다시 설정할 것 ( 접속 끊겼을떄 대응)
     public DatabaseReference Reference { get; private set; }
 
-
+    
     /// <summary>
     /// FireBase접속 초기설정
     /// </summary> 
@@ -107,7 +107,7 @@ public class AuthManager
 
         foreach (DataSnapshot user in findUser.Children)
         {
-            if (friendSnapshot.Exists && friends.ContainsKey(user.Key))
+            if (user.Key == User.UserId||friends.ContainsKey(user.Key))
                 continue;
 
             DataSnapshot usersnap = await Reference.Child("User").Child(user.Key).GetValueAsync();
@@ -411,8 +411,7 @@ public class AuthManager
     /// </summary>
     /// <param name="RoomInfo"></param>
     public async void CreateRoom(string _roomInfo)
-    {
-        UIManager.uiManager.OpenLoadingUI();
+    {   
         if (UIManager.uiManager.AOpenRoom == null)
         {
             UIManager.uiManager.CloseLoadingUI();
@@ -431,11 +430,10 @@ public class AuthManager
             userinfoQ.Enqueue(master);
             UIManager.uiManager.ARoomUpdate(userinfoQ);
         }
-
         UIManager.uiManager.CloseLoadingUI();
     }
     public async void JoinRoom(string _roomName, List<string> _userUID, bool _isEntered)
-    {
+    {   
         await Reference.Child("Room").Child(_roomName).Child("Guest").Child(User.UserId).SetValueAsync(true);
         UpdateRoom(_roomName, _userUID, _isEntered);
     }
@@ -447,15 +445,15 @@ public class AuthManager
     {
         Queue<UserInfo> userQ = new Queue<UserInfo>();
         DataSnapshot roomInfo = await Reference.Child("Room").Child(_roomName).GetValueAsync();
-        DataSnapshot masterDs = await Reference.Child("User").Child(roomInfo.Child("Master").Value.ToString()).GetValueAsync();
+        DataSnapshot masterDs = await Reference.Child("User").Child(_userUID[0]).GetValueAsync();
         UserInfo masterinfo = JsonUtility.FromJson<UserInfo>(masterDs.GetRawJsonValue());
         userQ.Enqueue(masterinfo);
 
-        foreach(DataSnapshot guest in roomInfo.Child("Guest").Children)
+        foreach(string friendUID in _userUID)
         {
-            if (masterinfo.UID == guest.Key)
+            if (masterinfo.UID == friendUID || friendUID == null)
                 continue;
-            DataSnapshot guestDs = await Reference.Child("User").Child(guest.Key).GetValueAsync();
+            DataSnapshot guestDs = await Reference.Child("User").Child(friendUID).GetValueAsync();
             UserInfo guestinfo = JsonUtility.FromJson<UserInfo>(guestDs.GetRawJsonValue());
             userQ.Enqueue(guestinfo);
         }
