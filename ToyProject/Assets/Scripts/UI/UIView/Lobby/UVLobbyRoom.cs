@@ -21,6 +21,7 @@ public class UVLobbyRoom : UIView
     {
         UIManager.uiManager.ARoomUpdate -= SettingRoom;
     }
+    public void OnClickPlayerButton() { LobbyManager.Instance.StartGame(); }
     public void OnLeaveRoomButton() { LobbyManager.Instance.LeaveRoom(); }
     void SettingRoom(Queue<UserInfo> _userInfo)
     {

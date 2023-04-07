@@ -8,6 +8,7 @@ using Firebase.Extensions;
 using Firebase.Database;
 using Photon.Pun;
 using System;
+using System.Threading.Tasks;
 public class AuthManager 
 {
     private static AuthManager instance;
@@ -45,6 +46,7 @@ public class AuthManager
                     Auth = FirebaseAuth.DefaultInstance;
                     App = FirebaseApp.DefaultInstance;
                     Reference = FirebaseDatabase.DefaultInstance.RootReference;
+                    Application.quitting += OnApplicationQuit;
                 }
                 else
                 {
@@ -54,6 +56,17 @@ public class AuthManager
             });
     }
 
+    async void OnApplicationQuit()
+    {
+        if (User == null)
+            return;
+        Task recordConnect = Reference.Child("User").Child(User.UserId).Child("Connect").SetValueAsync(false);
+        Task wait = Task.Delay(5000);
+        await wait;
+       
+
+        User = null;
+    }
     #region Lobby
     /// <summary>
     /// 로비 User정보를 얻어 초기세팅

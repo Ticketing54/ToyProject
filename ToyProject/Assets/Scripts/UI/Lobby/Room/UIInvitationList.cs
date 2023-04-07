@@ -20,6 +20,9 @@ public class UIInvitationList : MonoBehaviour
 
     void Add(UserInfo _friendinfo)
     {
+        if (_friendinfo.Connect == false)
+            return;
+
         UIInvitationFriendSlot newSlot = Instantiate(sampleSlot);
         newSlot.gameObject.SetActive(true);
         newSlot.transform.SetParent(contentObj.transform);

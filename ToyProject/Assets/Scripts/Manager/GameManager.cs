@@ -63,8 +63,7 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case GameState.Playing:
-                {
-                    yield return SceneManager.LoadSceneAsync("PlayScene");
+                {   
                     UIManager.uiManager.ChangeUINavgation(_state);
                 }
                 break;
@@ -136,9 +135,4 @@ public class GameManager : MonoBehaviour
         }
     }
     #endregion
-
-    private void OnApplicationQuit()
-    {
-        AuthManager.Instance.LogOut();
-    }
 }

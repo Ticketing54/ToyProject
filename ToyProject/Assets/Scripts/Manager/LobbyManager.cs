@@ -16,7 +16,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             {
                 instance = FindObjectOfType<LobbyManager>();
                 if(instance == null)
-                {
+                {   
                     GameObject obj = new GameObject("LobbyManager");                    
                     instance =  obj.AddComponent<LobbyManager>();
                     DontDestroyOnLoad(instance.gameObject);
@@ -25,6 +25,18 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
             return instance;
         }        
+    }
+
+    private void Awake()
+    {
+        Application.quitting +=
+            () =>
+            {
+                if(PhotonNetwork.IsConnected == true)
+                {
+                    PhotonNetwork.Disconnect();
+                }
+            };
     }
     /// <summary>
     /// ConnectSetting
@@ -35,6 +47,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         PhotonNetwork.AuthValues = new AuthenticationValues(AuthManager.Instance.User.UserId);
         PhotonNetwork.LocalPlayer.CustomProperties.Add("UID", AuthManager.Instance.User.UserId);
         PhotonNetwork.ConnectUsingSettings();
+        PhotonNetwork.JoinLobby();
     }
     /// <summary>
     /// SendInviteationMessage
@@ -140,10 +153,24 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LeaveRoom();
         PhotonNetwork.JoinLobby();
     }
-
-    public override void OnDisconnected(DisconnectCause cause)
+    public void StartGame()
     {
-       
+        UIManager.uiManager.OpenLoadingUI();
+        PhotonNetwork.LoadLevel("PlayScene");
+        StartCoroutine(CoStartGame());
     }
-    
+    IEnumerator CoStartGame()
+    {
+        bool isLoadedScene = false;
+        while(!isLoadedScene)
+        {
+            if(PhotonNetwork.LevelLoadingProgress >= 1)
+            {
+                isLoadedScene = true;
+            }
+            Debug.Log(PhotonNetwork.LevelLoadingProgress+" % ");
+            yield return null;
+        }
+        UIManager.uiManager.CloseLoadingUI();
+    }
 }
