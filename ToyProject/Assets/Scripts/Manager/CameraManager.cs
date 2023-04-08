@@ -18,6 +18,15 @@ public class CameraManager : MonoBehaviour
 
     void Update()
     {
-        transform.position = player.transform.position + vectorOffset;
+        
+    }
+
+    IEnumerator CoLookCharacter()
+    {
+        while(true)
+        {
+            yield return null;
+            transform.position = player.transform.position + vectorOffset;
+        }
     }
 }
