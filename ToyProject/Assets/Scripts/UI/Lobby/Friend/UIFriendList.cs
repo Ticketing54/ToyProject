@@ -40,7 +40,7 @@ public class UIFriendList : MonoBehaviour
         UIFriendSlot newfriend = pool.Get();
         newfriend.gameObject.SetActive(true);        
         newfriend.transform.SetParent(contentObj.transform);
-        if(_userinfo.Connect == false)
+        if(_userinfo.Connect == true)
         {
             newfriend.transform.SetAsLastSibling();
         }

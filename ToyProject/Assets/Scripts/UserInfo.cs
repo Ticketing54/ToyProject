@@ -8,12 +8,6 @@ public class UserInfo
     public string UID;
     public string NickName;
     public bool Connect;
-    public UserInfo()
-    {
-        UID = "";
-        NickName = "";
-        
-    }
     public UserInfo(string _userId,string _nickName)
     {
         UID = _userId;

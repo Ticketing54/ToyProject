@@ -117,12 +117,12 @@ public class AuthManager
         DataSnapshot friendSnapshot = await Reference.Child("User").Child(User.UserId).Child("Friend").GetValueAsync();
         Dictionary<string, object> friends = (Dictionary<string, object>)friendSnapshot.Value;
         
-
         foreach (DataSnapshot user in findUser.Children)
         {
-            if (user.Key == User.UserId||friends.ContainsKey(user.Key))
+            if (user.Key == User.UserId)
                 continue;
-
+            if (friends != null && friends.ContainsKey(user.Key))
+                continue;
             DataSnapshot usersnap = await Reference.Child("User").Child(user.Key).GetValueAsync();
             UserInfo userinfo = JsonUtility.FromJson<UserInfo>(usersnap.GetRawJsonValue());
             _uiUpdate(userinfo);
