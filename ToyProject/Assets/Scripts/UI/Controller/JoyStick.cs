@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-public class JoyStick : MonoBehaviour ,IDragHandler, IEndDragHandler
+public class JoyStick : MonoBehaviour ,IDragHandler, IEndDragHandler,IPointerClickHandler
 {
     [SerializeField]
     RectTransform center;
     [SerializeField]
     Image joystick;
+    [SerializeField]
+    GameObject mob;
     float radius;
     private void Start()
     {
@@ -20,10 +22,16 @@ public class JoyStick : MonoBehaviour ,IDragHandler, IEndDragHandler
     {
         
     }
-
+    Vector2 DIR;
+    private void Update()
+    {
+        mob.transform.position += new Vector3(DIR.x,0,DIR.y) * Time.deltaTime;
+    }
     public void OnDrag(PointerEventData eventData)
     {
-        Vector2 dir = eventData.position - center.anchoredPosition;
+        DIR = (eventData.position - (Vector2)center.position).normalized;
+
+        
 
         float distance = Vector2.Distance(eventData.position, center.position);
         if (radius < distance)
@@ -40,6 +48,16 @@ public class JoyStick : MonoBehaviour ,IDragHandler, IEndDragHandler
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        DIR = Vector2.zero;
         joystick.rectTransform.position = center.position;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        Debug.Log(eventData.position+  "클릭 포지션");
+        Debug.Log(center.transform.position+  "센터 포지션 : transform.position");
+        Debug.Log(center.anchoredPosition+  "센터 포지션 : anchoredPosition");
+        Debug.Log(center.position+  "센터 포지션 : rectPosition");
+
     }
 }
