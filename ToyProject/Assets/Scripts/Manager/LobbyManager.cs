@@ -168,9 +168,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             {
                 isLoadedScene = true;
             }
-            Debug.Log(PhotonNetwork.LevelLoadingProgress+" % ");
             yield return null;
         }
-        UIManager.uiManager.CloseLoadingUI();
+        GameManager.Instance.ChangeState(GameState.Playing);
     }
 }

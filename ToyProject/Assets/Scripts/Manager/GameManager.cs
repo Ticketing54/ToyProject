@@ -64,6 +64,11 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.Playing:
                 {   
+                    //////
+                    //////
+                    ///
+                    ///// 여기부터
+                    ////
                     UIManager.uiManager.ChangeUINavgation(_state);
                 }
                 break;
