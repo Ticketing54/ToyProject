@@ -63,15 +63,15 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case GameState.Playing:
-                {   
-                    //////
-                    //////
-                    ///
-                    ///// 여기부터
-                    ////
-                    UIManager.uiManager.ChangeUINavgation(_state);
+                {
+                    // 로딩 프로그래스 만들기
+                    // 테이블 가져오기 
+                    // (리소스 받기 맵세팅) 새로 만들 것!
+                    // 카메라 처음 움직임 
+                    UIManager.uiManager.CloseLoadingUI();
+                    UIManager.uiManager.ChangeUINavgation(GameState.Playing);
+                    yield break;
                 }
-                break;
             default:
                 {
                     Debug.LogError("GaemeState Error (Enum Default)");                    

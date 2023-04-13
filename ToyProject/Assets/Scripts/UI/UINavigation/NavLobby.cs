@@ -13,10 +13,6 @@ public class NavLobby : UINavigation
         base.Awake();
         UIManager.uiManager.AOpenRoom += () => { Push(playRoom); };
     }
-    public override void RootShow()
-    {
-        base.RootShow();
-    }
     public void OnClickCreateRoom() { LobbyManager.Instance.CreatRoom(); }
     public void OnClickTutorialButton()
     {

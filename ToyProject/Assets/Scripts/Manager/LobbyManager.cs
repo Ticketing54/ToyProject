@@ -155,6 +155,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     }
     public void StartGame()
     {
+        // 카운트 제작 할 것!
         UIManager.uiManager.OpenLoadingUI();
         PhotonNetwork.LoadLevel("PlayScene");
         StartCoroutine(CoStartGame());

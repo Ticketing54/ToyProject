@@ -55,7 +55,7 @@ public class InputManager : MonoBehaviour
             {
                 continue;
             }
-            Player.gameObject.transform.position = Player.Speed * _dir() * Time.deltaTime;
+            Player.gameObject.transform.position += Player.Speed * _dir() * Time.deltaTime;
         }
     }
     

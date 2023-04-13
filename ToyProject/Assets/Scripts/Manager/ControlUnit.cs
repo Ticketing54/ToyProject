@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ControlUnit : MonoBehaviour
 {
-    public float Speed { get; private set; }
+    public float Speed = 2f;//{ get; private set; }
 
 
 }

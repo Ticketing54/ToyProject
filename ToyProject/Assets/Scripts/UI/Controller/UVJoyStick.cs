@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-public class JoyStick : MonoBehaviour ,IDragHandler, IEndDragHandler
+public class UVJoyStick : UIView ,IDragHandler, IEndDragHandler
 {
     [SerializeField]
     RectTransform center;
     [SerializeField]
     Image joystick;
     [SerializeField]
-    GameObject mob;
+    ControlUnit mob;
     float radius;
     private void Start()
     {
@@ -22,6 +22,8 @@ public class JoyStick : MonoBehaviour ,IDragHandler, IEndDragHandler
     Vector3 GetDirection() { return new Vector3(dir.x, 0, dir.y); }
     private void OnEnable()
     {
+        ControlUnit unit = GameObject.Find("Test").GetComponent<ControlUnit>();
+        InputManager.Instance.SetUnit(unit);
         InputManager.Instance.StartControl(GetDirection);
     }
     private void OnDisable()
@@ -49,5 +51,5 @@ public class JoyStick : MonoBehaviour ,IDragHandler, IEndDragHandler
         dir = Vector2.zero;
         joystick.rectTransform.position = center.position;
     }
-
+    
 }
