@@ -9,10 +9,38 @@ public class LoadingUI : MonoBehaviour
     Image backGround;
     [SerializeField]
     Image loadingImage;
-    
+    [SerializeField]
+    Image loadingProgress;
 
-    private void Update()
+    private float targetProgress;
+    private float currentProgress;
+    public void StartLoading()
     {
-        loadingImage.transform.Rotate(Vector3.forward * 2f);
+        gameObject.SetActive(true);
+        loadingImage.gameObject.SetActive(true);
+        StartCoroutine(CoRotateLoadingImage());
     }
+    public void StartLoadingProgress()
+    {
+        gameObject.SetActive(true);
+        loadingProgress.gameObject.SetActive(true);
+    }
+    private void Clear()
+    {
+        loadingImage.gameObject.SetActive(false);
+        loadingProgress.gameObject.SetActive(false);
+        targetProgress = 0;
+        currentProgress = 0;
+    }
+
+    IEnumerator CoRotateLoadingImage()
+    {
+        while(true)
+        {
+            yield return null;
+            loadingImage.transform.Rotate(Vector3.forward * 2f);
+        }
+    }
+
+   
 }
