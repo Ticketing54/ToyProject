@@ -81,10 +81,7 @@ public class UIManager : MonoBehaviour
     }
 
     #region LoadingUI
-    [SerializeField]
-    GameObject loadingUI;
-    public void OpenLoadingUI() { loadingUI.gameObject.SetActive(true); }
-    public void CloseLoadingUI() { loadingUI.gameObject.SetActive(false); }
+    public LoadingUI loadingUI;
     #endregion
 
     #region DontClick && ErrorMessage    

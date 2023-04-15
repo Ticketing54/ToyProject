@@ -2,43 +2,71 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using TMPro;
 public class LoadingUI : MonoBehaviour
-{   
+{
+    /// <summary>
+    /// 로딩 이미지 설정할거면 바꿀 것 
+    /// </summary>
     [SerializeField]
     Image backGround;
-    [SerializeField]
-    Image loadingImage;
-    [SerializeField]
-    Image loadingProgress;
 
-    private float targetProgress;
-    private float currentProgress;
-    public void StartLoading()
+
+    // 로딩 이미지와 프로그래스바
+    [SerializeField]
+    Image simpleLoadingImage;
+    [SerializeField]
+    GameObject progress;
+
+    // 해당 위치
+    [SerializeField]
+    Transform outPosition;
+    [SerializeField]
+    Transform simplePosition;
+    [SerializeField]
+    Transform progressPosition;
+
+
+    #region Progress
+    [SerializeField]
+    Image progressBar;
+    [SerializeField]
+    TextMeshProUGUI progressText;
+    #endregion
+
+
+    public void OpenLoadingUI(bool _isProgress = false)
     {
         gameObject.SetActive(true);
-        loadingImage.gameObject.SetActive(true);
-        StartCoroutine(CoRotateLoadingImage());
+        if(_isProgress)
+        {
+            progress.transform.SetParent(progressPosition);
+        }
+        else
+        {
+            simpleLoadingImage.transform.SetParent(simplePosition);
+            StartCoroutine(CoRotateLoadingImage());
+        }
     }
-    public void StartLoadingProgress()
+
+    public void CloseLoadingUI()
     {
-        gameObject.SetActive(true);
-        loadingProgress.gameObject.SetActive(true);
+        Clear();
+        gameObject.SetActive(false);
     }
     private void Clear()
     {
-        loadingImage.gameObject.SetActive(false);
-        loadingProgress.gameObject.SetActive(false);
-        targetProgress = 0;
-        currentProgress = 0;
+        simplePosition.transform.SetParent(outPosition);
+        progress.transform.SetParent(outPosition);
+        progressText.text = "";
+        progressBar.fillAmount = 0;
     }
-
     IEnumerator CoRotateLoadingImage()
     {
         while(true)
         {
             yield return null;
-            loadingImage.transform.Rotate(Vector3.forward * 2f);
+            simpleLoadingImage.transform.Rotate(Vector3.forward * 2f);
         }
     }
 

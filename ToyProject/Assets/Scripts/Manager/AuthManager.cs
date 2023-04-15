@@ -427,7 +427,7 @@ public class AuthManager
     {   
         if (UIManager.uiManager.AOpenRoom == null)
         {
-            UIManager.uiManager.CloseLoadingUI();
+            UIManager.uiManager.loadingUI.CloseLoadingUI();
             return;
         }
         UIManager.uiManager.AOpenRoom();
@@ -443,7 +443,7 @@ public class AuthManager
             userinfoQ.Enqueue(master);
             UIManager.uiManager.ARoomUpdate(userinfoQ);
         }
-        UIManager.uiManager.CloseLoadingUI();
+        UIManager.uiManager.loadingUI.OpenLoadingUI(false);
     }
     public async void JoinRoom(string _roomName, List<string> _userUID, bool _isEntered)
     {   
@@ -472,8 +472,8 @@ public class AuthManager
         }
         UIManager.uiManager.ARoomUpdate(userQ);
 
-        if(!_isEntered)
-            UIManager.uiManager.CloseLoadingUI();
+        if (!_isEntered)
+            UIManager.uiManager.loadingUI.CloseLoadingUI();
     }
     /// <summary>
     ///  DestroyRoom

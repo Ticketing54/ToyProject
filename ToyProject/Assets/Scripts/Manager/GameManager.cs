@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-        UIManager.uiManager.OpenLoadingUI();
+        UIManager.uiManager.loadingUI.OpenLoadingUI(false);
         StartCoroutine(CoPatchCheck());
     }
     public GameState State { get; private set; }
@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
     IEnumerator CoChangeState(GameState _state)
     {
         // 로딩 UI 열기
-        UIManager.uiManager.OpenLoadingUI();
+        UIManager.uiManager.loadingUI.OpenLoadingUI();
         State = _state;
         yield return new WaitForSeconds(1f);                
 
@@ -64,12 +64,7 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.Playing:
                 {
-                    // 로딩 프로그래스 만들기
-                    // 테이블 가져오기 
-                    // (리소스 받기 맵세팅) 새로 만들 것!
-                    // 카메라 처음 움직임 
-                    UIManager.uiManager.CloseLoadingUI();
-                    UIManager.uiManager.ChangeUINavgation(GameState.Playing);
+                    yield return StartCoroutine(GameSetting());
                     yield break;
                 }
             default:
@@ -78,9 +73,19 @@ public class GameManager : MonoBehaviour
                 }
                 break;
         }
-        UIManager.uiManager.CloseLoadingUI();
+        UIManager.uiManager.loadingUI.CloseLoadingUI();
     }
 
+    IEnumerator GameSetting()
+    {
+        yield return null;
+        // 로딩 프로그래스 만들기
+        // 테이블 가져오기 
+        // (리소스 받기 맵세팅) 새로 만들 것!
+        // 카메라 처음 움직임 
+        UIManager.uiManager.loadingUI.CloseLoadingUI();
+        UIManager.uiManager.ChangeUINavgation(GameState.Playing);
+    }
     #region Patch
     /// <summary>
     /// PatchUI SizeSetting
@@ -115,7 +120,7 @@ public class GameManager : MonoBehaviour
             SettingPatch(sizeCheck.Result);
         }
         // 로딩화면 닫기
-        UIManager.uiManager.CloseLoadingUI();
+        UIManager.uiManager.loadingUI.CloseLoadingUI();
     }
     // UIPatchButton에 등록할 함수
     public void DownloadPatch()

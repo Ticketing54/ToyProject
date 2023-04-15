@@ -81,7 +81,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.InRoom)
             return;
-        UIManager.uiManager.OpenLoadingUI();
+        UIManager.uiManager.loadingUI.OpenLoadingUI(false);
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 4;
         roomOptions.IsOpen = true;
@@ -104,7 +104,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     /// <param name="_roomName"></param>
     public void JoinRoom(string _roomName) 
     {
-        UIManager.uiManager.OpenLoadingUI();
+        UIManager.uiManager.loadingUI.OpenLoadingUI(false);
         PhotonNetwork.JoinRoom(_roomName);
     }
     public override void OnJoinedRoom()
@@ -156,7 +156,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public void StartGame()
     {
         // 카운트 제작 할 것!
-        UIManager.uiManager.OpenLoadingUI();
+        UIManager.uiManager.loadingUI.OpenLoadingUI(false);
         PhotonNetwork.LoadLevel("PlayScene");
         StartCoroutine(CoStartGame());
     }
