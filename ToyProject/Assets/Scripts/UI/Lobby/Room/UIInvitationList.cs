@@ -33,12 +33,12 @@ public class UIInvitationList : MonoBehaviour
     private void OnEnable()
     {
         Clear();
-        UIManager.uiManager.AFriendAdd += Add;
+        UIManager.Instance.AFriendAdd += Add;
         AuthManager.Instance.UpdateFriendList();
     }
     private void OnDisable()
     {
-        UIManager.uiManager.AFriendAdd -= Add;
+        UIManager.Instance.AFriendAdd -= Add;
     }
     void Clear()
     {

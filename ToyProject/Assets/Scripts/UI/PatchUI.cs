@@ -20,21 +20,25 @@ public class PatchUI : MonoBehaviour
     Image progressBar;
     [SerializeField]
     TextMeshProUGUI ProgressMessage;
-    
-    private void Start()
+
+    public void OpenPatchUI()
     {
-        GameManager.Instance.UpdatePatchUI += UpdatePatch;
-        GameManager.Instance.SettingPatch += SetPatchUI;
-        GameManager.Instance.OpenPatchUI += () => this.gameObject.SetActive(true);
-        GameManager.Instance.ClosePatchUI += () => this.gameObject.SetActive(false);
+        gameObject.SetActive(true);
     }
-    private void OnEnable()
-    {   
-        Reset();
-        if(downloadMessageUI.gameObject.activeSelf == true || downloadProgress.gameObject.activeSelf == true)
+    public void ClosePatchUI()
+    {
+        Clear();
+        gameObject.SetActive(false);
+    }
+    void Clear()
+    {
+        if (downloadMessageUI.gameObject.activeSelf == true)
         {
             downloadMessageUI.gameObject.SetActive(false);
-            downloadProgress.gameObject.SetActive(false);
+        }
+        if (downloadProgress.activeSelf == true)
+        {
+            downloadProgress.SetActive(false);
         }
     }
     public void SetPatchUI(long _size)
@@ -54,24 +58,13 @@ public class PatchUI : MonoBehaviour
     {
         Application.Quit();
     }
-    private void Reset()
-    {
-        if (downloadMessageUI.gameObject.activeSelf == true)
-        {
-            downloadMessageUI.gameObject.SetActive(false);
-        }
-        if (downloadProgress.activeSelf == true)
-        {
-            downloadProgress.SetActive(false);
-        }
-    }
     /// <summary>
     /// 다운받은량, 크기, 진행도
     /// </summary>
     /// <param name="Current"></param>
     /// <param name="Size"></param>
     /// <param name="FillAmount"></param>
-    void UpdatePatch(long _cur, long _size, float _percent)
+    public void UpdatePatch(long _cur, long _size, float _percent)
     {
         string cur = ((float)_cur / (1024f * 1024f)).ToString("F2") +" MB";
         string size = ((float)_size / (1024f * 1024f)).ToString("F2")+" MB";

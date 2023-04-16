@@ -60,7 +60,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     /// <summary>
     /// UpdateRoom
     /// </summary>
-    void UpdateRoom(bool _isUIOn)
+    void UpdateRoom()
     {
         List<string> playersUID = new List<string>();
         string master = PhotonNetwork.CurrentRoom.CustomProperties["Master"].ToString();
@@ -72,7 +72,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                 continue;
             playersUID.Add(userUID);
         }
-        AuthManager.Instance.UpdateRoom(PhotonNetwork.CurrentRoom.Name, playersUID, _isUIOn);
+        AuthManager.Instance.UpdateRoom(PhotonNetwork.CurrentRoom.Name, playersUID);
     }
     /// <summary>
     /// CreateRoom
@@ -81,7 +81,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.InRoom)
             return;
-        UIManager.uiManager.loadingUI.OpenLoadingUI(false);
+        UIManager.Instance.LoadingUIInstance.OpenLoadingUI(false);     // 로딩 UI 활성화
+
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 4;
         roomOptions.IsOpen = true;
@@ -91,12 +92,14 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         PhotonNetwork.CreateRoom(null, roomOptions);
     }
     public override void OnCreatedRoom()
-    {   
-        AuthManager.Instance.CreateRoom(PhotonNetwork.CurrentRoom.Name);
+    {
+        UIManager.Instance.AOpenRoom();
+        UpdateRoom();
+        UIManager.Instance.LoadingUIInstance.CloseLoadingUI();
     }
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
-        UIManager.uiManager.OnErrorMessage("방생성에 실패했습니다.");
+        UIManager.Instance.OnErrorMessage("방생성에 실패했습니다.");
     }
     /// <summary>
     /// JoinRoom
@@ -104,28 +107,29 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     /// <param name="_roomName"></param>
     public void JoinRoom(string _roomName) 
     {
-        UIManager.uiManager.loadingUI.OpenLoadingUI(false);
+        UIManager.Instance.LoadingUIInstance.OpenLoadingUI(false);
         PhotonNetwork.JoinRoom(_roomName);
     }
     public override void OnJoinedRoom()
     {
         if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
             return;
-        UIManager.uiManager.AOpenRoom();
-        UpdateRoom(false);
+        UIManager.Instance.AOpenRoom();
+        UpdateRoom();
+        UIManager.Instance.LoadingUIInstance.CloseLoadingUI();
     }
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
-        UIManager.uiManager.OnErrorMessage(message);
+        UIManager.Instance.OnErrorMessage(message);
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        UpdateRoom(true);
+        UpdateRoom();
     }
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        UpdateRoom(true);
+        UpdateRoom();
     }
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
@@ -138,25 +142,17 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     }
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
     {
-        if(true)
-        {
-            Debug.Log("dd");
-        }
-        UpdateRoom(true);
+        UpdateRoom();
     }
     public void LeaveRoom()
     {
-        if(PhotonNetwork.CurrentRoom.PlayerCount == 1)
-        {
-            AuthManager.Instance.DestroyRoom(PhotonNetwork.CurrentRoom.Name);
-        }
         PhotonNetwork.LeaveRoom();
         PhotonNetwork.JoinLobby();
     }
     public void StartGame()
     {
         // 카운트 제작 할 것!
-        UIManager.uiManager.loadingUI.OpenLoadingUI(false);
+        UIManager.Instance.LoadingUIInstance.OpenLoadingUI();
         PhotonNetwork.LoadLevel("PlayScene");
         StartCoroutine(CoStartGame());
     }

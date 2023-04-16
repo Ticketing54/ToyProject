@@ -15,11 +15,11 @@ public class UVLobbyRoom : UIView
 
     private void OnEnable()
     {
-        UIManager.uiManager.ARoomUpdate += SettingRoom;
+        UIManager.Instance.ARoomUpdate += SettingRoom;
     }
     private void OnDisable()
     {
-        UIManager.uiManager.ARoomUpdate -= SettingRoom;
+        UIManager.Instance.ARoomUpdate -= SettingRoom;
     }
     public void OnClickPlayerButton() { LobbyManager.Instance.StartGame(); }
     public void OnLeaveRoomButton() { LobbyManager.Instance.LeaveRoom(); }

@@ -507,7 +507,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 0.203
+  m_FillAmount: 0.27
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -15144,6 +15144,7 @@ MonoBehaviour:
   unLobby: {fileID: 6945298754469038874}
   unplaying: {fileID: 5787407075035003170}
   loadingUI: {fileID: 6945298753904550406}
+  patchUI: {fileID: 6945298754416297471}
   dontClick: {fileID: 6945298752981089742}
 --- !u!1 &6945298753960580675
 GameObject:
@@ -16609,7 +16610,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6945298754416297221
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16619,7 +16620,7 @@ RectTransform:
   m_GameObject: {fileID: 6945298754416297222}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.99999994, y: 0.99999994, z: 0.99999994}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6945298754198084606}

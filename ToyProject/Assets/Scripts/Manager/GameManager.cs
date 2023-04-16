@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-        UIManager.uiManager.loadingUI.OpenLoadingUI(false);
+        UIManager.Instance.LoadingUIInstance.OpenLoadingUI();
         StartCoroutine(CoPatchCheck());
     }
     public GameState State { get; private set; }
@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
     IEnumerator CoChangeState(GameState _state)
     {
         // 로딩 UI 열기
-        UIManager.uiManager.loadingUI.OpenLoadingUI();
+        UIManager.Instance.LoadingUIInstance.OpenLoadingUI();
         State = _state;
         yield return new WaitForSeconds(1f);                
 
@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour
                     }
                     yield return SceneManager.LoadSceneAsync("LobbyScene");
                     LobbyManager.Instance.ConnectSetting();
-                    UIManager.uiManager.ChangeUINavgation(_state);
+                    UIManager.Instance.ChangeUINavgation(_state);
                 }
                 break;
             case GameState.Playing:
@@ -73,54 +73,51 @@ public class GameManager : MonoBehaviour
                 }
                 break;
         }
-        UIManager.uiManager.loadingUI.CloseLoadingUI();
+        UIManager.Instance.LoadingUIInstance.CloseLoadingUI();
     }
 
     IEnumerator GameSetting()
     {
+        
         yield return null;
-        // 로딩 프로그래스 만들기
+        UIManager.Instance.LoadingUIInstance.OpenLoadingUI(true);
+        yield return new WaitForSeconds(2f);
+        UIManager.Instance.LoadingUIInstance.UpdateProgress(1, 4);
+        yield return new WaitForSeconds(2f);
+        UIManager.Instance.LoadingUIInstance.UpdateProgress(2, 4);
+        yield return new WaitForSeconds(2f);
+        UIManager.Instance.LoadingUIInstance.UpdateProgress(3, 4);
+        yield return new WaitForSeconds(2f);
+        UIManager.Instance.LoadingUIInstance.UpdateProgress(4, 4,
+            ()=>
+            {
+                UIManager.Instance.LoadingUIInstance.CloseLoadingUI();
+                UIManager.Instance.ChangeUINavgation(GameState.Playing);
+            });
+
+
         // 테이블 가져오기 
         // (리소스 받기 맵세팅) 새로 만들 것!
         // 카메라 처음 움직임 
-        UIManager.uiManager.loadingUI.CloseLoadingUI();
-        UIManager.uiManager.ChangeUINavgation(GameState.Playing);
+        
     }
     #region Patch
-    /// <summary>
-    /// PatchUI SizeSetting
-    /// </summary>
-    public Action<long> SettingPatch;
-    /// <summary>
-    /// OpenPatchUI
-    /// </summary>
-    public Action OpenPatchUI;
-    /// <summary>
-    /// ClosePatchUI
-    /// </summary>
-    public Action ClosePatchUI;
-    /// <summary>
-    /// UpdateCurent UpdateSize UpdateProgress
-    /// </summary>
-    public Action<long, long, float> UpdatePatchUI;
     IEnumerator CoPatchCheck()
-    {
+    {   
         yield return new WaitForSeconds(2f);
-        OpenPatchUI();
+        UIManager.Instance.PatchUIInstacne.OpenPatchUI();
         yield return AuthManager.Instance.Init();
+        UIManager.Instance.LoadingUIInstance.CloseLoadingUI();
         AsyncOperationHandle<long> sizeCheck = Addressables.GetDownloadSizeAsync("Patch");
         yield return sizeCheck;
         if (sizeCheck.Result == 0)
         {
-            UIManager.uiManager.ChangeUINavgation(GameState.Login);
-            ClosePatchUI();
+            UIManager.Instance.ChangeUINavgation(GameState.Login);
         }
         else
         {
-            SettingPatch(sizeCheck.Result);
+            UIManager.Instance.PatchUIInstacne.SetPatchUI(sizeCheck.Result);
         }
-        // 로딩화면 닫기
-        UIManager.uiManager.loadingUI.CloseLoadingUI();
     }
     // UIPatchButton에 등록할 함수
     public void DownloadPatch()
@@ -132,15 +129,15 @@ public class GameManager : MonoBehaviour
     {
         AsyncOperationHandle patch = Addressables.DownloadDependenciesAsync("Patch", true);
         yield return StartCoroutine(UpdateUI(patch));
-        UIManager.uiManager.ChangeUINavgation(GameState.Login);
-        ClosePatchUI();
+        UIManager.Instance.ChangeUINavgation(GameState.Login);
+        UIManager.Instance.PatchUIInstacne.ClosePatchUI();
     }
     IEnumerator UpdateUI(AsyncOperationHandle _handle)
     {
         while (_handle.IsValid())
         {   
             DownloadStatus downstatus = _handle.GetDownloadStatus();
-            UpdatePatchUI(downstatus.DownloadedBytes, downstatus.TotalBytes, downstatus.Percent);
+            UIManager.Instance.PatchUIInstacne.UpdatePatch(downstatus.DownloadedBytes, downstatus.TotalBytes, downstatus.Percent);
             yield return null;
         }
     }

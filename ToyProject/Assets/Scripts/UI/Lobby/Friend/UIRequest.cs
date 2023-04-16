@@ -17,12 +17,12 @@ public class UIRequest : MonoBehaviour
     private void OnEnable()
     {
         Clear();
-        UIManager.uiManager.ACheckFriendRequests += Add;
+        UIManager.Instance.ACheckFriendRequests += Add;
         AuthManager.Instance.CheckFriendRequests();
     }
     private void OnDisable()
     {
-        UIManager.uiManager.ACheckFriendRequests -= Add;
+        UIManager.Instance.ACheckFriendRequests -= Add;
     }
     
     void Add(UserInfo _userinfo)

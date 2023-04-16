@@ -11,7 +11,7 @@ public class NavLobby : UINavigation
     public override void Awake()
     {
         base.Awake();
-        UIManager.uiManager.AOpenRoom += () => { Push(playRoom); };
+        UIManager.Instance.AOpenRoom += () => { Push(playRoom); };
     }
     public void OnClickCreateRoom() { LobbyManager.Instance.CreatRoom(); }
     public void OnClickTutorialButton()

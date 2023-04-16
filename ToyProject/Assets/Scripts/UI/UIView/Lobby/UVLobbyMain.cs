@@ -9,12 +9,12 @@ public class UVLobbyMain : UIView
     TextMeshProUGUI idText;
     private void OnEnable()
     {
-        UIManager.uiManager.ALobbyPlayerSetting += SetNickName;
+        UIManager.Instance.ALobbyPlayerSetting += SetNickName;
         AuthManager.Instance.LobbyMainSetting();
     }
     private void OnDisable()
     {
-        UIManager.uiManager.ALobbyPlayerSetting -= SetNickName;
+        UIManager.Instance.ALobbyPlayerSetting -= SetNickName;
     }
     
     void SetNickName(UserInfo _nickName) { idText.text = _nickName.NickName; }

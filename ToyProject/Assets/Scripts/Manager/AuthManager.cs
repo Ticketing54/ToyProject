@@ -77,16 +77,16 @@ public class AuthManager
         if(data.Exists)
         {
             CheckFriendRequests();
-            if (UIManager.uiManager.ALobbyPlayerSetting != null)
+            if (UIManager.Instance.ALobbyPlayerSetting != null)
             {
                 UserInfo player = JsonUtility.FromJson<UserInfo>(data.GetRawJsonValue());
-                UIManager.uiManager.ALobbyPlayerSetting(player);
+                UIManager.Instance.ALobbyPlayerSetting(player);
             }
         }
         else
         {
             Debug.Log("AuthManager:: LobbyMainsetting() Error");
-            UIManager.uiManager.OnErrorMessage("로그인 정보를 불러올 수 없습니다.");
+            UIManager.Instance.OnErrorMessage("로그인 정보를 불러올 수 없습니다.");
             GameManager.Instance.ChangeState(GameState.Login);
         }
     }
@@ -96,13 +96,13 @@ public class AuthManager
     public async void CheckFriendRequests()         // 나중에 PushCheck로 바꿀것
     {
         DataSnapshot data = await Reference.Child("User").Child(User.UserId).Child("Push").Child("FriendRequest").GetValueAsync();
-        if(data.Exists&& UIManager.uiManager.ACheckFriendRequests != null)
+        if(data.Exists&& UIManager.Instance.ACheckFriendRequests != null)
         {
             foreach(DataSnapshot request in data.Children)
             {
                 DataSnapshot userSnapshot =  await Reference.Child("User").Child(request.Key).GetValueAsync();
                 UserInfo userinfo = JsonUtility.FromJson<UserInfo>(userSnapshot.GetRawJsonValue());
-                UIManager.uiManager.ACheckFriendRequests(userinfo);
+                UIManager.Instance.ACheckFriendRequests(userinfo);
             }
         }
     }
@@ -155,7 +155,7 @@ public class AuthManager
     /// </summary>
     public async void UpdateFriendList()
     {
-        if (UIManager.uiManager.AFriendAdd == null)
+        if (UIManager.Instance.AFriendAdd == null)
             return;
         DataSnapshot friendsSnapshot= await Reference.Child("User").Child(User.UserId).Child("Friend").GetValueAsync();
         if(friendsSnapshot.Exists)
@@ -164,7 +164,7 @@ public class AuthManager
             {
                 DataSnapshot friendSnapshot = await Reference.Child("User").Child(friend.Key).GetValueAsync();
                 UserInfo userinfo = JsonUtility.FromJson<UserInfo>(friendSnapshot.GetRawJsonValue());
-                UIManager.uiManager.AFriendAdd(userinfo);
+                UIManager.Instance.AFriendAdd(userinfo);
             }
         }
     }
@@ -186,7 +186,7 @@ public class AuthManager
         DataSnapshot senderinfo = await Reference.Child("User").Child(_inviteMessage.Value.ToString()).GetValueAsync();
         UserInfo user = JsonUtility.FromJson<UserInfo>(senderinfo.GetRawJsonValue());
         string roomName = _inviteMessage.Key;
-        UIManager.uiManager.AOpenInvitationMessage(user, roomName);
+        UIManager.Instance.AOpenInvitationMessage(user, roomName);
     }
     #endregion
 
@@ -199,16 +199,16 @@ public class AuthManager
         if (!invite.Exists)
             return;
         Reference.Child("User").Child(User.UserId).Child("Push").Child("RoomInviteRequest").Child(invite.Key).RemoveValueAsync();
-        if (UIManager.uiManager.AOpenInvitationMessage != null)
+        if (UIManager.Instance.AOpenInvitationMessage != null)
         {
             ReceiveinvitationMessage(invite);
         }
     }
     private void HandleFriend(object sender, ValueChangedEventArgs e)
     {
-        if (UIManager.uiManager.AFriendListClear == null || UIManager.uiManager.AFriendAdd == null)
+        if (UIManager.Instance.AFriendListClear == null || UIManager.Instance.AFriendAdd == null)
             return;
-        UIManager.uiManager.AFriendListClear();
+        UIManager.Instance.AFriendListClear();
 
         if (e.DatabaseError != null)
         {
@@ -220,10 +220,10 @@ public class AuthManager
     private void HandleFriendRequestChanged(object sender, ValueChangedEventArgs e)
     {
 
-        if (UIManager.uiManager.AMarkingFriendButton != null)
-            UIManager.uiManager.AMarkingFriendButton();
+        if (UIManager.Instance.AMarkingFriendButton != null)
+            UIManager.Instance.AMarkingFriendButton();
 
-        if (UIManager.uiManager.ACheckFriendRequests == null)
+        if (UIManager.Instance.ACheckFriendRequests == null)
             return;
         if (e.DatabaseError != null)
         {
@@ -249,14 +249,14 @@ public class AuthManager
         {
             Debug.LogError("Auth is Null");
         }
-        UIManager.uiManager.OnDontClick();
+        UIManager.Instance.OnDontClick();
         Auth.SignInWithEmailAndPasswordAsync(_id, _pw).ContinueWithOnMainThread(
             (task) =>
             {
                 if(task.IsCanceled)
                 {   
                     Debug.Log("Login Canceled");
-                    UIManager.uiManager.OnErrorMessage("로그인 취소");
+                    UIManager.Instance.OnErrorMessage("로그인 취소");
                 }
                 else if (task.IsFaulted)
                 {   
@@ -269,18 +269,18 @@ public class AuthManager
                             case AuthError.UserNotFound:
                                 {
                                     
-                                    UIManager.uiManager.OnErrorMessage("존재하지 않는 ID 입니다");
+                                    UIManager.Instance.OnErrorMessage("존재하지 않는 ID 입니다");
                                     
                                 }
                                 break;
                             case AuthError.WrongPassword:
                                 {
-                                    UIManager.uiManager.OnErrorMessage("Password를 다시입력해 주세요");
+                                    UIManager.Instance.OnErrorMessage("Password를 다시입력해 주세요");
                                     
                                 }
                                 break;
                             default:
-                                UIManager.uiManager.OnErrorMessage(error.ToString());
+                                UIManager.Instance.OnErrorMessage(error.ToString());
                                 break;
                         }
                     }
@@ -317,14 +317,14 @@ public class AuthManager
                 }
             }
             
-            if(UIManager.uiManager.AOpenNickNameUI==null)
+            if(UIManager.Instance.AOpenNickNameUI==null)
             {
                 GameManager.Instance.ChangeState(GameState.Login);
             }
             else if (userinfo.NickName == null)
             {
 
-                UIManager.uiManager.AOpenNickNameUI();
+                UIManager.Instance.AOpenNickNameUI();
             }
             else
             {
@@ -334,9 +334,9 @@ public class AuthManager
         else
         {
             GameManager.Instance.ChangeState(GameState.Login);
-            UIManager.uiManager.OnErrorMessage("로그인 정보가 존재하지 않습니다.");
+            UIManager.Instance.OnErrorMessage("로그인 정보가 존재하지 않습니다.");
         }
-        UIManager.uiManager.OFFDontClick();
+        UIManager.Instance.OFFDontClick();
     }
 
     /// <summary>
@@ -356,7 +356,7 @@ public class AuthManager
     /// <param name="PW"></param>
     public void Regist(string _id,string _pw)
     {
-        UIManager.uiManager.OnDontClick();
+        UIManager.Instance.OnDontClick();
 
         Auth.CreateUserWithEmailAndPasswordAsync(_id, _pw).ContinueWithOnMainThread(
             (task) =>
@@ -364,7 +364,7 @@ public class AuthManager
                 if (task.IsCanceled)
                 {
                     Debug.Log("Regist Canceled");
-                    UIManager.uiManager.OnErrorMessage("회원 가입이 취소 되었습니다.");
+                    UIManager.Instance.OnErrorMessage("회원 가입이 취소 되었습니다.");
                 }
                 else if (task.IsFaulted)
                 {
@@ -377,20 +377,20 @@ public class AuthManager
                             case AuthError.EmailAlreadyInUse:
                                 {
 
-                                    UIManager.uiManager.OnErrorMessage("이미 사용되고있는 ID입니다.");
+                                    UIManager.Instance.OnErrorMessage("이미 사용되고있는 ID입니다.");
 
                                 }
                                 break;
                             case AuthError.WeakPassword:
                                 {
-                                    UIManager.uiManager.OnErrorMessage("패스워드가 너무 간단합니다.");
+                                    UIManager.Instance.OnErrorMessage("패스워드가 너무 간단합니다.");
 
                                 }
                                 break;
                             default:
                                 {
                                     Debug.Log(error);
-                                    UIManager.uiManager.OnErrorMessage(error.ToString());
+                                    UIManager.Instance.OnErrorMessage(error.ToString());
                                 }                                
                                 break;
                         }
@@ -400,8 +400,8 @@ public class AuthManager
                 {   
                     Reference.Child("User").Child(task.Result.UserId).Child("UID").SetValueAsync(task.Result.UserId);
                     Reference.Child("User").Child(task.Result.UserId).Child("Connect").SetValueAsync(false);
-                    UIManager.uiManager.OFFDontClick();
-                    UIManager.uiManager.CurrentPop();
+                    UIManager.Instance.OFFDontClick();
+                    UIManager.Instance.CurrentPop();
                 }
             });
     }
@@ -411,80 +411,35 @@ public class AuthManager
     /// <param name="NickName"></param>
     public async void SetNickName(string _nicName)
     {
-        UIManager.uiManager.OnDontClick();
+        UIManager.Instance.OnDontClick();
         await Reference.Child("User").Child(User.UserId).Child("NickName").SetValueAsync(_nicName);
-        UIManager.uiManager.OFFDontClick();
+        UIManager.Instance.OFFDontClick();
         GameManager.Instance.ChangeState(GameState.Lobby);
     }
 
     #endregion
     #region Room
     /// <summary>
-    /// CreateRoom with FirebaseDataBase
-    /// </summary>
-    /// <param name="RoomInfo"></param>
-    public async void CreateRoom(string _roomInfo)
-    {   
-        if (UIManager.uiManager.AOpenRoom == null)
-        {
-            UIManager.uiManager.loadingUI.CloseLoadingUI();
-            return;
-        }
-        UIManager.uiManager.AOpenRoom();
-
-        await Reference.Child("Room").Child(_roomInfo).Child("Master").SetValueAsync(User.UserId);
-        DataSnapshot roomSnapshot = await Reference.Child("Room").Child(_roomInfo).GetValueAsync();
-        
-        if (roomSnapshot.Exists && UIManager.uiManager.ARoomUpdate != null)
-        {
-            Queue<UserInfo> userinfoQ = new Queue<UserInfo>();
-            DataSnapshot masterDs = await Reference.Child("User").Child(roomSnapshot.Child("Master").Value.ToString()).GetValueAsync();
-            UserInfo master = JsonUtility.FromJson<UserInfo>(masterDs.GetRawJsonValue());
-            userinfoQ.Enqueue(master);
-            UIManager.uiManager.ARoomUpdate(userinfoQ);
-        }
-        UIManager.uiManager.loadingUI.CloseLoadingUI();
-    }
-    public async void JoinRoom(string _roomName, List<string> _userUID, bool _isEntered)
-    {   
-        await Reference.Child("Room").Child(_roomName).Child("Guest").Child(User.UserId).SetValueAsync(true);
-        UpdateRoom(_roomName, _userUID, _isEntered);
-    }
-    /// <summary>
     /// RoomStateUpdate
     /// </summary>
     /// <param name="RoomDataSnapshot"></param>
-    public async void UpdateRoom(string _roomName,List<string> _userUID,bool _isEntered)
+    public async void UpdateRoom(string _roomName,List<string> _userUID)
     {
         Queue<UserInfo> userQ = new Queue<UserInfo>();
-        DataSnapshot roomInfo = await Reference.Child("Room").Child(_roomName).GetValueAsync();
         DataSnapshot masterDs = await Reference.Child("User").Child(_userUID[0]).GetValueAsync();
         UserInfo masterinfo = JsonUtility.FromJson<UserInfo>(masterDs.GetRawJsonValue());
         userQ.Enqueue(masterinfo);
 
-        foreach(string friendUID in _userUID)
+        foreach(string roomUserUID in _userUID)
         {
-            if (masterinfo.UID == friendUID || friendUID == null)
+            if (masterinfo.UID == roomUserUID || roomUserUID == null)
                 continue;
-            DataSnapshot guestDs = await Reference.Child("User").Child(friendUID).GetValueAsync();
+            DataSnapshot guestDs = await Reference.Child("User").Child(roomUserUID).GetValueAsync();
             UserInfo guestinfo = JsonUtility.FromJson<UserInfo>(guestDs.GetRawJsonValue());
             userQ.Enqueue(guestinfo);
         }
-        UIManager.uiManager.ARoomUpdate(userQ);
-
-        if (!_isEntered)
-            UIManager.uiManager.loadingUI.CloseLoadingUI();
+        UIManager.Instance.ARoomUpdate(userQ);
     }
-    /// <summary>
-    ///  DestroyRoom
-    /// </summary>
-    /// <param name="RoomName"></param>
-    public void DestroyRoom(string _roomName) { Reference.Child("Room").Child(_roomName).RemoveValueAsync(); }
-    /// <summary>
-    /// JoinRoom with FirebaseDatabase
-    /// </summary>
-    /// <param name="RoomName"></param>
-
     #endregion
     #region  Chat
     /// <summary>

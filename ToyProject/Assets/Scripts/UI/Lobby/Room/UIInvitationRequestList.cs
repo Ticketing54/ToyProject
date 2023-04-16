@@ -17,11 +17,11 @@ public class UIInvitationRequestList : MonoBehaviour
     private void OnEnable()
     {
         Clear();
-        UIManager.uiManager.AOpenInvitationMessage += Add;
+        UIManager.Instance.AOpenInvitationMessage += Add;
     }
     private void OnDisable()
     {
-        UIManager.uiManager.AOpenInvitationMessage -= Add;
+        UIManager.Instance.AOpenInvitationMessage -= Add;
     }
 
     void Add(UserInfo _userinfo,string _roomName)

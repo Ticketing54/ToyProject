@@ -40,7 +40,7 @@ public abstract class UINavigation : MonoBehaviour
     }
     protected virtual IEnumerator CoRootShow()
     {
-        UIManager.uiManager.OnDontClick();
+        UIManager.Instance.OnDontClick();
         rootView.gameObject.SetActive(true);
         if (current != null)
         {
@@ -48,14 +48,14 @@ public abstract class UINavigation : MonoBehaviour
             yield return new WaitWhile(() => current.State != UIView.VisibleState.Disappeared);
             current.gameObject.SetActive(false);
         }
-        UIManager.uiManager.OFFDontClick();
+        UIManager.Instance.OFFDontClick();
         rootView.Show();
         history.Clear();
         current = rootView;
     }
     IEnumerator CoPushUIView(UIView _uiview)
     {
-        UIManager.uiManager.OnDontClick();
+        UIManager.Instance.OnDontClick();
         _uiview.gameObject.SetActive(true);
         if (current != null)
         {
@@ -63,17 +63,17 @@ public abstract class UINavigation : MonoBehaviour
             yield return new WaitWhile(() => current.State != UIView.VisibleState.Disappeared);
             current.gameObject.SetActive(false);
         }
-        UIManager.uiManager.OFFDontClick();
+        UIManager.Instance.OFFDontClick();
         _uiview.Show();
         history.Push(current);
         current = _uiview;
     }
     IEnumerator CoPopUIView()
     {
-        UIManager.uiManager.OnDontClick();
+        UIManager.Instance.OnDontClick();
         yield return new WaitWhile(() => current.State != UIView.VisibleState.Disappeared);        
         current.gameObject.SetActive(false);
-        UIManager.uiManager.OFFDontClick();
+        UIManager.Instance.OFFDontClick();
         UIView prevView = history.Pop();
         prevView.gameObject.SetActive(true);
         prevView.Show();

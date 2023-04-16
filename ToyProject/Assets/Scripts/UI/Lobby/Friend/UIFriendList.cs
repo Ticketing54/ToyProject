@@ -25,14 +25,14 @@ public class UIFriendList : MonoBehaviour
     private void OnEnable()
     {
         Clear();
-        UIManager.uiManager.AFriendListClear += Clear;
-        UIManager.uiManager.AFriendAdd += Add;
+        UIManager.Instance.AFriendListClear += Clear;
+        UIManager.Instance.AFriendAdd += Add;
         AuthManager.Instance.UpdateFriendList();
     }
     private void OnDisable()
     {
-        UIManager.uiManager.AFriendListClear -= Clear;
-        UIManager.uiManager.AFriendAdd -= Add;
+        UIManager.Instance.AFriendListClear -= Clear;
+        UIManager.Instance.AFriendAdd -= Add;
     }
 
     private void Add(UserInfo _userinfo)

@@ -4,20 +4,20 @@ using UnityEngine;
 using System;
 using UnityEngine.UI;
 public class UIManager : MonoBehaviour
-{   
-    public static UIManager uiManager;
+{
+    public static UIManager Instance;
     private void Awake()
     {
-        if (uiManager == null)
+        if (Instance == null)
         {
-            uiManager = this;
-            DontDestroyOnLoad(this.gameObject);                        
+            Instance = this;
+            DontDestroyOnLoad(this.gameObject);
         }
         else
         {
-            Destroy(uiManager);
+            Destroy(Instance);
         }
-    }    
+    }
 
     // Current UINavigation
     public UINavigation Current { get; private set; }
@@ -28,7 +28,7 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     UINavigation unLobby;
     [SerializeField]
-    UINavigation unplaying;   
+    UINavigation unplaying;
 
 
     /// <summary>
@@ -37,13 +37,13 @@ public class UIManager : MonoBehaviour
     /// <param name="GameState"></param>
     public void ChangeUINavgation(GameState _state)
     {
-        if(Current != null)
+        if (Current != null)
         {
             Current.gameObject.SetActive(false);
         }
         Current = GetUINavigation(_state);
         Current.gameObject.SetActive(true);
-        Current.gameObject.transform.localPosition= Vector3.zero;
+        Current.gameObject.transform.localPosition = Vector3.zero;
         Current.RootShow();
     }
     /// <summary>
@@ -65,14 +65,14 @@ public class UIManager : MonoBehaviour
                 Debug.LogError("Wrong Enum GameState");
                 return null;
         }
-    }    
+    }
 
     /// <summary>
     /// Back Button
     /// </summary>
     public void CurrentPop()
     {
-        if(Current == null)
+        if (Current == null)
         {
             Debug.LogError("Current UINavigation is NULL");
             return;
@@ -80,8 +80,13 @@ public class UIManager : MonoBehaviour
         Current.Pop();
     }
 
-    #region LoadingUI
-    public LoadingUI loadingUI;
+    #region LoadingUI & PatchUI
+    [SerializeField]
+    LoadingUI loadingUI;
+    [SerializeField]
+    PatchUI patchUI;
+    public LoadingUI LoadingUIInstance { get => loadingUI; set => loadingUI = value; }
+    public PatchUI PatchUIInstacne { get => patchUI; set => patchUI = value; }
     #endregion
 
     #region DontClick && ErrorMessage    
