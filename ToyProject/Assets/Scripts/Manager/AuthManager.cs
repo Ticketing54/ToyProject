@@ -443,7 +443,7 @@ public class AuthManager
             userinfoQ.Enqueue(master);
             UIManager.uiManager.ARoomUpdate(userinfoQ);
         }
-        UIManager.uiManager.loadingUI.OpenLoadingUI(false);
+        UIManager.uiManager.loadingUI.CloseLoadingUI();
     }
     public async void JoinRoom(string _roomName, List<string> _userUID, bool _isEntered)
     {   

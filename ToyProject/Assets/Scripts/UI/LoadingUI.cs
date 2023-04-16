@@ -56,7 +56,7 @@ public class LoadingUI : MonoBehaviour
     }
     private void Clear()
     {
-        simplePosition.transform.SetParent(outPosition);
+        simpleLoadingImage.transform.SetParent(outPosition);
         progress.transform.SetParent(outPosition);
         progressText.text = "";
         progressBar.fillAmount = 0;
