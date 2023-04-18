@@ -33,9 +33,10 @@ public class LoadingUI : MonoBehaviour
     Image progressBar;
     [SerializeField]
     TextMeshProUGUI progressText;
-    #endregion
 
-    Coroutine updateCo;
+    float targetStep;
+    float currentStep;
+    #endregion
     public void OpenLoadingUI(bool _isProgress = false)
     {
         gameObject.SetActive(true);
@@ -57,10 +58,13 @@ public class LoadingUI : MonoBehaviour
     }
     private void Clear()
     {
+        StopAllCoroutines();
         simpleLoadingImage.transform.SetParent(outPosition);
         progress.transform.SetParent(outPosition);
         progressText.text = "";
         progressBar.fillAmount = 0;
+        targetStep = 0;
+        currentStep = 0;
     }
     IEnumerator CoRotateLoadingImage()
     {
@@ -70,24 +74,25 @@ public class LoadingUI : MonoBehaviour
             simpleLoadingImage.transform.Rotate(Vector3.forward * 2f);
         }
     }
-    public void UpdateProgress (float _current, float _target, Action continueWith=null)
+    public void ProgressSetting (float _targetProgress, Action _continueWith)
     {
-        if(updateCo != null)
-        {
-            StopCoroutine(updateCo);
-        }   
-        updateCo = StartCoroutine(CoUpdateProgress(_current,_target)); 
+        targetStep = _targetProgress;
+        currentStep = 0;
+        StartCoroutine(CoUpdateProgress(_continueWith)); ; 
     }
-    public IEnumerator CoUpdateProgress(float _current, float _target, Action continueWith = null)
+    public float CurrentStep { get => currentStep; set => currentStep = value; }
+    
+    public IEnumerator CoUpdateProgress(Action continueWith = null)
     {
-        
-        float percent = _current / _target;
-        float curPercent = progressBar.fillAmount;
-        while (progressBar.fillAmount < percent)
+        while (progressBar.fillAmount < 1)
         {
             yield return null;
-            progressBar.fillAmount = Mathf.Lerp(curPercent, percent, 0.1f);
-            progressText.text = (progressBar.fillAmount * 100).ToString("F2") +" %";
+            float percent = currentStep / targetStep;
+            if(progressBar.fillAmount < percent)
+            {
+                progressBar.fillAmount += Time.deltaTime*0.5f;
+                progressText.text = (progressBar.fillAmount * 100).ToString("F2") + " %";
+            }
         }
         if(continueWith != null)
         {

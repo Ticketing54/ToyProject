@@ -440,6 +440,14 @@ public class AuthManager
         }
         UIManager.Instance.ARoomUpdate(userQ);
     }
+    
+    
+    public async void SettingTable()
+    {
+        DataSnapshot tableSnapShot = await Reference.Child("Table").GetValueAsync();
+        DataSnapshot stageSnapShot = tableSnapShot.Child("Stage");
+
+    }
     #endregion
     #region  Chat
     /// <summary>

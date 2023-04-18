@@ -9,3 +9,9 @@ public enum GameState
     Playing,  
     None
 }
+public enum TableType
+{
+    Character,
+    Monster,
+    Stage
+}

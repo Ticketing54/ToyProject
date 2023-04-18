@@ -81,25 +81,24 @@ public class GameManager : MonoBehaviour
         
         yield return null;
         UIManager.Instance.LoadingUIInstance.OpenLoadingUI(true);
+        UIManager.Instance.LoadingUIInstance.ProgressSetting(3, () =>
+         {
+             UIManager.Instance.LoadingUIInstance.CloseLoadingUI();
+             UIManager.Instance.ChangeUINavgation(GameState.Playing);
+         });
+        yield return new WaitForSeconds(2f);            // 테이블 가져오기
+        UIManager.Instance.LoadingUIInstance.CurrentStep++;
+        yield return new WaitForSeconds(2f);            // 리소스 받고 맵세팅 할 것
+        UIManager.Instance.LoadingUIInstance.CurrentStep++;
+        yield return new WaitForSeconds(2f);            // 카메라 세팅
+        UIManager.Instance.LoadingUIInstance.CurrentStep++;
         yield return new WaitForSeconds(2f);
-        UIManager.Instance.LoadingUIInstance.UpdateProgress(1, 4);
-        yield return new WaitForSeconds(2f);
-        UIManager.Instance.LoadingUIInstance.UpdateProgress(2, 4);
-        yield return new WaitForSeconds(2f);
-        UIManager.Instance.LoadingUIInstance.UpdateProgress(3, 4);
-        yield return new WaitForSeconds(2f);
-        UIManager.Instance.LoadingUIInstance.UpdateProgress(4, 4,
-            ()=>
-            {
-                UIManager.Instance.LoadingUIInstance.CloseLoadingUI();
-                UIManager.Instance.ChangeUINavgation(GameState.Playing);
-            });
-
-
+        UIManager.Instance.LoadingUIInstance.CurrentStep++;
+        
         // 테이블 가져오기 
         // (리소스 받기 맵세팅) 새로 만들 것!
         // 카메라 처음 움직임 
-        
+
     }
     #region Patch
     IEnumerator CoPatchCheck()
