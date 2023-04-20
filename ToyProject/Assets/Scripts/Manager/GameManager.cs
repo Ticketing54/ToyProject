@@ -86,19 +86,15 @@ public class GameManager : MonoBehaviour
              UIManager.Instance.LoadingUIInstance.CloseLoadingUI();
              UIManager.Instance.ChangeUINavgation(GameState.Playing);
          });
-        yield return AuthManager.Instance.SettingTable();
+        yield return AuthManager.Instance.SettingTable();          // Table
         UIManager.Instance.LoadingUIInstance.CurrentStep++;
-        yield return new WaitForSeconds(2f);            // 리소스 받고 맵세팅 할 것
+        yield return ResourceManager.Instance.PrefabSetting();     // Prefab 
         UIManager.Instance.LoadingUIInstance.CurrentStep++;
-        yield return new WaitForSeconds(2f);            // 카메라 세팅
-        UIManager.Instance.LoadingUIInstance.CurrentStep++;
-        yield return new WaitForSeconds(2f);
-        UIManager.Instance.LoadingUIInstance.CurrentStep++;
+        // MapSetting
         
-        // 테이블 가져오기 
-        // (리소스 받기 맵세팅) 새로 만들 것!
-        // 카메라 처음 움직임 
+        // OpeningCarmeraSetting
 
+        // GameStart
     }
     #region Patch
     IEnumerator CoPatchCheck()

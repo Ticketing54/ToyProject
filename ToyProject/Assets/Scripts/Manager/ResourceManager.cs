@@ -30,13 +30,15 @@ public class ResourceManager : MonoBehaviour
     {
         AsyncOperationHandle<IList<IResourceLocation>> locationHandle = Addressables.LoadResourceLocationsAsync("Prefab");
         await locationHandle.Task;
-        AsyncOperationHandle<IList<GameObject>> objSetting = Addressables.LoadAssetsAsync<GameObject>(locationHandle, PrefabSetting);
+        AsyncOperationHandle<IList<GameObject>> objSetting = Addressables.LoadAssetsAsync<GameObject>(locationHandle,
+            (obj)=> 
+            {
+                prefabDic.Add(obj.name, obj);
+
+            });
         await objSetting.Task;
     }
-    void PrefabSetting(GameObject _obj)
-    {
-
-    }
+    
     #endregion
 
     #region Monster
