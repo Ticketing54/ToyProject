@@ -23,7 +23,7 @@ public class InputManager : MonoBehaviour
     }
     public delegate Vector3 direction ();
     public ControlUnit Player { get; private set; }
-    Coroutine control;
+    public Coroutine control { get; set; }
     /// <summary>
     /// 캐릭터 세팅
     /// </summary>
@@ -32,13 +32,12 @@ public class InputManager : MonoBehaviour
     /// <summary>
     /// 캐릭터 컨트롤 시작
     /// </summary>
-    public void StartControl(direction _dir) { control = StartCoroutine(CoControlUnit(_dir)); }
+    public void StartControl(direction _dir) { StartCoroutine(CoControlUnit(_dir)); }
     /// <summary>
     /// 모든 정보 초기화
     /// </summary>
     public void Clear()
-    {
-        StopCoroutine(control);
+    {   
         Player = null;
     }
     /// <summary>

@@ -2,16 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Monster 
+public class Monster : MonoBehaviour
 {
-    public int Hp;
-    public int Atk;
-    public int Gold;
-
-    public Monster (int _hp,int _atk,int _gold)
+    public float Hp { get; private set; }
+    public float Atk { get; private set; }
+    public void SettingMonster(float _hp,float _atk)
     {
         Hp = _hp;
         Atk = _atk;
-        Gold = _gold;
     }
 }

@@ -30,11 +30,67 @@ public class AuthManager
     public FirebaseUser User { get; private set; }    // 나중에 다시 설정할 것 ( 접속 끊겼을떄 대응)
     public DatabaseReference Reference { get; private set; }
 
-    
+    #region Table
+    /// <summary>
+    /// ResourceManager TableSetting
+    /// </summary>
+    public async Task SettingTable()
+    {
+        DataSnapshot tableSnapShot = await Reference.Child("Table").GetValueAsync();
+        Dictionary<int, StageInfo> stageDic = GetStageTable(tableSnapShot.Child("Stage"));
+        Dictionary<string, MonsterInfo> monsterDic = GetMonsterTable(tableSnapShot.Child("Monster"));
+        ResourceManager.Instance.SettingTable(stageDic, monsterDic);
+    }
+    /// <summary>
+    /// StageTable
+    /// </summary>
+    /// <param name="SnapShot(Stage)"></param>
+    /// <returns></returns>
+    Dictionary<int, StageInfo> GetStageTable(DataSnapshot _dataSnapShot)
+    {
+        Dictionary<int, StageInfo> stageTable = new Dictionary<int, StageInfo>();
+        DataSnapshot monstersSnapshot = _dataSnapShot.Child("Monster");
+
+        foreach(DataSnapshot stage in _dataSnapShot.Children)
+        {
+            List<List<string>> mobList = new List<List<string>>();
+            foreach(DataSnapshot monster in stage.Child("Monster").Children)
+            {
+                List<string> mobinfo = new List<string>();
+                mobinfo.Add(monster.Key);
+                mobinfo.Add(monster.Value.ToString());
+                mobList.Add(mobinfo);
+            }
+            int stageNumber = int.Parse(stage.Key);
+            int gold = int.Parse(stage.Child("Reward").Child("Gold").Value.ToString());
+            int exp = int.Parse(stage.Child("Reward").Child("Exp").Value.ToString());
+            StageInfo stageinfo = new StageInfo(gold, exp, mobList);
+            stageTable.Add(stageNumber, stageinfo);
+        } 
+        return stageTable;
+    }
+    /// <summary>
+    /// MonsterTable
+    /// </summary>
+    /// <param name="SnapShot(Monster)"></param>
+    /// <returns></returns>
+    Dictionary<string, MonsterInfo> GetMonsterTable(DataSnapshot _dataSnapShot)
+    {
+        Dictionary<string, MonsterInfo> monsterTable = new Dictionary<string, MonsterInfo>();
+        foreach (DataSnapshot info in _dataSnapShot.Children)
+        {
+            MonsterInfo mobinfo = JsonUtility.FromJson<MonsterInfo>(info.GetRawJsonValue());
+            monsterTable.Add(info.Key, mobinfo);
+        }
+        return monsterTable;
+    }
+    #endregion
     /// <summary>
     /// FireBase접속 초기설정
     /// </summary> 
     /// <returns></returns>
+    /// 
+
     public IEnumerator Init()
     {
         User = null;
@@ -441,13 +497,6 @@ public class AuthManager
         UIManager.Instance.ARoomUpdate(userQ);
     }
     
-    
-    public async void SettingTable()
-    {
-        DataSnapshot tableSnapShot = await Reference.Child("Table").GetValueAsync();
-        DataSnapshot stageSnapShot = tableSnapShot.Child("Stage");
-
-    }
     #endregion
     #region  Chat
     /// <summary>

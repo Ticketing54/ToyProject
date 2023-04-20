@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour
              UIManager.Instance.LoadingUIInstance.CloseLoadingUI();
              UIManager.Instance.ChangeUINavgation(GameState.Playing);
          });
-        yield return new WaitForSeconds(2f);            // 테이블 가져오기
+        yield return AuthManager.Instance.SettingTable();
         UIManager.Instance.LoadingUIInstance.CurrentStep++;
         yield return new WaitForSeconds(2f);            // 리소스 받고 맵세팅 할 것
         UIManager.Instance.LoadingUIInstance.CurrentStep++;
