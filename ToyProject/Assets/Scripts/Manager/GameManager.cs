@@ -77,8 +77,7 @@ public class GameManager : MonoBehaviour
     }
 
     IEnumerator GameSetting()
-    {
-        
+    {   
         yield return null;
         UIManager.Instance.LoadingUIInstance.OpenLoadingUI(true);
         UIManager.Instance.LoadingUIInstance.ProgressSetting(3, () =>
@@ -90,9 +89,11 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.LoadingUIInstance.CurrentStep++;
         yield return ResourceManager.Instance.PrefabSetting();     // Prefab 
         UIManager.Instance.LoadingUIInstance.CurrentStep++;
-        // MapSetting
-        
-        // OpeningCarmeraSetting
+        int playerCount = 0;
+        ResourceManager.Instance.SettingMap(playerCount);
+        // 카메라 이동 
+
+        // 카운팅
 
         // GameStart
     }

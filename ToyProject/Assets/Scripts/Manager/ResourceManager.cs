@@ -79,6 +79,28 @@ public class ResourceManager : MonoBehaviour
     }
     #endregion
 
+    public void SettingMap(int _playerCount)
+    {
+        PlayerCount = _playerCount;
+        spawnPosition = new List<Vector3>();
+        GameObject[] spawner =GameObject.FindGameObjectsWithTag("Spawner");
+        GameObject castleObj = Instantiate(prefabDic["Castle"]);
+        castleObj.transform.tag = "Castle";
+        // castle Script 작성
+
+        for(int i=0;i<_playerCount;i++)
+        {
+            spawnPosition.Add(spawner[i].transform.position);
+        }
+
+        foreach(Vector3 pos in spawnPosition)
+        {
+            GameObject character = Instantiate(prefabDic["Character"]); // character스크립트에서  realease 구현할 것
+            // 캐릭터 스크립트 addcomponent
+            character.transform.localScale = new Vector3(1f, 1f, 1f);
+            character.transform.position = pos;
+        }
+    }
     /// <summary>
     /// SettingTable
     /// </summary>
@@ -101,8 +123,13 @@ public class ResourceManager : MonoBehaviour
     {
         StageTable = null;
         MonsterTable = null;
+        prefabDic = null;
+        PlayerCount = 0;
     }
     public Dictionary<int, StageInfo> StageTable { get; private set; }
     public Dictionary<string,MonsterInfo> MonsterTable { get; private set; }
     public Dictionary<string, GameObject> prefabDic { get; private set; }
+    public int PlayerCount { get; private set; }
+
+    private List<Vector3> spawnPosition;
 }
