@@ -80,11 +80,7 @@ public class GameManager : MonoBehaviour
     {   
         yield return null;
         UIManager.Instance.LoadingUIInstance.OpenLoadingUI(true);
-        UIManager.Instance.LoadingUIInstance.ProgressSetting(3, () =>
-         {
-             UIManager.Instance.LoadingUIInstance.CloseLoadingUI();
-             UIManager.Instance.ChangeUINavgation(GameState.Playing);
-         });
+        UIManager.Instance.LoadingUIInstance.ProgressSetting(3);
         yield return AuthManager.Instance.SettingTable();          // Table
         UIManager.Instance.LoadingUIInstance.CurrentStep++;
         yield return ResourceManager.Instance.PrefabSetting();     // Prefab 

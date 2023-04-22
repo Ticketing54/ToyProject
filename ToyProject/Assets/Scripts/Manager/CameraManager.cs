@@ -20,7 +20,10 @@ public class CameraManager : MonoBehaviour
     {
         
     }
+    public void SettingStart()
+    {
 
+    }
     IEnumerator CoLookCharacter()
     {
         while(true)

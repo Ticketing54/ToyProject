@@ -74,15 +74,15 @@ public class LoadingUI : MonoBehaviour
             simpleLoadingImage.transform.Rotate(Vector3.forward * 2f);
         }
     }
-    public void ProgressSetting (float _targetProgress, Action _continueWith)
+    public void ProgressSetting (float _targetProgress)
     {
         targetStep = _targetProgress;
         currentStep = 0;
-        StartCoroutine(CoUpdateProgress(_continueWith)); ; 
+        StartCoroutine(CoUpdateProgress()); ; 
     }
     public float CurrentStep { get => currentStep; set => currentStep = value; }
     
-    public IEnumerator CoUpdateProgress(Action continueWith = null)
+    public IEnumerator CoUpdateProgress()
     {
         while (progressBar.fillAmount < 1)
         {
@@ -94,10 +94,7 @@ public class LoadingUI : MonoBehaviour
                 progressText.text = (progressBar.fillAmount * 100).ToString("F2") + " %";
             }
         }
-        if(continueWith != null)
-        {
-            continueWith();
-        }
+        CloseLoadingUI();
     }
    
 }
