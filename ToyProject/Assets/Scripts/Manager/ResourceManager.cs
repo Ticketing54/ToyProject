@@ -100,6 +100,10 @@ public class ResourceManager : MonoBehaviour
             character.transform.localScale = new Vector3(1f, 1f, 1f);
             character.transform.position = pos;
         }
+
+        GameObject castle = Instantiate(prefabDic["Castle"]);
+        // castle 스크립트 addComponent
+        castle.transform.position = new Vector3(75, 0, 75);
     }
     /// <summary>
     /// SettingTable

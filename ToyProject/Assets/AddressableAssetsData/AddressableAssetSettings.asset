@@ -100,6 +100,7 @@ MonoBehaviour:
     m_LabelNames:
     - default
     - Patch
+    - Prefab
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: b8e13ee50c493a748af908e3b25e4762, type: 2}

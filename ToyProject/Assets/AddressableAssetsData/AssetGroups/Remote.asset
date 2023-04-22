@@ -10,38 +10,34 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Test
+  m_Name: Remote
   m_EditorClassIdentifier: 
-  m_GroupName: Test
+  m_GroupName: Remote
   m_Data:
     m_SerializedData: []
   m_GUID: c8894bf322a9d0742bec50b41096b2bd
   m_SerializeEntries:
-  - m_GUID: 9c69ddcfbf0adfc489453c4f34112d8b
-    m_Address: Cube
+  - m_GUID: ccd8c3b89aa02e943a08ab9238a8a70c
+    m_Address: Wizard
     m_ReadOnly: 0
     m_SerializedLabels:
     - Patch
-  - m_GUID: 6848f2b406bdb2745b49e2cc8e003dd9
-    m_Address: Cube2
+    - Prefab
+  - m_GUID: 45288819fde2143449a96207b14db0bb
+    m_Address: Knight
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Patch
-  - m_GUID: 77c6e8dc90aded442b6b325ea07bd731
-    m_Address: Cube3
+    - Prefab
+  - m_GUID: 1cace56ba420dd64c9171c422c8e9aaa
+    m_Address: Castle
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Patch
-  - m_GUID: 8cf06961a4dc1a24a82d7d02fdb17e82
-    m_Address: Cube4
+    - Prefab
+  - m_GUID: 55776efecb0cd134ea5f418c2f97a705
+    m_Address: Slime
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Patch
-  - m_GUID: a05d49e5687fd3c4380912ac00e2db9c
-    m_Address: rkskek
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Patch
+    - Prefab
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 185dab7d74f7bf245883506aadc823da, type: 2}
   m_SchemaSet:

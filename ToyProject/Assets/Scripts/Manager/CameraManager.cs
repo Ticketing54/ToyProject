@@ -1,35 +1,49 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Cinemachine;
 public class CameraManager : MonoBehaviour
 {
     [SerializeField]
+    CinemachineBrain brain;
+    [SerializeField]
+    CinemachineVirtualCamera mainCamera;
+    [SerializeField]
+    CinemachineVirtualCamera otherCamera;
+
+
+    [SerializeField]
     GameObject player;
+    
 
-    Vector3 rotateOffset;
-    Vector3 vectorOffset;
-    private void Start()
-    {
-        rotateOffset= new Vector3(40f, 0f, 0f);
-        vectorOffset = new Vector3(0f, 10f, -10f);
-        transform.rotation = Quaternion.Euler(rotateOffset);
-    }
-
-    void Update()
+    
+    /// <summary>
+    /// Target is Player or Castle
+    /// </summary>
+    /// <param name="Target"></param>
+    public void TargetOn(GameObject _target)
     {
         
     }
-    public void SettingStart()
+    public void Test()
+    {
+        
+    }
+    
+
+    public void Test2()
     {
 
     }
-    IEnumerator CoLookCharacter()
+    private void Update()
     {
-        while(true)
+        if(Input.GetKeyDown(KeyCode.S))
         {
-            yield return null;
-            transform.position = player.transform.position + vectorOffset;
+            TargetOn(player);
+        }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            TargetOn(player);
         }
     }
 }
