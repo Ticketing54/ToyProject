@@ -6,6 +6,8 @@ TagManager:
   tags:
   - DontTouch
   - Spawner
+  - Bullet
+  - Castle
   layers:
   - Default
   - TransparentFX

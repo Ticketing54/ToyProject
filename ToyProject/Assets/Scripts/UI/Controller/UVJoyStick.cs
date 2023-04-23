@@ -22,8 +22,6 @@ public class UVJoyStick : UIView ,IDragHandler, IEndDragHandler
     Vector3 GetDirection() { return new Vector3(dir.x, 0, dir.y); }
     private void OnEnable()
     {
-        ControlUnit unit = GameObject.Find("Test").GetComponent<ControlUnit>();
-        InputManager.Instance.SetUnit(unit);
         InputManager.Instance.StartControl(GetDirection);
     }
     private void OnDisable()

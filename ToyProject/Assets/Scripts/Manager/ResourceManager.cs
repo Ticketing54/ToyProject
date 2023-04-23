@@ -28,13 +28,18 @@ public class ResourceManager : MonoBehaviour
     #region Prefab
     public async Task PrefabSetting()
     {
-        AsyncOperationHandle<IList<IResourceLocation>> locationHandle = Addressables.LoadResourceLocationsAsync("Prefab");
-        await locationHandle.Task;
-        AsyncOperationHandle<IList<GameObject>> objSetting = Addressables.LoadAssetsAsync<GameObject>(locationHandle,
+        prefabDic = new Dictionary<string, GameObject>();
+        AsyncOperationHandle<IList<GameObject>> objSetting = Addressables.LoadAssetsAsync<GameObject>("Prefab",
             (obj)=> 
             {
-                prefabDic.Add(obj.name, obj);
-
+                if(!prefabDic.ContainsKey(obj.name))
+                {
+                    prefabDic.Add(obj.name, obj);
+                }
+                else
+                {
+                    Debug.Log(obj.name + " 은 이미 등록되어있습니다.");
+                }
             });
         await objSetting.Task;
     }
@@ -84,8 +89,6 @@ public class ResourceManager : MonoBehaviour
         PlayerCount = _playerCount;
         spawnPosition = new List<Vector3>();
         GameObject[] spawner =GameObject.FindGameObjectsWithTag("Spawner");
-        GameObject castleObj = Instantiate(prefabDic["Castle"]);
-        castleObj.transform.tag = "Castle";
         // castle Script 작성
 
         for(int i=0;i<_playerCount;i++)
@@ -95,13 +98,14 @@ public class ResourceManager : MonoBehaviour
 
         foreach(Vector3 pos in spawnPosition)
         {
-            GameObject character = Instantiate(prefabDic["Character"]); // character스크립트에서  realease 구현할 것
+            GameObject character = Instantiate(prefabDic["Knight"]); // character스크립트에서  realease 구현할 것
             // 캐릭터 스크립트 addcomponent
             character.transform.localScale = new Vector3(1f, 1f, 1f);
             character.transform.position = pos;
         }
 
         GameObject castle = Instantiate(prefabDic["Castle"]);
+        castle.transform.tag = "Castle";
         // castle 스크립트 addComponent
         castle.transform.position = new Vector3(75, 0, 75);
     }

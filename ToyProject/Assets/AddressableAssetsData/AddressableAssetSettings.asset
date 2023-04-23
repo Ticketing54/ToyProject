@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 468a46d0ae32c3544b7d98094e6448a9, type: 3}
   m_Name: AddressableAssetSettings
   m_EditorClassIdentifier: 
-  m_DefaultGroup: cbe0e9feba0751f47873000509586cc8
+  m_DefaultGroup: c8894bf322a9d0742bec50b41096b2bd
   m_CachedHash:
     serializedVersion: 2
     Hash: 00000000000000000000000000000000
@@ -42,7 +42,6 @@ MonoBehaviour:
   m_overridePlayerVersion: 
   m_GroupAssets:
   - {fileID: 11400000, guid: 8e166ed4e68b6e547acc2f1032ed2d1d, type: 2}
-  - {fileID: 11400000, guid: 8c21f31b818c0924483b9bf441812e8b, type: 2}
   - {fileID: 11400000, guid: f18b799a1766bb44094ab6e7a170739f, type: 2}
   m_BuildSettings:
     m_CompileScriptsInVirtualMode: 0
@@ -64,7 +63,7 @@ MonoBehaviour:
       - m_Id: 0e1bfc4644c50c44084d25c7d6d7dcc7
         m_Value: ServerData/[BuildTarget]
       - m_Id: f918d70b51bcb934e9d5cb239591c95a
-        m_Value: https://storage.googleapis.com/dastledefence/Android
+        m_Value: gs://dastledefence/Android
     - m_InheritedParent: 
       m_Id: 5d95b9365c8587e4584ff7bb3f6bfa11
       m_ProfileName: Remote
@@ -78,7 +77,7 @@ MonoBehaviour:
       - m_Id: 0e1bfc4644c50c44084d25c7d6d7dcc7
         m_Value: ServerData/[BuildTarget]
       - m_Id: f918d70b51bcb934e9d5cb239591c95a
-        m_Value: https://storage.googleapis.com/dastledefence/Android
+        m_Value: gs://dastledefence/Android
     m_ProfileEntryNames:
     - m_Id: 89f04fed5d108ee43837a343ae94f4da
       m_Name: BuildTarget

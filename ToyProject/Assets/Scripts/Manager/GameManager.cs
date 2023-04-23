@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.Playing:
                 {
-                    yield return StartCoroutine(GameSetting());
+                    GameSetting();
                     yield break;
                 }
             default:
@@ -76,20 +76,26 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.LoadingUIInstance.CloseLoadingUI();
     }
 
-    IEnumerator GameSetting()
+    async void  GameSetting()
     {   
-        yield return null;
         UIManager.Instance.LoadingUIInstance.OpenLoadingUI(true);
         UIManager.Instance.LoadingUIInstance.ProgressSetting(3);
-        yield return AuthManager.Instance.SettingTable();          // Table
+
+        await AuthManager.Instance.SettingTable();          // Table
         UIManager.Instance.LoadingUIInstance.CurrentStep++;
-        yield return ResourceManager.Instance.PrefabSetting();     // Prefab 
+
+        await ResourceManager.Instance.PrefabSetting();     // Prefab 
         UIManager.Instance.LoadingUIInstance.CurrentStep++;
         int playerCount = 0;
         ResourceManager.Instance.SettingMap(playerCount);
         UIManager.Instance.ChangeUINavgation(GameState.Playing);
-        // Ä«¿îÆÃ
+        UIManager.Instance.LoadingUIInstance.CurrentStep++;
 
+        ControlUnit temp = new GameObject("Test").AddComponent<ControlUnit>();
+        temp.transform.position = new Vector3(75f, 0, 75f);
+        CameraManager.Instance.TargetPlayer(temp.gameObject);
+        InputManager.Instance.SetUnit(temp);
+        StartCoroutine(Counting());
         // GameStart
     }
 
@@ -118,6 +124,7 @@ public class GameManager : MonoBehaviour
         if (sizeCheck.Result == 0)
         {
             UIManager.Instance.ChangeUINavgation(GameState.Login);
+            UIManager.Instance.PatchUIInstacne.ClosePatchUI();
         }
         else
         {
