@@ -155,4 +155,8 @@ public class UIManager : MonoBehaviour
     public Action<Queue<UserInfo>> ARoomUpdate { get; set; }
 
     #endregion
+    #region Play
+    public Action<float> ATimer { get; set; }
+    #endregion
+
 }

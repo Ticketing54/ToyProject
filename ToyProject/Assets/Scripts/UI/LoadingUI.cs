@@ -40,6 +40,7 @@ public class LoadingUI : MonoBehaviour
     public void OpenLoadingUI(bool _isProgress = false)
     {
         gameObject.SetActive(true);
+        Clear();
         if(_isProgress)
         {
             progress.transform.SetParent(progressPosition);
@@ -52,8 +53,7 @@ public class LoadingUI : MonoBehaviour
     }
 
     public void CloseLoadingUI()
-    {
-        Clear();
+    {   
         gameObject.SetActive(false);
     }
     private void Clear()

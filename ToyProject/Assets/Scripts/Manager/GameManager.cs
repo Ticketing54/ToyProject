@@ -87,11 +87,24 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.LoadingUIInstance.CurrentStep++;
         int playerCount = 0;
         ResourceManager.Instance.SettingMap(playerCount);
-        // 카메라 이동 
-
+        UIManager.Instance.ChangeUINavgation(GameState.Playing);
         // 카운팅
 
         // GameStart
+    }
+
+    IEnumerator Counting()
+    {
+        float timer = 20f;
+        while(timer>0)
+        {   
+            timer -= Time.deltaTime;
+            if (UIManager.Instance.ATimer!= null)
+                UIManager.Instance.ATimer(timer);
+            yield return null;
+        }
+        if (UIManager.Instance.ATimer != null)
+            UIManager.Instance.ATimer(0);
     }
     #region Patch
     IEnumerator CoPatchCheck()
