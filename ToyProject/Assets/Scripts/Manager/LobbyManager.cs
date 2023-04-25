@@ -81,8 +81,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.InRoom)
             return;
-        UIManager.Instance.LoadingUIInstance.OpenLoadingUI(false);     // 로딩 UI 활성화
-
+        UIManager.Instance.LoadingUIInstance.OpenLoadingUI();
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 4;
         roomOptions.IsOpen = true;
