@@ -141,6 +141,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     }
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
     {
+        if (propertiesThatChanged.ContainsKey("Ready") && (bool)propertiesThatChanged["Ready"] == false)
+        {
+            CancleReadyMessage();
+        }
         UpdateRoom();
     }
     public void LeaveRoom()
@@ -148,14 +152,44 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LeaveRoom();
         PhotonNetwork.JoinLobby();
     }
+
+    Coroutine startGame;
     public void StartGame()
     {
-        // 카운트 제작 할 것!
+        if(PhotonNetwork.IsMasterClient)
+        {
+            
+            startGame = StartCoroutine(CoStartingReady());
+        }
+    }
+    public void CanclePlayGame()
+    {
+        ExitGames.Client.Photon.Hashtable cancle = PhotonNetwork.CurrentRoom.CustomProperties;
+        cancle["Ready"] = false;
+        PhotonNetwork.CurrentRoom.SetCustomProperties(cancle);
+    }
+    void CancleReadyMessage()
+    {
+        StopCoroutine(startGame);
+        UIManager.Instance.ACountNumber(-1);
+    }
+    IEnumerator CoStartingReady()
+    {
+        UIManager.Instance.AOpenCounter();
+        float count = 5f;
+        UIManager.Instance.ACountNumber((int)count);
+        while (count >=0.1)
+        {
+            count -= Time.deltaTime;
+            UIManager.Instance.ACountNumber((int)count);
+            yield return null;
+        }
+        UIManager.Instance.ACountNumber(-1); // 종료
         UIManager.Instance.LoadingUIInstance.OpenLoadingUI();
         PhotonNetwork.LoadLevel("PlayScene");
-        StartCoroutine(CoStartGame());
+        StartCoroutine(CowaitSceneLoaded());
     }
-    IEnumerator CoStartGame()
+    IEnumerator CowaitSceneLoaded()
     {
         bool isLoadedScene = false;
         while(!isLoadedScene)

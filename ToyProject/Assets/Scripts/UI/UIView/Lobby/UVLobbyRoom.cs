@@ -11,16 +11,20 @@ public class UVLobbyRoom : UIView
     List<UIRoomUserSlot> guestSlot;
     [SerializeField]
     Button playerButton;
-
+    [SerializeField]
+    UIWaitPlayGame count;
 
     private void OnEnable()
     {
         UIManager.Instance.ARoomUpdate += SettingRoom;
+        UIManager.Instance.AOpenCounter += OpenCounter;
     }
     private void OnDisable()
     {
         UIManager.Instance.ARoomUpdate -= SettingRoom;
+        UIManager.Instance.AOpenCounter -= OpenCounter;
     }
+    void OpenCounter() { count.gameObject.SetActive(true); }
     public void OnClickPlayerButton() { LobbyManager.Instance.StartGame(); }
     public void OnLeaveRoomButton() { LobbyManager.Instance.LeaveRoom(); }
     void SettingRoom(Queue<UserInfo> _userInfo)

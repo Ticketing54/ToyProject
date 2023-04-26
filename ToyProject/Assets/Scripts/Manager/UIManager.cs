@@ -153,7 +153,8 @@ public class UIManager : MonoBehaviour
     /// UI RoomStateUpdate
     /// </summary>
     public Action<Queue<UserInfo>> ARoomUpdate { get; set; }
-
+    public Action AOpenCounter { get; set; }
+    public Action<int> ACountNumber { get; set; }
     #endregion
     #region Play
     public Action<float> ATimer { get; set; }
