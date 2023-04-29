@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
 using TMPro;
-public class UIWaitPlayGame : MonoBehaviourPun
+public class UIWaitPlayGame : MonoBehaviour
 {
     [SerializeField]
     TextMeshProUGUI count;
@@ -12,6 +11,7 @@ public class UIWaitPlayGame : MonoBehaviourPun
     {
         UIManager.Instance.ACountNumber += Counting;
     }
+    
     void Counting(int _countNumber)
     {
         if (_countNumber == -1)
@@ -21,6 +21,7 @@ public class UIWaitPlayGame : MonoBehaviourPun
         }
         count.text = _countNumber.ToString()+ "초 후에 시작됩니다.";
     }
+    
     public void CancleCounting()
     {
         LobbyManager.Instance.CanclePlayGame();

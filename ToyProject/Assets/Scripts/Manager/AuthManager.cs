@@ -494,7 +494,11 @@ public class AuthManager
             UserInfo guestinfo = JsonUtility.FromJson<UserInfo>(guestDs.GetRawJsonValue());
             userQ.Enqueue(guestinfo);
         }
-        UIManager.Instance.ARoomUpdate(userQ);
+        if(UIManager.Instance.ARoomUpdate != null)
+        {
+            UIManager.Instance.ARoomUpdate(userQ);
+        }
+        
     }
     
     #endregion

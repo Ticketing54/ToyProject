@@ -4,8 +4,9 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
 using UnityEngine;
+using Photon.Pun;
 using System;
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviourPun
 {
     public static GameManager Instance;
 
@@ -14,12 +15,11 @@ public class GameManager : MonoBehaviour
         if(Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(this.gameObject);
-        }
-        else
-        {
-            Destroy(this.gameObject);
-        }        
+            PhotonView pv = gameObject.AddComponent<PhotonView>();
+            pv.ViewID = 999;
+            PhotonNetwork.AutomaticallySyncScene = true;
+            DontDestroyOnLoad(Instance.gameObject);
+        }   
     }
     private void Start()
     {
@@ -75,9 +75,8 @@ public class GameManager : MonoBehaviour
         }
         UIManager.Instance.LoadingUIInstance.CloseLoadingUI();
     }
-
-    async void  GameSetting()
-    {   
+    async void GameSetting()
+    {
         UIManager.Instance.LoadingUIInstance.OpenLoadingUI(true);
         UIManager.Instance.LoadingUIInstance.ProgressSetting(3);
 
@@ -86,18 +85,101 @@ public class GameManager : MonoBehaviour
 
         await ResourceManager.Instance.PrefabSetting();     // Prefab 
         UIManager.Instance.LoadingUIInstance.CurrentStep++;
-        int playerCount = 0;
-        ResourceManager.Instance.SettingMap(playerCount);
+        SettingMap();
         UIManager.Instance.ChangeUINavgation(GameState.Playing);
         UIManager.Instance.LoadingUIInstance.CurrentStep++;
-
-        ControlUnit temp = new GameObject("Test").AddComponent<ControlUnit>();
-        temp.transform.position = new Vector3(75f, 0, 75f);
-        CameraManager.Instance.TargetPlayer(temp.gameObject);
-        InputManager.Instance.SetUnit(temp);
-        StartCoroutine(Counting());
-        // GameStart
+        if(PhotonNetwork.IsMasterClient)
+        {
+            CountingNextRound();
+        }
     }
+    void SettingMap()
+    {
+        SettingMap_Character();
+        SettingMap_Castle();
+        
+        
+    }
+    void SettingMap_Castle()
+    {
+        GameObject castle = ResourceManager.Instance.GetPrefab("Castle");
+        castle.transform.tag = "Castle";
+        castle.transform.position = new Vector3(75, 0, 75);
+        //castle script add
+
+    }
+    void SettingMap_Character()
+    {
+         Photon.Realtime.Player[] playerList= PhotonNetwork.PlayerList;
+
+        GameObject[] spawner = GameObject.FindGameObjectsWithTag("Spawner");
+        for (int i = 0; i < playerList.Length; i++)
+        {
+            GameObject character = ResourceManager.Instance.GetPrefab("DogPolyart");// 다시 할것
+            if (character != null)
+            {
+                character.transform.localScale = new Vector3(1f, 1f, 1f);
+                character.transform.position = spawner[i].transform.position;
+                //Character script add
+                if (playerList[i].CustomProperties["UID"].ToString() == AuthManager.Instance.User.UserId)
+                {
+                    CameraManager.Instance.TargetPlayer(character.gameObject);
+                    Character temp = character.AddComponent<Character>();
+                    InputManager.Instance.SetUnit(temp);
+                }
+            }
+
+        }
+    }
+    /// <summary>
+    /// Only MasterClient 
+    /// </summary>
+    void CountingNextRound() { StartCoroutine(CoCountNextRound()); }
+    
+    IEnumerator CoCountNextRound()
+    {
+        int count = 60;
+        while (0 != count--)
+        {
+            photonView.RPC("PRCountNextRound", RpcTarget.All,count);
+            yield return new WaitForSeconds(1f);
+        }
+        /// 다음 라운드
+    }
+    #region RPC
+
+    public void StartGame()
+    {
+        if (PhotonNetwork.IsMasterClient == false)
+            return;
+    }
+    public void ChangePlay() { photonView.RPC("PRChangePlayGame", RpcTarget.All); }
+    public void OpenLobbyCounter() { photonView.RPC("PROpenLobbyCounter", RpcTarget.All); }
+    public void LobbyCounterCounting(int _countNumber) { photonView.RPC("PRLobbyCounterCounting", RpcTarget.All, _countNumber); }
+    [PunRPC]
+    void PRCountNextRound(int _count) 
+    {
+        if (UIManager.Instance.ATimer != null)
+        {
+            UIManager.Instance.ATimer(_count);
+        }
+    }
+    [PunRPC]
+    void PRChangePlayGame() { ChangeState(GameState.Playing); }
+    [PunRPC]
+    void PROpenLobbyCounter() { UIManager.Instance.AOpenCounter(); }
+
+    [PunRPC]
+    void PRLobbyCounterCounting(int _countNumber)
+    {
+        UIManager.Instance.ACountNumber(_countNumber);
+        if (_countNumber == -1)
+        {
+            UIManager.Instance.LoadingUIInstance.OpenLoadingUI();
+        }
+    }
+
+    #endregion
 
     IEnumerator Counting()
     {

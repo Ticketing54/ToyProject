@@ -26,7 +26,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             return instance;
         }        
     }
-
+    
     private void Awake()
     {
         Application.quitting +=
@@ -81,7 +81,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.InRoom)
             return;
-        UIManager.Instance.LoadingUIInstance.OpenLoadingUI();
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 4;
         roomOptions.IsOpen = true;
@@ -92,6 +91,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     }
     public override void OnCreatedRoom()
     {
+        UIManager.Instance.LoadingUIInstance.OpenLoadingUI();
         UIManager.Instance.AOpenRoom();
         UpdateRoom();
         UIManager.Instance.LoadingUIInstance.CloseLoadingUI();
@@ -170,36 +170,26 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     }
     void CancleReadyMessage()
     {
-        StopCoroutine(startGame);
+        if(PhotonNetwork.IsMasterClient)
+        {
+            StopCoroutine(startGame);
+        }
         UIManager.Instance.ACountNumber(-1);
     }
     IEnumerator CoStartingReady()
     {
-        UIManager.Instance.AOpenCounter();
-        float count = 5f;
-        UIManager.Instance.ACountNumber((int)count);
-        while (count >=0.1)
+        GameManager.Instance.OpenLobbyCounter();
+        int count = 5;
+        GameManager.Instance.LobbyCounterCounting(count);
+        while(0 != count--)
         {
-            count -= Time.deltaTime;
-            UIManager.Instance.ACountNumber((int)count);
-            yield return null;
+            GameManager.Instance.LobbyCounterCounting(count);
+            yield return new WaitForSeconds(1f);
         }
-        UIManager.Instance.ACountNumber(-1); // Á¾·á
-        UIManager.Instance.LoadingUIInstance.OpenLoadingUI();
+        GameManager.Instance.LobbyCounterCounting(-1);
         PhotonNetwork.LoadLevel("PlayScene");
-        StartCoroutine(CowaitSceneLoaded());
+        yield return new WaitUntil(() => PhotonNetwork.LevelLoadingProgress >= 1);
+        GameManager.Instance.ChangePlay();
     }
-    IEnumerator CowaitSceneLoaded()
-    {
-        bool isLoadedScene = false;
-        while(!isLoadedScene)
-        {
-            if(PhotonNetwork.LevelLoadingProgress >= 1)
-            {
-                isLoadedScene = true;
-            }
-            yield return null;
-        }
-        GameManager.Instance.ChangeState(GameState.Playing);
-    }
+ 
 }

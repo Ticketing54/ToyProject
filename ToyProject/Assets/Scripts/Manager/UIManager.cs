@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
+using Photon.Pun;
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
@@ -153,6 +154,7 @@ public class UIManager : MonoBehaviour
     /// UI RoomStateUpdate
     /// </summary>
     public Action<Queue<UserInfo>> ARoomUpdate { get; set; }
+
     public Action AOpenCounter { get; set; }
     public Action<int> ACountNumber { get; set; }
     #endregion

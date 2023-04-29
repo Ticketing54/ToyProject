@@ -15,6 +15,7 @@ public class UIPlayCount : MonoBehaviour
     {
         UIManager.Instance.ATimer -= SettingCount;
     }
+    
     void SettingCount (float _count)
     {
         if(_count == 0)

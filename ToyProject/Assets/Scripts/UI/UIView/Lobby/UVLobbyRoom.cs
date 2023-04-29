@@ -24,6 +24,7 @@ public class UVLobbyRoom : UIView
         UIManager.Instance.ARoomUpdate -= SettingRoom;
         UIManager.Instance.AOpenCounter -= OpenCounter;
     }
+
     void OpenCounter() { count.gameObject.SetActive(true); }
     public void OnClickPlayerButton() { LobbyManager.Instance.StartGame(); }
     public void OnLeaveRoomButton() { LobbyManager.Instance.LeaveRoom(); }

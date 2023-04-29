@@ -22,17 +22,21 @@ public class InputManager : MonoBehaviour
         }
     }
     public delegate Vector3 direction ();
-    public ControlUnit Player { get; private set; }
-    public Coroutine control { get; set; }
+    public Character Player { get; private set; }
     /// <summary>
     /// 캐릭터 세팅
     /// </summary>
     /// <param name="Unit"></param>
-    public void SetUnit(ControlUnit _unit) { Player = _unit; }
+    public void SetUnit(Character _unit) { Player = _unit; }
     /// <summary>
     /// 캐릭터 컨트롤 시작
     /// </summary>
-    public void StartControl(direction _dir) { StartCoroutine(CoControlUnit(_dir)); }
+    public void Control(Vector3 _dir)
+    {
+        if (Player == null)
+            return;
+        Player.Direction = _dir;
+    }
     /// <summary>
     /// 모든 정보 초기화
     /// </summary>
@@ -40,23 +44,7 @@ public class InputManager : MonoBehaviour
     {   
         Player = null;
     }
-    /// <summary>
-    /// Control
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator CoControlUnit(direction _dir)
-    {
-        while(true)
-        {
-            yield return null;
-
-            if (Player == null)
-            {
-                continue;
-            }
-            Player.gameObject.transform.position += Player.Speed * _dir() * Time.deltaTime;
-        }
-    }
+    
     
 
 

@@ -19,11 +19,8 @@ public class UVJoyStick : UIView ,IDragHandler, IEndDragHandler
     }
     
     Vector2 dir;
-    Vector3 GetDirection() { return new Vector3(dir.x, 0, dir.y); }
-    private void OnEnable()
-    {
-        InputManager.Instance.StartControl(GetDirection);
-    }
+    Vector3 Direction() { return new Vector3(dir.x, 0, dir.y); }
+    
     private void OnDisable()
     {
         InputManager.Instance.Clear();
@@ -31,6 +28,7 @@ public class UVJoyStick : UIView ,IDragHandler, IEndDragHandler
     public void OnDrag(PointerEventData eventData)
     {
         dir = (eventData.position - (Vector2)center.position).normalized;
+        InputManager.Instance.Control(Direction());
         float distance = Vector2.Distance(eventData.position, center.position);
         if (radius < distance)
         {
@@ -47,6 +45,7 @@ public class UVJoyStick : UIView ,IDragHandler, IEndDragHandler
     public void OnEndDrag(PointerEventData eventData)
     {
         dir = Vector2.zero;
+        InputManager.Instance.Control(Direction());
         joystick.rectTransform.position = center.position;
     }
     
