@@ -19,17 +19,15 @@ public class Character_Move : StateMachineBehaviour
         if(character.Direction == Vector3.zero)
         {
             animator.SetBool("IsMove", false);
+            return;
         }
-        else
-        {
 
-            character.gameObject.transform.position += character.Speed * character.Direction * Time.deltaTime;
-            Vector3 newdir = Vector3.RotateTowards(character.transform.forward, character.Direction, Time.deltaTime * 30f, Time.deltaTime * 30f);
-            character.transform.rotation = Quaternion.LookRotation(newdir);
-        }
+        character.gameObject.transform.position += character.Speed * character.Direction * Time.deltaTime;
+        Quaternion dir = Quaternion.LookRotation(character.Direction);
+        character.transform.rotation = dir;
     }
 
-    
+
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.SetBool("IsMove", false);

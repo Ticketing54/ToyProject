@@ -29,6 +29,7 @@ public class UVJoyStick : UIView ,IDragHandler, IEndDragHandler
     {
         dir = (eventData.position - (Vector2)center.position).normalized;
         InputManager.Instance.Control(Direction());
+
         float distance = Vector2.Distance(eventData.position, center.position);
         if (radius < distance)
         {

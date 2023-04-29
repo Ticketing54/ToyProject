@@ -115,7 +115,7 @@ public class GameManager : MonoBehaviourPun
         GameObject[] spawner = GameObject.FindGameObjectsWithTag("Spawner");
         for (int i = 0; i < playerList.Length; i++)
         {
-            GameObject character = ResourceManager.Instance.GetPrefab("DogPolyart");// 다시 할것
+            GameObject character = ResourceManager.Instance.GetPrefab("Knight");// 다시 할것
             if (character != null)
             {
                 character.transform.localScale = new Vector3(1f, 1f, 1f);
@@ -123,9 +123,11 @@ public class GameManager : MonoBehaviourPun
                 //Character script add
                 if (playerList[i].CustomProperties["UID"].ToString() == AuthManager.Instance.User.UserId)
                 {
-                    CameraManager.Instance.TargetPlayer(character.gameObject);
+                    
                     Character temp = character.AddComponent<Character>();
+                    temp.SettingCharacter();
                     InputManager.Instance.SetUnit(temp);
+                    CameraManager.Instance.TargetPlayer(temp.cameraSet);
                 }
             }
 

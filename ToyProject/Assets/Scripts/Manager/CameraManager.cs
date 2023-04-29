@@ -9,8 +9,6 @@ public class CameraManager : MonoBehaviour
     [SerializeField]
     CinemachineBrain brain;
     [SerializeField]
-    CinemachineFreeLook freeLook;
-    [SerializeField]
     CinemachineVirtualCamera follow;
     private void Awake()
     {
@@ -30,6 +28,7 @@ public class CameraManager : MonoBehaviour
         follow.Priority = 20;
         follow.Follow = _target.transform;
         follow.LookAt = _target.transform;
+        
     }
     public void TargetOtherPlayer(GameObject _target)
     {

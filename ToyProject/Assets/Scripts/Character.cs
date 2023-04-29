@@ -10,12 +10,15 @@ public class Character : MonoBehaviourPun
     public float Atk;
     public float Speed;
     Animator anim;
-    public Character()
+    public GameObject cameraSet;
+    public void SettingCharacter()
     {
-        anim.GetComponent<Animator>();
+        anim = GetComponent<Animator>();
+        cameraSet = transform.Find("Camera").gameObject;
+        Speed = 2f;
+
         LevelSetting(1);
     }
-
     public void Attack()
     {
         anim.SetTrigger("Attack");
