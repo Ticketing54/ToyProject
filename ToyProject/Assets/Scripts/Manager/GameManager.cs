@@ -22,10 +22,14 @@ public class GameManager : MonoBehaviourPun
         }   
     }
     private void Start()
-    {
+    {   
         UIManager.Instance.LoadingUIInstance.OpenLoadingUI();
         StartCoroutine(CoPatchCheck());
+        
     }
+
+    private int photonViewNumber = 1000;
+
     public GameState State { get; private set; }
     /// <summary>
     /// 게임 상태 변경 (Enum타입)
@@ -104,6 +108,7 @@ public class GameManager : MonoBehaviourPun
     {
         GameObject castle = ResourceManager.Instance.GetPrefab("Castle");
         castle.transform.tag = "Castle";
+
         castle.transform.position = new Vector3(75, 0, 75);
         //castle script add
 
@@ -115,22 +120,18 @@ public class GameManager : MonoBehaviourPun
         GameObject[] spawner = GameObject.FindGameObjectsWithTag("Spawner");
         for (int i = 0; i < playerList.Length; i++)
         {
-            GameObject character = ResourceManager.Instance.GetPrefab("Knight");// 다시 할것
-            if (character != null)
+            GameObject prefab = ResourceManager.Instance.GetPrefab("Knight");// 다시 할것
+            if (prefab != null)
             {
-                character.transform.localScale = new Vector3(1f, 1f, 1f);
-                character.transform.position = spawner[i].transform.position;
-                //Character script add
+                Character temp = prefab.gameObject.AddComponent<Character>();
+                temp.SettingCharacter(photonViewNumber++);
+                temp.gameObject.transform.position = spawner[i].transform.position;
                 if (playerList[i].CustomProperties["UID"].ToString() == AuthManager.Instance.User.UserId)
-                {
-                    
-                    Character temp = character.AddComponent<Character>();
-                    temp.SettingCharacter();
+                {   
                     InputManager.Instance.SetUnit(temp);
-                    CameraManager.Instance.TargetPlayer(temp.cameraSet);
+                    CameraManager.Instance.SetActiveCamera(temp.gameObject);
                 }
             }
-
         }
     }
     /// <summary>

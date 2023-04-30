@@ -83,13 +83,18 @@ public class ResourceManager : MonoBehaviour
         return mobs;
     }
     #endregion
+    /// <summary>
+    /// Using Instantiate
+    /// </summary>
+    /// <param name="PrefabName"></param>
+    /// <returns></returns>
     public GameObject GetPrefab(string _name)
     {
         GameObject prefab = null;
         if (prefabDic.ContainsKey(_name))
         {
-            prefab = Instantiate(prefabDic[_name]);
-
+            prefab = GameObject.Instantiate(prefabDic[_name]);
+            
         }
         return prefab;
     }

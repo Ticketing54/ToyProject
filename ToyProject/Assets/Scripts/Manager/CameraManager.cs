@@ -1,15 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cinemachine;
 public class CameraManager : MonoBehaviour
 {   
     public static CameraManager Instance;
-    
-    [SerializeField]
-    CinemachineBrain brain;
-    [SerializeField]
-    CinemachineVirtualCamera follow;
+    public Vector3 Preset = new Vector3(0, 8, -10);
     private void Awake()
     {
         if(Instance == null)
@@ -18,23 +13,20 @@ public class CameraManager : MonoBehaviour
             DontDestroyOnLoad(this.gameObject);
         }
     }
-
     /// <summary>
-    /// Target is Player or Castle
+    /// Folling Camera
     /// </summary>
     /// <param name="Target"></param>
-    public void TargetPlayer(GameObject _target)
+    public void SetActiveCamera(GameObject _target) { StartCoroutine(CoActiveCamera(_target)); }
+    IEnumerator CoActiveCamera(GameObject _target)
     {
-        follow.Priority = 20;
-        follow.Follow = _target.transform;
-        follow.LookAt = _target.transform;
-        
-    }
-    public void TargetOtherPlayer(GameObject _target)
-    {
-        brain.enabled = true;
-        // Control UI ¾ø¾Ù °Í
-        brain.ActiveVirtualCamera.Follow = _target.transform;
-        brain.ActiveVirtualCamera.LookAt = _target.transform;
+        transform.rotation = Quaternion.Euler(35f, 0, 0);
+        while(true)
+        {
+            if (_target == null)
+                break;
+            transform.position = _target.transform.position + Preset;
+            yield return null;
+        }
     }
 }

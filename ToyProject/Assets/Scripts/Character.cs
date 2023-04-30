@@ -10,16 +10,15 @@ public class Character : MonoBehaviourPun
     public float Atk;
     public float Speed;
     Animator anim;
-    public GameObject cameraSet;
-    public void SettingCharacter()
+    public void SettingCharacter(int _photonViewIDNumber)
     {
         anim = GetComponent<Animator>();
-        cameraSet = transform.Find("Camera").gameObject;
-        Speed = 2f;
-
+        Speed = 4f;
         LevelSetting(1);
+        PhotonView pv = PhotonView.Get(this);
+        pv.ViewID = _photonViewIDNumber;
     }
-    public void Attack()
+    public void NomalAttack()
     {
         anim.SetTrigger("Attack");
     }

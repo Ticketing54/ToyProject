@@ -49,5 +49,5 @@ public class UVJoyStick : UIView ,IDragHandler, IEndDragHandler
         InputManager.Instance.Control(Direction());
         joystick.rectTransform.position = center.position;
     }
-    
+    public void OnClickNomalAttackButton() { InputManager.Instance.NomalAttack(); }
 }

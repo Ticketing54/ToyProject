@@ -37,6 +37,12 @@ public class InputManager : MonoBehaviour
             return;
         Player.Direction = _dir;
     }
+    public void NomalAttack()
+    {
+        if (Player == null)
+            return;
+        Player.NomalAttack();
+    }
     /// <summary>
     /// 모든 정보 초기화
     /// </summary>
