@@ -10,13 +10,16 @@ public class Character : MonoBehaviourPun
     public float Atk;
     public float Speed;
     Animator anim;
-    public void SettingCharacter(int _photonViewIDNumber)
+    public PhotonView photonview;
+    public void SettingCharacter(PhotonView _pv)
     {
         anim = GetComponent<Animator>();
         Speed = 4f;
+        photonview = _pv;
+        photonView.ObservedComponents = new List<Component>();
+        photonView.ObservedComponents.Add(GetComponent<PhotonAnimatorView>());
+        photonView.ObservedComponents.Add(GetComponent<PhotonTransformView>());
         LevelSetting(1);
-        PhotonView pv = PhotonView.Get(this);
-        pv.ViewID = _photonViewIDNumber;
     }
     public void NomalAttack()
     {

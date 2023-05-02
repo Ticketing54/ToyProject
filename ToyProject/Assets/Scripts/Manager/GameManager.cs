@@ -6,7 +6,9 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 using Photon.Pun;
 using System;
-public class GameManager : MonoBehaviourPun
+using Photon.Realtime;
+
+public class GameManager : MonoBehaviourPunCallbacks, IPunOwnershipCallbacks
 {
     public static GameManager Instance;
 
@@ -79,6 +81,7 @@ public class GameManager : MonoBehaviourPun
         }
         UIManager.Instance.LoadingUIInstance.CloseLoadingUI();
     }
+    int ReadyCount = 0;
     async void GameSetting()
     {
         UIManager.Instance.LoadingUIInstance.OpenLoadingUI(true);
@@ -89,21 +92,39 @@ public class GameManager : MonoBehaviourPun
 
         await ResourceManager.Instance.PrefabSetting();     // Prefab 
         UIManager.Instance.LoadingUIInstance.CurrentStep++;
-        SettingMap();
+        Stack<PhotonView> pvStack =  SettingMap_Character(); 
+        SettingMap_Castle();
+
         UIManager.Instance.ChangeUINavgation(GameState.Playing);
         UIManager.Instance.LoadingUIInstance.CurrentStep++;
-        if(PhotonNetwork.IsMasterClient)
+        photonView.RPC("ReadyPlayer", RpcTarget.MasterClient);
+
+        if (PhotonNetwork.IsMasterClient)
         {
+            while(ReadyCount != PhotonNetwork.CurrentRoom.PlayerCount)
+            {
+                await System.Threading.Tasks.Task.Delay(1000);
+            }
+            ReadyCount = 0;
+            SettingCharacterOwner(pvStack);
+            photonView.RPC("CloseLoadingUI", RpcTarget.All);
             CountingNextRound();
         }
     }
-    void SettingMap()
+    
+    void SettingCharacterOwner(Stack<PhotonView> _characterStack)
     {
-        SettingMap_Character();
-        SettingMap_Castle();
-        
-        
+        Photon.Realtime.Player[] playerList = PhotonNetwork.PlayerList;
+        GameObject[] startPos = GameObject.FindGameObjectsWithTag("StartPos");
+        for (int i=0;i<playerList.Length;i++)
+        {   
+            PhotonView pv = _characterStack.Pop();
+            object[] para = new object[] { pv.ViewID, startPos[i].transform.position };
+            photonView.RPC("TransSetting", RpcTarget.All, para);
+            pv.TransferOwnership(playerList[i]);
+        }
     }
+ 
     void SettingMap_Castle()
     {
         GameObject castle = ResourceManager.Instance.GetPrefab("Castle");
@@ -113,26 +134,25 @@ public class GameManager : MonoBehaviourPun
         //castle script add
 
     }
-    void SettingMap_Character()
+    Stack<PhotonView> SettingMap_Character()
     {
-         Photon.Realtime.Player[] playerList= PhotonNetwork.PlayerList;
-
-        GameObject[] spawner = GameObject.FindGameObjectsWithTag("Spawner");
+        Stack<PhotonView> characterstack = new Stack<PhotonView>();
+        Photon.Realtime.Player[] playerList= PhotonNetwork.PlayerList;
         for (int i = 0; i < playerList.Length; i++)
         {
             GameObject prefab = ResourceManager.Instance.GetPrefab("Knight");// 다시 할것
             if (prefab != null)
             {
-                Character temp = prefab.gameObject.AddComponent<Character>();
-                temp.SettingCharacter(photonViewNumber++);
-                temp.gameObject.transform.position = spawner[i].transform.position;
-                if (playerList[i].CustomProperties["UID"].ToString() == AuthManager.Instance.User.UserId)
-                {   
-                    InputManager.Instance.SetUnit(temp);
-                    CameraManager.Instance.SetActiveCamera(temp.gameObject);
-                }
+                Character temp = prefab.gameObject.AddComponent<Character>();                
+                PhotonView pv = prefab.AddComponent<PhotonView>();
+                temp.SettingCharacter(pv);
+                pv.OwnershipTransfer = OwnershipOption.Takeover;
+                pv.ViewID = photonViewNumber++;
+                characterstack.Push(pv);
             }
         }
+        return characterstack;
+        
     }
     /// <summary>
     /// Only MasterClient 
@@ -160,6 +180,20 @@ public class GameManager : MonoBehaviourPun
     public void OpenLobbyCounter() { photonView.RPC("PROpenLobbyCounter", RpcTarget.All); }
     public void LobbyCounterCounting(int _countNumber) { photonView.RPC("PRLobbyCounterCounting", RpcTarget.All, _countNumber); }
     [PunRPC]
+    void TransSetting(int _phtonViewNumber , Vector3 _pos)
+    {
+        PhotonView pv = PhotonView.Find(_phtonViewNumber);
+        pv.transform.position = _pos;
+    }
+    
+    [PunRPC]
+    void ReadyPlayer() { ReadyCount++; }
+    [PunRPC]
+    void CreateCharacter(int _photonViewNumber,Vector3 _pos)
+    {
+
+    }
+    [PunRPC]
     void PRCountNextRound(int _count) 
     {
         if (UIManager.Instance.ATimer != null)
@@ -167,6 +201,8 @@ public class GameManager : MonoBehaviourPun
             UIManager.Instance.ATimer(_count);
         }
     }
+    [PunRPC]
+    void CloseLoadingUI(){ UIManager.Instance.LoadingUIInstance.CloseLoadingUI(); }
     [PunRPC]
     void PRChangePlayGame() { ChangeState(GameState.Playing); }
     [PunRPC]
@@ -238,5 +274,27 @@ public class GameManager : MonoBehaviourPun
             yield return null;
         }
     }
+
+    public void OnOwnershipRequest(PhotonView targetView, Player requestingPlayer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void OnOwnershipTransfered(PhotonView targetView, Player previousOwner)
+    {
+        if(targetView.Owner == PhotonNetwork.LocalPlayer)
+        {
+            targetView.RequestOwnership();
+            Character character = targetView.GetComponent<Character>();
+            InputManager.Instance.SetUnit(character);
+            CameraManager.Instance.SetActiveCamera(character.gameObject);
+        }
+    }
+
+    public void OnOwnershipTransferFailed(PhotonView targetView, Player senderOfFailedRequest)
+    {
+        throw new NotImplementedException();
+    }
+
     #endregion
 }

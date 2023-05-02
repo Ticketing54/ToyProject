@@ -18,6 +18,8 @@ public class LoadingUI : MonoBehaviour
     Image simpleLoadingImage;
     [SerializeField]
     GameObject progress;
+    [SerializeField]
+    Image waitOtherPlayerMessage;
 
     // 해당 위치
     [SerializeField]
@@ -61,6 +63,7 @@ public class LoadingUI : MonoBehaviour
         StopAllCoroutines();
         simpleLoadingImage.transform.SetParent(outPosition);
         progress.transform.SetParent(outPosition);
+        waitOtherPlayerMessage.transform.SetParent(outPosition);
         progressText.text = "";
         progressBar.fillAmount = 0;
         targetStep = 0;
@@ -94,7 +97,13 @@ public class LoadingUI : MonoBehaviour
                 progressText.text = (progressBar.fillAmount * 100).ToString("F2") + " %";
             }
         }
-        CloseLoadingUI();
+        simpleLoadingImage.transform.SetParent(outPosition);
+        progress.transform.SetParent(outPosition);
+        progressText.text = "";
+        progressBar.fillAmount = 0;
+        targetStep = 0;
+        currentStep = 0;
+        waitOtherPlayerMessage.transform.SetParent(progressPosition);
     }
    
 }

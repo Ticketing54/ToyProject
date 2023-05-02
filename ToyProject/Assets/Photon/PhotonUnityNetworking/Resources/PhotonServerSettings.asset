@@ -46,6 +46,12 @@ MonoBehaviour:
   - PRLobbyCounterCounting
   - PROpenLobbyCounter
   - PRCountNextRound
+  - SetOwnerShip
+  - ReadyPlayer
+  - CloseLoadingUI
+  - SettingCharacter
+  - CreateCharacter
+  - TransSetting
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

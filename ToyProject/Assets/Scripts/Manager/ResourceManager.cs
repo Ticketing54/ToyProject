@@ -98,7 +98,7 @@ public class ResourceManager : MonoBehaviour
         }
         return prefab;
     }
-
+    
     /// <summary>
     /// SettingTable
     /// </summary>
