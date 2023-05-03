@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - DontTouch
+  - Spawner
+  - Bullet
+  - Castle
+  - StartPos
   layers:
   - Default
   - TransparentFX

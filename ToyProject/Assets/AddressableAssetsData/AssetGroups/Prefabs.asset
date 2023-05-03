@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Prefabs
+  m_EditorClassIdentifier: 
+  m_GroupName: Prefabs
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 586995917741ae64db5b0f942109f805
+  m_SerializeEntries:
+  - m_GUID: ccd8c3b89aa02e943a08ab9238a8a70c
+    m_Address: Wizard
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Patch
+    - Prefab
+  - m_GUID: 45288819fde2143449a96207b14db0bb
+    m_Address: Knight
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Prefab
+  - m_GUID: 1cace56ba420dd64c9171c422c8e9aaa
+    m_Address: Castle
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Prefab
+  - m_GUID: 55776efecb0cd134ea5f418c2f97a705
+    m_Address: Slime
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Prefab
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 185dab7d74f7bf245883506aadc823da, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 88b001404fc41b0428d1b5cbe0d96a91, type: 2}
+    - {fileID: 11400000, guid: 6dbef00364fadbe4290f491287ff8180, type: 2}

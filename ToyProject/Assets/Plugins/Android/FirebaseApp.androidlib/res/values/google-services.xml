@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/firebase_database_url,@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id,@string/default_android_client_id,@string/default_web_client_id">
+  <string name="firebase_database_url" translatable="false">https://castledepence-default-rtdb.firebaseio.com</string>
+  <string name="gcm_defaultSenderId" translatable="false">509718245769</string>
+  <string name="google_storage_bucket" translatable="false">castledepence.appspot.com</string>
+  <string name="project_id" translatable="false">castledepence</string>
+  <string name="google_api_key" translatable="false">AIzaSyA1pcHIC713KgPKxMZHyQP2L_9T0rG41eE</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyA1pcHIC713KgPKxMZHyQP2L_9T0rG41eE</string>
+  <string name="google_app_id" translatable="false">1:509718245769:android:9455a6c687d1e00d35f158</string>
+  <string name="default_android_client_id" translatable="false">509718245769-cmjksirsi64988mj3in8s5llpd4fc1ct.apps.googleusercontent.com</string>
+  <string name="default_web_client_id" translatable="false">509718245769-3sjm4krqqol69c4k11pho0rd86ichcdp.apps.googleusercontent.com</string>
+</resources>
