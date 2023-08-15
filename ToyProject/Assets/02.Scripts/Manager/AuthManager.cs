@@ -474,6 +474,7 @@ public class AuthManager
     }
 
     #endregion
+
     #region Room
     /// <summary>
     /// RoomStateUpdate
@@ -502,6 +503,7 @@ public class AuthManager
     }
     
     #endregion
+
     #region  Chat
     /// <summary>
     /// SendMessage (UserID, Message)

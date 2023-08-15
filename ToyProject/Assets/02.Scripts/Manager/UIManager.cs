@@ -45,7 +45,7 @@ public class UIManager : MonoBehaviour
         Current = GetUINavigation(_state);
         Current.gameObject.SetActive(true);
         Current.gameObject.transform.localPosition = Vector3.zero;
-        Current.RootShow();
+        //Current.RootShow();
     }
     /// <summary>
     ///  GameState ·Î UINavigation ¹ÝÈ¯

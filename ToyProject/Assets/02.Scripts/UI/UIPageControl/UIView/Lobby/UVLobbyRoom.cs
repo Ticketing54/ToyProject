@@ -59,13 +59,5 @@ public class UVLobbyRoom : UIView
             }
         }
     }
-    public override void Show()
-    {
-        canvasGroup.alpha = 1;
-        state = VisibleState.Appeared;
-    }
-    public override void Hide()
-    {
-        state = VisibleState.Disappeared;
-    }
+    
 }
